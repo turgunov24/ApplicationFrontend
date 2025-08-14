@@ -108,6 +108,7 @@ export const paths = {
       course: `${ROOTS.DASHBOARD}/course`,
     },
     user: {
+      all: `${ROOTS.DASHBOARD}/user/all`,
       root: `${ROOTS.DASHBOARD}/user`,
       new: `${ROOTS.DASHBOARD}/user/new`,
       list: `${ROOTS.DASHBOARD}/user/list`,
@@ -116,6 +117,9 @@ export const paths = {
       account: `${ROOTS.DASHBOARD}/user/account`,
       edit: (id: string) => `${ROOTS.DASHBOARD}/user/${id}/edit`,
       demo: { edit: `${ROOTS.DASHBOARD}/user/${MOCK_ID}/edit` },
+    },
+    users: {
+      root: `${ROOTS.DASHBOARD}/users`,
     },
     product: {
       root: `${ROOTS.DASHBOARD}/product`,

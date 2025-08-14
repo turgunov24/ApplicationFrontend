@@ -48,7 +48,7 @@ export const fetcher = async <T = unknown>(
     const res = await axiosInstance.get<T>(url, config);
 
     return res.data;
-  } catch (error) {
+  } catch (error) { 
     console.error('Fetcher failed:', error);
     throw error;
   }

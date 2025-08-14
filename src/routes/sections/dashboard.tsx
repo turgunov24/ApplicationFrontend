@@ -84,6 +84,10 @@ const BlankPage = lazy(() => import('src/pages/dashboard/blank'));
 
 // ----------------------------------------------------------------------
 
+const UsersPage = lazy(() => import('src/pages/core/admin/users'));
+
+// ----------------------------------------------------------------------
+
 function SuspenseOutlet() {
   const pathname = usePathname();
   return (
@@ -117,6 +121,15 @@ export const dashboardRoutes: RouteObject[] = [
       { path: 'booking', element: <OverviewBookingPage /> },
       { path: 'file', element: <OverviewFilePage /> },
       { path: 'course', element: <OverviewCoursePage /> },
+      {
+        path: 'users',
+        children: [
+          {
+            index: true,
+            element: <UsersPage />,
+          },
+        ],
+      },
       {
         path: 'user',
         children: [
