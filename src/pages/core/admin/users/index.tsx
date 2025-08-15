@@ -1,100 +1,151 @@
-import type { TableHeadCellProps } from 'src/components/table';
-import type { IUserItem, IUserTableFilters } from 'src/types/user';
+import type { IIndexResponse } from './services/types';
 
-import { useState, useCallback } from 'react';
-import { varAlpha } from 'minimal-shared/utils';
-import { useBoolean, useSetState } from 'minimal-shared/hooks';
+import { useMemo, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import {
+  parseAsString,
+  parseAsArrayOf,
+  useQueryStates,
+  parseAsInteger,
+  parseAsStringEnum,
+} from 'nuqs';
+import {
+  flexRender,
+  useReactTable,
+  getCoreRowModel,
+  createColumnHelper,
+  getPaginationRowModel,
+} from '@tanstack/react-table';
 
-import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
-import Tabs from '@mui/material/Tabs';
 import Table from '@mui/material/Table';
 import Button from '@mui/material/Button';
+import Switch from '@mui/material/Switch';
 import Tooltip from '@mui/material/Tooltip';
+import TableRow from '@mui/material/TableRow';
+import Checkbox from '@mui/material/Checkbox';
+import TableHead from '@mui/material/TableHead';
+import TableCell from '@mui/material/TableCell';
 import TableBody from '@mui/material/TableBody';
 import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
+import TablePagination from '@mui/material/TablePagination';
+import FormControlLabel from '@mui/material/FormControlLabel';
 
 import { paths } from 'src/routes/paths';
 import { RouterLink } from 'src/routes/components';
 
 import { CONFIG } from 'src/global-config';
 import { DashboardContent } from 'src/layouts/dashboard';
-import { _roles, _userList, USER_STATUS_OPTIONS } from 'src/_mock';
 
-import { Label } from 'src/components/label';
-import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
-import {
-  useTable,
-  rowInPage,
-  emptyRows,
-  TableNoData,
-  getComparator,
-  TableEmptyRows,
-  TableHeadCustom,
-  TableSelectedAction,
-} from 'src/components/table';
 
-import { UserTableRow } from './user-table-row';
-import { UserTableToolbar } from './user-table-toolbar';
-import { UserTableFiltersResult } from './user-table-filters-result';
+import Filters from './components/filters';
+import Statuses from './components/statuses';
+import FilterResults from './components/filterResults';
+import { usersService, USERS_BASE_QUERY_KEY } from './services';
+import { Roles, Statuses as StatusesEnum } from './services/types';
+
 // ----------------------------------------------------------------------
 
-const metadata = { title: `User | All - ${CONFIG.appName}` };
+type IUser = IIndexResponse['result'][number];
 
-const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...USER_STATUS_OPTIONS];
-
-const TABLE_HEAD: TableHeadCellProps[] = [
-  { id: 'name', label: 'Name' },
-  { id: 'phoneNumber', label: 'Phone number', width: 180 },
-  { id: 'company', label: 'Company', width: 220 },
-  { id: 'role', label: 'Role', width: 180 },
-  { id: 'status', label: 'Status', width: 100 },
-  { id: '', width: 88 },
-];
+const metadata = { title: `Users - ${CONFIG.appName}` };
+const fallBackData: any[] = [];
 
 export default function Page() {
-  const filters = useSetState<IUserTableFilters>({ name: '', role: [], status: 'all' });
-  const { state: currentFilters, setState: updateFilters } = filters;
-  const canReset =
-    !!currentFilters.name || currentFilters.role.length > 0 || currentFilters.status !== 'all';
-  const [tableData, setTableData] = useState<IUserItem[]>(_userList);
+  const [rowSelection, setRowSelection] = useState({});
+  const [dense, setDense] = useState(false);
 
-  const table = useTable();
+  const [{ status, roles, search, ...pagination }, setQueryStates] = useQueryStates(
+    {
+      roles: parseAsArrayOf(parseAsStringEnum<Roles>(Object.values(Roles))).withDefault([]),
+      status: parseAsStringEnum<StatusesEnum>(Object.values(StatusesEnum)).withDefault(
+        StatusesEnum.all
+      ),
+      search: parseAsString.withDefault(''),
 
-  const dataFiltered = applyFilter({
-    inputData: tableData,
-    comparator: getComparator(table.order, table.orderBy),
-    filters: currentFilters,
+      page: parseAsInteger.withDefault(1),
+      pageSize: parseAsInteger.withDefault(10),
+    },
+    {
+      history: 'push',
+    }
+  );
+
+  const columnHelper = createColumnHelper<IUser>();
+
+  const columns = useMemo(
+    () => [
+      columnHelper.accessor('name', {
+        header: 'Name',
+        cell: (info) => info.getValue(),
+      }),
+      columnHelper.accessor('username', {
+        header: 'Username',
+        // cell: (info) => info.getValue(),
+      }),
+    ],
+    [columnHelper]
+  );
+
+  const {
+    data = {
+      result: fallBackData,
+      pagination: {
+        page: 1,
+        pageCount: 1,
+        sizePerPage: 10,
+      },
+    },
+  } = useQuery({
+    queryKey: [USERS_BASE_QUERY_KEY, 'index', status, roles, search],
+    queryFn: async () => {
+      try {
+        const response = await usersService.index({ status, roles, search });
+        return response;
+      } catch (error: unknown) {
+        console.log('error', error);
+        return {
+          result: fallBackData,
+          pagination: {
+            page: 1,
+            pageCount: 1,
+            sizePerPage: 10,
+          },
+        };
+      }
+    },
   });
 
-  const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
-  const dataInPage = rowInPage(dataFiltered, table.page, table.rowsPerPage);
-
-  const handleFilterStatus = useCallback(
-    (event: React.SyntheticEvent, newValue: string) => {
-      table.onResetPage();
-      updateFilters({ status: newValue });
+  const table = useReactTable({
+    data: data.result,
+    columns,
+    manualPagination: true,
+    enableRowSelection: true,
+    getCoreRowModel: getCoreRowModel(),
+    pageCount: data.pagination.pageCount,
+    onRowSelectionChange: setRowSelection,
+    getPaginationRowModel: getPaginationRowModel(),
+    state: {
+      rowSelection,
+      pagination: {
+        pageSize: pagination.pageSize,
+        pageIndex: pagination.page - 1,
+      },
     },
-    [updateFilters, table]
-  );
-  const confirmDialog = useBoolean();
-
-  const handleDeleteRow = useCallback(
-    (id: string) => {
-      const deleteRow = tableData.filter((row) => row.id !== id);
-
-      toast.success('Delete success!');
-
-      setTableData(deleteRow);
-
-      table.onUpdatePageDeleteRow(dataInPage.length);
+    onPaginationChange: (updater) => {
+      const newPagination =
+        typeof updater === 'function' ? updater(table.getState().pagination) : updater;
+      setQueryStates({
+        pageSize: newPagination.pageSize,
+        page: newPagination.pageIndex + 1,
+      });
     },
-    [dataInPage.length, table, tableData]
-  );
+  });
 
   return (
     <>
@@ -116,156 +167,155 @@ export default function Page() {
           sx={{ mb: { xs: 3, md: 5 } }}
         />
         <Card>
-          <Tabs
-            value={currentFilters.status}
-            onChange={handleFilterStatus}
-            sx={[
-              (theme) => ({
-                px: { md: 2.5 },
-                boxShadow: `inset 0 -2px 0 0 ${varAlpha(theme.vars.palette.grey['500Channel'], 0.08)}`,
-              }),
-            ]}
-          >
-            {STATUS_OPTIONS.map((tab) => (
-              <Tab
-                key={tab.value}
-                iconPosition="end"
-                value={tab.value}
-                label={tab.label}
-                icon={
-                  <Label
-                    variant={
-                      ((tab.value === 'all' || tab.value === currentFilters.status) && 'filled') ||
-                      'soft'
-                    }
-                    color={
-                      (tab.value === 'active' && 'success') ||
-                      (tab.value === 'pending' && 'warning') ||
-                      (tab.value === 'banned' && 'error') ||
-                      'default'
-                    }
-                  >
-                    {['active', 'pending', 'banned', 'rejected'].includes(tab.value)
-                      ? tableData.filter((user) => user.status === tab.value).length
-                      : tableData.length}
-                  </Label>
-                }
-              />
-            ))}
-          </Tabs>
-          <UserTableToolbar
-            filters={filters}
-            onResetPage={table.onResetPage}
-            options={{ roles: _roles }}
-          />
-          {canReset && (
-            <UserTableFiltersResult
-              filters={filters}
-              totalResults={dataFiltered.length}
-              onResetPage={table.onResetPage}
-              sx={{ p: 2.5, pt: 0 }}
-            />
-          )}
+          <Statuses count={data.result.length} />
+          <Filters />
+          <FilterResults totalResults={data.result.length} />
+
           <Box sx={{ position: 'relative' }}>
-            <TableSelectedAction
-              dense={table.dense}
-              numSelected={table.selected.length}
-              rowCount={dataFiltered.length}
-              onSelectAllRows={(checked) =>
-                table.onSelectAllRows(
-                  checked,
-                  dataFiltered.map((row) => row.id)
-                )
-              }
-              action={
+            {Object.keys(rowSelection).length ? (
+              <Box
+                sx={[
+                  () => ({
+                    pl: 1,
+                    pr: 2,
+                    top: 0,
+                    left: 0,
+                    width: 1,
+                    zIndex: 9,
+                    height: 58,
+                    display: 'flex',
+                    position: 'absolute',
+                    alignItems: 'center',
+                    bgcolor: 'primary.lighter',
+                    ...(dense && { height: 38 }),
+                  }),
+                ]}
+              >
+                <Checkbox
+                  indeterminate={
+                    !!table.getSelectedRowModel().rows.length &&
+                    table.getSelectedRowModel().rows.length < data.result.length
+                  }
+                  checked={
+                    !!data.result.length &&
+                    table.getSelectedRowModel().rows.length === data.result.length
+                  }
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                    table.getToggleAllRowsSelectedHandler()(event)
+                  }
+                  slotProps={{
+                    input: {
+                      id: 'deselect-all-checkbox',
+                      'aria-label': 'Deselect all checkbox',
+                    },
+                  }}
+                />
+
+                <Typography
+                  variant="subtitle2"
+                  sx={{
+                    ml: 2,
+                    flexGrow: 1,
+                    color: 'primary.main',
+                    ...(dense && { ml: 3 }),
+                  }}
+                >
+                  {table.getIsAllRowsSelected()
+                    ? 'All'
+                    : `${table.getSelectedRowModel().rows.length} selected`}
+                </Typography>
+
                 <Tooltip title="Delete">
-                  <IconButton color="primary" onClick={confirmDialog.onTrue}>
+                  <IconButton color="primary" onClick={() => {}}>
                     <Iconify icon="solar:trash-bin-trash-bold" />
                   </IconButton>
                 </Tooltip>
-              }
-            />
-
+              </Box>
+            ) : null}
             <Scrollbar>
-              <Table size={table.dense ? 'small' : 'medium'} sx={{ minWidth: 960 }}>
-                <TableHeadCustom
-                  order={table.order}
-                  orderBy={table.orderBy}
-                  headCells={TABLE_HEAD}
-                  rowCount={dataFiltered.length}
-                  numSelected={table.selected.length}
-                  onSort={table.onSort}
-                  onSelectAllRows={(checked) =>
-                    table.onSelectAllRows(
-                      checked,
-                      dataFiltered.map((row) => row.id)
-                    )
-                  }
-                />
-
+              <Table size={dense ? 'small' : 'medium'} sx={{ minWidth: 960 }}>
+                <TableHead>
+                  {table.getHeaderGroups().map((headerGroup) => (
+                    <TableRow key={headerGroup.id}>
+                      <>
+                        <TableCell sx={{ width: 50 }}>
+                          <Checkbox
+                            onChange={table.getToggleAllRowsSelectedHandler()}
+                            checked={table.getIsAllRowsSelected()}
+                            indeterminate={table.getIsSomeRowsSelected()}
+                          />
+                        </TableCell>
+                        {headerGroup.headers.map((header) => (
+                          <TableCell key={header.id} colSpan={header.colSpan}>
+                            {flexRender(header.column.columnDef.header, header.getContext())}
+                          </TableCell>
+                        ))}
+                      </>
+                    </TableRow>
+                  ))}
+                </TableHead>
                 <TableBody>
-                  {dataFiltered
-                    .slice(
-                      table.page * table.rowsPerPage,
-                      table.page * table.rowsPerPage + table.rowsPerPage
-                    )
-                    .map((row) => (
-                      <UserTableRow
-                        key={row.id}
-                        row={row}
-                        selected={table.selected.includes(row.id)}
-                        onSelectRow={() => table.onSelectRow(row.id)}
-                        onDeleteRow={() => handleDeleteRow(row.id)}
-                        editHref={paths.dashboard.user.edit(row.id)}
-                      />
-                    ))}
-
-                  <TableEmptyRows
-                    height={table.dense ? 56 : 56 + 20}
-                    emptyRows={emptyRows(table.page, table.rowsPerPage, dataFiltered.length)}
-                  />
-
-                  <TableNoData notFound={notFound} />
+                  {table.getRowModel().rows.map((row, index) => (
+                    <TableRow
+                      key={row.id}
+                      onDoubleClick={row.getToggleSelectedHandler()}
+                      sx={{
+                        '&:hover #actions': {
+                          opacity: 1,
+                        },
+                      }}
+                    >
+                      <>
+                        <TableCell sx={{ width: 50 }}>
+                          <Checkbox
+                            checked={row.getIsSelected()}
+                            onChange={row.getToggleSelectedHandler()}
+                            disabled={!row.getCanSelect()}
+                            indeterminate={row.getIsSomeSelected()}
+                          />
+                        </TableCell>
+                        {row.getVisibleCells().map((cell) => (
+                          <TableCell key={cell.id}>
+                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                          </TableCell>
+                        ))}
+                      </>
+                    </TableRow>
+                  ))}
                 </TableBody>
               </Table>
             </Scrollbar>
+          </Box>
+          <Box sx={{ position: 'relative' }}>
+            <TablePagination
+              component="div"
+              rowsPerPageOptions={[5, 10, 25]}
+              page={pagination.page}
+              count={data.pagination.pageCount}
+              onPageChange={(_, newPage) => setQueryStates({ page: newPage })}
+              sx={{ borderTopColor: 'transparent' }}
+              rowsPerPage={data.pagination.sizePerPage}
+            />
+
+            <FormControlLabel
+              label="Dense"
+              control={
+                <Switch
+                  checked={dense}
+                  onChange={() => setDense(!dense)}
+                  slotProps={{ input: { id: 'dense-switch' } }}
+                />
+              }
+              sx={{
+                pl: 2,
+                py: 1.5,
+                top: 0,
+                position: { sm: 'absolute' },
+              }}
+            />
           </Box>
         </Card>
       </DashboardContent>
     </>
   );
-}
-
-type ApplyFilterProps = {
-  inputData: IUserItem[];
-  filters: IUserTableFilters;
-  comparator: (a: any, b: any) => number;
-};
-
-function applyFilter({ inputData, comparator, filters }: ApplyFilterProps) {
-  const { name, status, role } = filters;
-
-  const stabilizedThis = inputData.map((el, index) => [el, index] as const);
-
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) return order;
-    return a[1] - b[1];
-  });
-
-  inputData = stabilizedThis.map((el) => el[0]);
-
-  if (name) {
-    inputData = inputData.filter((user) => user.name.toLowerCase().includes(name.toLowerCase()));
-  }
-
-  if (status !== 'all') {
-    inputData = inputData.filter((user) => user.status === status);
-  }
-
-  if (role.length) {
-    inputData = inputData.filter((user) => role.includes(user.role));
-  }
-
-  return inputData;
 }

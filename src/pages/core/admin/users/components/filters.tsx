@@ -1,56 +1,34 @@
-import type { SelectChangeEvent } from '@mui/material/Select';
-import type { UseSetStateReturn } from 'minimal-shared/hooks';
-import type { IUserTableFilters } from 'src/types/user';
 
-import { useCallback } from 'react';
-import { usePopover } from 'minimal-shared/hooks';
+import { usePopover } from 'minimal-shared/hooks'
+import { parseAsString, parseAsArrayOf, useQueryStates, parseAsStringEnum } from 'nuqs'
 
-import Box from '@mui/material/Box';
-import Select from '@mui/material/Select';
-import MenuList from '@mui/material/MenuList';
-import MenuItem from '@mui/material/MenuItem';
-import Checkbox from '@mui/material/Checkbox';
-import TextField from '@mui/material/TextField';
-import InputLabel from '@mui/material/InputLabel';
-import IconButton from '@mui/material/IconButton';
-import FormControl from '@mui/material/FormControl';
-import InputAdornment from '@mui/material/InputAdornment';
+import Box from '@mui/material/Box'
+import Select from '@mui/material/Select'
+import MenuItem from '@mui/material/MenuItem'
+import Checkbox from '@mui/material/Checkbox'
+import MenuList from '@mui/material/MenuList'
+import TextField from '@mui/material/TextField'
+import InputLabel from '@mui/material/InputLabel'
+import IconButton from '@mui/material/IconButton'
+import FormControl from '@mui/material/FormControl'
+import InputAdornment from '@mui/material/InputAdornment'
 
-import { Iconify } from 'src/components/iconify';
-import { CustomPopover } from 'src/components/custom-popover';
+import { Iconify } from 'src/components/iconify'
+import { CustomPopover } from 'src/components/custom-popover'
 
-// ----------------------------------------------------------------------
+import { Roles } from '../services/types'
 
-type Props = {
-  onResetPage: () => void;
-  filters: UseSetStateReturn<IUserTableFilters>;
-  options: {
-    roles: string[];
-  };
-};
-
-export function UserTableToolbar({ filters, options, onResetPage }: Props) {
+const Filters = () => {
   const menuActions = usePopover();
 
-  const { state: currentFilters, setState: updateFilters } = filters;
-
-  const handleFilterName = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      onResetPage();
-      updateFilters({ name: event.target.value });
+  const [{ roles, search }, setQueryStates] = useQueryStates(
+    {
+      roles: parseAsArrayOf(parseAsStringEnum<Roles>(Object.values(Roles))).withDefault([]),
+      search: parseAsString.withDefault(''),
     },
-    [onResetPage, updateFilters]
-  );
-
-  const handleFilterRole = useCallback(
-    (event: SelectChangeEvent<string[]>) => {
-      const newValue =
-        typeof event.target.value === 'string' ? event.target.value.split(',') : event.target.value;
-
-      onResetPage();
-      updateFilters({ role: newValue });
-    },
-    [onResetPage, updateFilters]
+    {
+      history: 'push',
+    }
   );
 
   const renderMenuActions = () => (
@@ -96,20 +74,23 @@ export function UserTableToolbar({ filters, options, onResetPage }: Props) {
           <Select
             multiple
             label="Role"
-            value={currentFilters.role}
-            onChange={handleFilterRole}
+            value={roles}
+            onChange={(event) => {
+              // @ts-expect-error string buladi devotiyu bu
+              setQueryStates({ roles: event.target.value });
+            }}
             renderValue={(selected) => selected.map((value) => value).join(', ')}
             inputProps={{ id: 'filter-role-select' }}
             MenuProps={{
               slotProps: { paper: { sx: { maxHeight: 240 } } },
             }}
           >
-            {options.roles.map((option) => (
+            {Object.values(Roles).map((option) => (
               <MenuItem key={option} value={option}>
                 <Checkbox
                   disableRipple
                   size="small"
-                  checked={currentFilters.role.includes(option)}
+                  checked={roles.includes(option)}
                   slotProps={{ input: { id: `${option}-checkbox` } }}
                 />
                 {option}
@@ -129,8 +110,8 @@ export function UserTableToolbar({ filters, options, onResetPage }: Props) {
         >
           <TextField
             fullWidth
-            value={currentFilters.name}
-            onChange={handleFilterName}
+            value={search}
+            onChange={(e) => setQueryStates({ search: e.target.value })}
             placeholder="Search..."
             slotProps={{
               input: {
@@ -152,4 +133,6 @@ export function UserTableToolbar({ filters, options, onResetPage }: Props) {
       {renderMenuActions()}
     </>
   );
-}
+};
+
+export default Filters;

@@ -6,6 +6,7 @@ import importPlugin from 'eslint-plugin-import';
 import reactHooksPlugin from 'eslint-plugin-react-hooks';
 import perfectionistPlugin from 'eslint-plugin-perfectionist';
 import unusedImportsPlugin from 'eslint-plugin-unused-imports';
+import queryPlugin from '@tanstack/eslint-plugin-query';
 
 // ----------------------------------------------------------------------
 
@@ -13,6 +14,7 @@ import unusedImportsPlugin from 'eslint-plugin-unused-imports';
  * @rules common
  * from 'react', 'eslint-plugin-react-hooks'...
  */
+
 const commonRules = () => ({
   ...reactHooksPlugin.configs.recommended.rules,
   'func-names': 1,
@@ -156,12 +158,17 @@ const sortImportsRules = () => {
 /**
  * Custom ESLint configuration.
  */
+
+const queryRules = () => ({
+  ...queryPlugin.configs.recommended.rules,
+});
 export const customConfig = {
   plugins: {
     'react-hooks': reactHooksPlugin,
     'unused-imports': unusedImportsPlugin,
     perfectionist: perfectionistPlugin,
     import: importPlugin,
+    '@tanstack/query': queryPlugin,
   },
   settings: {
     // https://www.npmjs.com/package/eslint-import-resolver-typescript
@@ -178,6 +185,7 @@ export const customConfig = {
     ...importRules(),
     ...unusedImportsRules(),
     ...sortImportsRules(),
+    ...queryRules(),
   },
 };
 
