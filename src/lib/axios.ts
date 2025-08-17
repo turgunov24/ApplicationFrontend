@@ -48,7 +48,7 @@ export const fetcher = async <T = unknown>(
     const res = await axiosInstance.get<T>(url, config);
 
     return res.data;
-  } catch (error) { 
+  } catch (error) {
     console.error('Fetcher failed:', error);
     throw error;
   }
@@ -61,9 +61,9 @@ export const endpoints = {
   kanban: '/api/kanban',
   calendar: '/api/calendar',
   auth: {
-    me: '/api/auth/me',
-    login: '/api/auth/login',
-    register: '/api/auth/register',
+    me: '/auth/me',
+    login: '/auth/login',
+    register: '/auth/register',
   },
   mail: {
     list: '/api/mail/list',

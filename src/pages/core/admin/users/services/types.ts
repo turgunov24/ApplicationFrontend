@@ -15,11 +15,22 @@ export enum Roles {
   subscriber = 'subscriber',
 }
 
+export type IGetCountsByStatusResponse = Record<Statuses, number>;
+
 export interface IIndexResponse {
-  result: Array<{ id: number; name: string; username: string }>;
+  result: Array<{
+    id: number;
+    name: string;
+    username: string;
+    createdAt: Date;
+    status: 'active' | 'pending' | 'banned' | 'rejected';
+  }>;
   pagination: {
-    page: number;
-    pageCount: number;
-    sizePerPage: number;
+    currentPage: number;
+    dataPerPage: number;
+    totalData: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPrevPage: boolean;
   };
 }
