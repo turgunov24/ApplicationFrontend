@@ -120,6 +120,7 @@ export const paths = {
     },
     users: {
       root: `${ROOTS.DASHBOARD}/users`,
+      create: `${ROOTS.DASHBOARD}/users/create`,
     },
     product: {
       root: `${ROOTS.DASHBOARD}/product`,

@@ -84,7 +84,8 @@ const BlankPage = lazy(() => import('src/pages/dashboard/blank'));
 
 // ----------------------------------------------------------------------
 
-const UsersPage = lazy(() => import('src/pages/core/admin/users'));
+const UsersPage = lazy(() => import('src/pages/core/admin/users/index'));
+const UsersFormPage = lazy(() => import('src/pages/core/admin/users/form'));
 
 // ----------------------------------------------------------------------
 
@@ -127,6 +128,10 @@ export const dashboardRoutes: RouteObject[] = [
           {
             index: true,
             element: <UsersPage />,
+          },
+          {
+            path: 'create',
+            element: <UsersFormPage />,
           },
         ],
       },

@@ -1,6 +1,5 @@
 import type { FC } from 'react'
-import type {
-  IGetCountsByStatusResponse} from '../services/types';
+import type { IGetCountsByStatusResponse } from '../../services/types';
 
 import { varAlpha } from 'minimal-shared/utils'
 import { useQueryStates, parseAsStringEnum } from 'nuqs'
@@ -10,15 +9,13 @@ import Tabs from '@mui/material/Tabs'
 
 import { Label } from 'src/components/label'
 
-import {
-  Statuses as StatusesEnum,
-} from '../services/types'
+import { Statuses as StatusesEnum } from '../../services/types'
 
 interface IProps {
   countsByStatus: IGetCountsByStatusResponse;
 }
 
-const Statuses: FC<IProps> = ({  countsByStatus }) => {
+const Statuses: FC<IProps> = ({ countsByStatus }) => {
   const [{ status }, setQueryStates] = useQueryStates(
     {
       status: parseAsStringEnum<StatusesEnum>(Object.values(Statuses)).withDefault(

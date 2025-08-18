@@ -16,7 +16,7 @@ import InputAdornment from '@mui/material/InputAdornment'
 import { Iconify } from 'src/components/iconify'
 import { CustomPopover } from 'src/components/custom-popover'
 
-import { Roles } from '../services/types'
+import { Roles } from '../../services/types'
 
 const Filters = () => {
   const menuActions = usePopover();

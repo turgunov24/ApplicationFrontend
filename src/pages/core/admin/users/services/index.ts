@@ -1,4 +1,4 @@
-import type { IGetCountsByStatusResponse, IIndexResponse } from './types';
+import type { IIndexResponse, IGetCountsByStatusResponse } from './types';
 
 import axiosInstance from 'src/lib/axios';
 
@@ -8,6 +8,16 @@ export const usersService = {
   index: async (params: any) => {
     const response = await axiosInstance.get<IIndexResponse>('/users', { params });
     return response.data;
+  },
+  form: {
+    create: async (data: FormData) => {
+      const response = await axiosInstance.post('/users', data, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return response.data;
+    },
   },
   helpers: {
     getCountsByStatus: async () => {

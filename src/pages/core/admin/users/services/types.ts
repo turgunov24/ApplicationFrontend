@@ -34,3 +34,4 @@ export interface IIndexResponse {
     hasPrevPage: boolean;
   };
 }
+

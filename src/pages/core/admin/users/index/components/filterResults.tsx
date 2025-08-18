@@ -5,7 +5,7 @@ import Chip from '@mui/material/Chip';
 
 import { chipProps, FiltersBlock, FiltersResult } from 'src/components/filters-result';
 
-import { Roles, Statuses } from '../services/types';
+import { Roles, Statuses } from '../../services/types';
 
 interface IProps {
   totalResults: number;
