@@ -1,8 +1,10 @@
 import type { AxiosRequestConfig } from 'axios';
 
-import axios from 'axios';
+import axios, { AxiosError, HttpStatusCode } from 'axios';
 
 import { CONFIG } from 'src/global-config';
+
+import { toast } from 'src/components/snackbar';
 
 // ----------------------------------------------------------------------
 
@@ -29,9 +31,47 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
-    const message = error?.response?.data?.message || error?.message || 'Something went wrong!';
-    console.error('Axios error:', message);
-    return Promise.reject(new Error(message));
+    if (error instanceof AxiosError) {
+      switch (error.status) {
+        case HttpStatusCode.Unauthorized:
+          if (error.response) {
+            const { data } = error.response as { data: { errors: Array<{ message: string }> } };
+
+            if (data) {
+              const { errors } = data;
+              if (errors) {
+                errors.forEach((e) => {
+                  toast.error(e.message);
+                });
+              }
+            }
+          }
+          // /login
+          break;
+        case HttpStatusCode.BadRequest:
+          if (error.response) {
+            const { data } = error.response as { data: { errors: Array<{ message: string }> } };
+
+            if (data) {
+              const { errors } = data;
+              if (errors) {
+                errors.forEach((e) => {
+                  toast.error(e.message);
+                });
+              }
+            }
+          }
+          break;
+        case HttpStatusCode.InternalServerError:
+          toast.error('Internal Server Error');
+          break;
+        default:
+          toast.error('Axios Error');
+          break;
+      }
+    }
+
+    return Promise.reject(new Error('Something went wrong!'));
   }
 );
 

@@ -1,19 +1,12 @@
 import * as z from 'zod';
-import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useBoolean } from 'minimal-shared/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import Box from '@mui/material/Box';
-import Link from '@mui/material/Link';
-import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
-
-import { paths } from 'src/routes/paths';
-// import { useRouter } from 'src/routes/hooks'
-import { RouterLink } from 'src/routes/components';
 
 import { Iconify } from 'src/components/iconify';
 import { Form, Field } from 'src/components/hook-form';
@@ -21,7 +14,6 @@ import { Form, Field } from 'src/components/hook-form';
 import { useAuthStore } from 'src/auth/store';
 import { authService } from 'src/auth/service';
 
-import { getErrorMessage } from '../../utils';
 import { FormHead } from '../../components/form-head';
 
 // ----------------------------------------------------------------------
@@ -45,11 +37,9 @@ export function JwtSignInView() {
   const showPassword = useBoolean();
   const { setUser, setAccessToken } = useAuthStore();
 
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
   const defaultValues: SignInSchemaType = {
-    username: 'murod',
-    password: '1234',
+    username: '',
+    password: '',
   };
 
   const methods = useForm({
@@ -75,8 +65,7 @@ export function JwtSignInView() {
       // router.refresh();
     } catch (error) {
       console.error(error);
-      const feedbackMessage = getErrorMessage(error);
-      setErrorMessage(feedbackMessage);
+      // const feedbackMessage = getErrorMessage(error);
     }
   });
 
@@ -85,7 +74,7 @@ export function JwtSignInView() {
       <Field.Text name="username" label="Username" slotProps={{ inputLabel: { shrink: true } }} />
 
       <Box sx={{ gap: 1.5, display: 'flex', flexDirection: 'column' }}>
-        <Link
+        {/* <Link
           component={RouterLink}
           href="#"
           variant="body2"
@@ -93,7 +82,7 @@ export function JwtSignInView() {
           sx={{ alignSelf: 'flex-end' }}
         >
           Forgot password?
-        </Link>
+        </Link> */}
 
         <Field.Text
           name="password"
@@ -135,17 +124,18 @@ export function JwtSignInView() {
     <>
       <FormHead
         title="Sign in to your account"
-        description={
-          <>
-            {`Don’t have an account? `}
-            <Link component={RouterLink} href={paths.auth.jwt.register} variant="subtitle2">
-              Get started
-            </Link>
-          </>
-        }
+        // description={
+        //   <>
+        //     {`Don’t have an account? `}
+        //     <Link component={RouterLink} href={paths.auth.jwt.register} variant="subtitle2">
+        //       Get started
+        //     </Link>
+        //   </>
+        // }
         sx={{ textAlign: { xs: 'center', md: 'left' } }}
       />
 
+      {/*
       <Alert severity="info" sx={{ mb: 3 }}>
         Use <strong>{defaultValues.username}</strong>
         {' with password '}
@@ -156,7 +146,7 @@ export function JwtSignInView() {
         <Alert severity="error" sx={{ mb: 3 }}>
           {errorMessage}
         </Alert>
-      )}
+      )} */}
 
       <Form methods={methods} onSubmit={onSubmit}>
         {renderForm()}

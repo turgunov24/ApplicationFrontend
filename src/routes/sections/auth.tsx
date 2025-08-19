@@ -16,7 +16,7 @@ import { GuestGuard } from 'src/auth/guard';
  *************************************** */
 const Jwt = {
   SignInPage: lazy(() => import('src/pages/auth/jwt/login')),
-  SignUpPage: lazy(() => import('src/pages/auth/jwt/register')),
+  // SignUpPage: lazy(() => import('src/pages/auth/jwt/register')),
 };
 
 // const authJwt = {
@@ -64,16 +64,16 @@ const authJwt: RouteObject[] = [
       </GuestGuard>
     ),
   },
-  {
-    path: 'register',
-    element: (
-      <GuestGuard>
-        <AuthSplitLayout>
-          <Jwt.SignUpPage />
-        </AuthSplitLayout>
-      </GuestGuard>
-    ),
-  },
+  // {
+  //   path: 'register',
+  //   element: (
+  //     <GuestGuard>
+  //       <AuthSplitLayout>
+  //         <Jwt.SignUpPage />
+  //       </AuthSplitLayout>
+  //     </GuestGuard>
+  //   ),
+  // },
 ];
 
 /** **************************************
