@@ -133,6 +133,10 @@ export const dashboardRoutes: RouteObject[] = [
             path: 'create',
             element: <UsersFormPage />,
           },
+          {
+            path: 'edit/:id',
+            element: <UsersFormPage />,
+          },
         ],
       },
       {

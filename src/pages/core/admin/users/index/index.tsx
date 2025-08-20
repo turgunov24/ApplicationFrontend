@@ -2,7 +2,7 @@ import type { SortingState } from '@tanstack/react-table';
 import type { IIndexResponse } from '../services/types';
 
 import { useMemo, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   parseAsString,
   parseAsArrayOf,
@@ -40,6 +40,7 @@ import TablePagination from '@mui/material/TablePagination';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
 import { paths } from 'src/routes/paths';
+import { useRouter } from 'src/routes/hooks';
 import { RouterLink } from 'src/routes/components';
 
 import { _mock } from 'src/_mock';
@@ -47,9 +48,11 @@ import { CONFIG } from 'src/global-config';
 import { DashboardContent } from 'src/layouts/dashboard';
 
 import { Label } from 'src/components/label';
+import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
 import { TableNoData } from 'src/components/table';
 import { Scrollbar } from 'src/components/scrollbar';
+import { ConfirmDialog } from 'src/components/custom-dialog';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
 import Filters from './components/filters';
@@ -69,7 +72,9 @@ export default function Page() {
   const [rowSelection, setRowSelection] = useState({});
   const [dense, setDense] = useState(false);
   const [sorting, setSorting] = useState<SortingState>([]);
-
+  const router = useRouter();
+  const [idForDeleteUser, setIdForDeleteUser] = useState<IUser['id'] | null>(null);
+  const queryClient = useQueryClient();
   const [{ status, roles, search, ...pagination }, setQueryStates] = useQueryStates(
     {
       roles: parseAsArrayOf(parseAsStringEnum<Roles>(Object.values(Roles))).withDefault([]),
@@ -152,24 +157,23 @@ export default function Page() {
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Tooltip title="Quick edit" placement="top" arrow>
               <IconButton
-              // color={quickEditForm.value ? 'inherit' : 'default'}
-              // onClick={quickEditForm.onTrue}
+                color="info"
+                onClick={() => {
+                  router.push(paths.dashboard.users.edit(info.getValue().toString()));
+                }}
               >
                 <Iconify icon="solar:pen-bold" />
               </IconButton>
             </Tooltip>
 
-            <IconButton
-            // color={menuActions.open ? 'inherit' : 'default'}
-            // onClick={menuActions.onOpen}
-            >
-              <Iconify icon="eva:more-vertical-fill" />
+            <IconButton color="error" onClick={() => setIdForDeleteUser(info.getValue())}>
+              <Iconify icon="solar:trash-bin-trash-bold" />
             </IconButton>
           </Box>
         ),
       }),
     ],
-    [columnHelper]
+    [columnHelper, router]
   );
 
   const {
@@ -251,6 +255,27 @@ export default function Page() {
     },
   });
 
+  const { mutate: deleteUser } = useMutation({
+    mutationKey: [USERS_BASE_QUERY_KEY, 'delete'],
+    mutationFn: async (id: IUser['id']) => {
+      try {
+        const response = await usersService.form.delete(id);
+        return response;
+      } catch (error: unknown) {
+        console.log('error', error);
+        return false;
+      }
+    },
+    onSuccess: () => {
+      toast.success('Delete success!');
+      setIdForDeleteUser(null);
+      queryClient.invalidateQueries({ queryKey: [USERS_BASE_QUERY_KEY] });
+    },
+    onError: () => {
+      toast.error('Delete failed!');
+    },
+  });
+
   const table = useReactTable({
     data: data.result,
     columns,
@@ -282,6 +307,27 @@ export default function Page() {
 
   const hasSelectedRows = useMemo(() => Object.keys(rowSelection).length > 0, [rowSelection]);
   const hasData = useMemo(() => data.result.length > 0, [data.result]);
+
+  const renderConfirmDialog = () => (
+    <ConfirmDialog
+      open={!!idForDeleteUser}
+      onClose={() => setIdForDeleteUser(null)}
+      title="Delete"
+      content="Are you sure want to delete?"
+      action={
+        <Button
+          variant="contained"
+          color="error"
+          onClick={() => {
+            deleteUser(idForDeleteUser!);
+            setIdForDeleteUser(null);
+          }}
+        >
+          Delete
+        </Button>
+      }
+    />
+  );
 
   return (
     <>
@@ -360,7 +406,12 @@ export default function Page() {
                               : `${table.getSelectedRowModel().rows.length} selected`}
                           </Typography>
                           <Tooltip title="Delete">
-                            <IconButton color="primary" onClick={() => {}}>
+                            <IconButton
+                              color="primary"
+                              onClick={() => {
+                                // setIdForDeleteUser(table.getSelectedRowModel().rows[0].original.id);
+                              }}
+                            >
                               <Iconify icon="solar:trash-bin-trash-bold" />
                             </IconButton>
                           </Tooltip>
@@ -496,6 +547,7 @@ export default function Page() {
           </Box>
         </Card>
       </DashboardContent>
+      {renderConfirmDialog()}
     </>
   );
 }

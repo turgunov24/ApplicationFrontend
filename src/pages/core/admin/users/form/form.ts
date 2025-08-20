@@ -5,54 +5,54 @@ import { schemaUtils } from 'src/components/hook-form';
 
 export type IForm = z.infer<typeof IFormSchema>;
 
-export const IFormSchema = z
-  .object({
-    file: schemaUtils.file({ error: 'Avatar is required!' }),
-    fullName: z.string().min(1, { error: 'Full name is required!' }),
-    username: z.string().min(1, { error: 'Username is required!' }),
-    email: schemaUtils.email(),
-    phoneNumber: schemaUtils.phoneNumber({ isValid: isValidPhoneNumber }),
-    // countryId: schemaUtils.nullableInput(z.string().min(1, { error: 'Country is required!' }), {
-    //   error: 'Country is required!',
-    // }),
-    countryId: z.object(
-      {
-        id: z.number(),
-        label: z.string(),
-      },
-      { error: 'Country is required!' }
-    ),
-    stateId: z.object(
-      {
-        id: z.number(),
-        label: z.string(),
-      },
-      { error: 'State is required!' }
-    ),
-    cityId: z.object(
-      {
-        id: z.number(),
-        label: z.string(),
-      },
-      { error: 'City is required!' }
-    ),
-    roleId: z.object(
-      {
-        id: z.number(),
-        label: z.string(),
-      },
-      { error: 'Role is required!' }
-    ),
-    // Not required
-    status: z.string(),
-    isVerified: z.boolean(),
-    password: z.string().min(1, { error: 'Password is required!' }),
-    confirmPassword: z.string().min(1, { error: 'Confirm password is required!' }),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    error: 'Passwords do not match!',
-    path: ['confirmPassword'], // This will show the error on the confirmPassword field
-  });
+export const IFormSchema = z.object({
+  file: schemaUtils.file({ error: 'Avatar is required!' }),
+  fullName: z.string().min(1, { error: 'Full name is required!' }),
+  username: z.string().min(1, { error: 'Username is required!' }),
+  email: schemaUtils.email(),
+  phoneNumber: schemaUtils.phoneNumber({ isValid: isValidPhoneNumber }),
+  // countryId: schemaUtils.nullableInput(z.string().min(1, { error: 'Country is required!' }), {
+  //   error: 'Country is required!',
+  // }),
+  countryId: z.object(
+    {
+      id: z.number(),
+      label: z.string(),
+    },
+    { error: 'Country is required!' }
+  ),
+  stateId: z.object(
+    {
+      id: z.number(),
+      label: z.string(),
+    },
+    { error: 'State is required!' }
+  ),
+  cityId: z.object(
+    {
+      id: z.number(),
+      label: z.string(),
+    },
+    { error: 'City is required!' }
+  ),
+  roleId: z.object(
+    {
+      id: z.number(),
+      label: z.string(),
+    },
+    { error: 'Role is required!' }
+  ),
+  // Not required
+  status: z.string(),
+  isVerified: z.boolean(),
+  password: z.string().optional(),
+  confirmPassword: z.string().optional(),
+  updatePassword: z.boolean().optional(),
+});
+// .refine((data) => data.password === data.confirmPassword, {
+//   error: 'Passwords do not match!',
+//   path: ['confirmPassword'], // This will show the error on the confirmPassword field
+// });
 
 export const defaultValues: IForm = {
   status: '',
@@ -72,4 +72,5 @@ export const defaultValues: IForm = {
   roleId: null,
   password: '',
   confirmPassword: '',
+  updatePassword: false,
 };

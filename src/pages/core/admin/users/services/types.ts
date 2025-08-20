@@ -23,7 +23,7 @@ export interface IIndexResponse {
     name: string;
     username: string;
     createdAt: Date;
-    status: 'active' | 'pending' | 'banned' | 'rejected';
+    status: 'active' | 'pending' | 'banned' | 'rejected' ;
   }>;
   pagination: {
     currentPage: number;
@@ -35,3 +35,20 @@ export interface IIndexResponse {
   };
 }
 
+export interface IGetResponse {
+  id: number;
+  fullName: string;
+  username: string;
+  email: string;
+  phone: string;
+  countryId: number;
+  regionId: number;
+  cityId: number;
+  roleId: number;
+  token: string | null;
+  password: string;
+  status: string;
+  avatarPath: string;
+  createdAt: Date;
+  updatedAt: Date;
+}

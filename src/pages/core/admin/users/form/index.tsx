@@ -1,4 +1,7 @@
+import { useMemo } from 'react';
 import { useForm } from 'react-hook-form';
+import { useBoolean } from 'minimal-shared/hooks';
+import { useMutation } from '@tanstack/react-query';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import Box from '@mui/material/Box';
@@ -7,41 +10,60 @@ import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
+import InputAdornment from '@mui/material/InputAdornment';
 
 import { paths } from 'src/routes/paths';
-import { useRouter } from 'src/routes/hooks';
+import { useParams, useRouter } from 'src/routes/hooks';
 
 import { fData } from 'src/utils/format-number';
 
 import { DashboardContent } from 'src/layouts/dashboard';
 
 import { toast } from 'src/components/snackbar';
+import { Iconify } from 'src/components/iconify';
 import { Form, Field } from 'src/components/hook-form';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
-import { usersService } from '../services';
+import SetValues from './setValues';
 import { IFormSchema, defaultValues } from './form';
+import { usersService, USERS_BASE_QUERY_KEY } from '../services';
 
 export default function FormPage() {
   const router = useRouter();
+  const { id } = useParams();
+
+  const showPassword = useBoolean();
+  const showConfirmPassword = useBoolean();
 
   const methods = useForm({
     mode: 'onSubmit',
     resolver: zodResolver(IFormSchema),
     defaultValues,
-    // values: currentUser,
   });
 
   const {
-    reset,
     watch,
-    control,
+    setError,
     handleSubmit,
     formState: { isSubmitting },
   } = methods;
 
-  const values = watch();
-  console.log('🚀 ~ FormPage ~ values:', values);
+  const { mutateAsync } = useMutation({
+    mutationKey: [USERS_BASE_QUERY_KEY, 'save'],
+    mutationFn: async (formData: FormData) => {
+      if (id) {
+        const response = await usersService.form.update(Number(id), formData);
+        return response;
+      }
+      const response = await usersService.form.create(formData);
+      return response;
+    },
+    onSuccess: () => {
+      toast.success(id ? 'Update success!' : 'Create success!');
+      router.push(paths.dashboard.users.root);
+    },
+  });
 
   const onSubmit = handleSubmit(async (data) => {
     try {
@@ -75,26 +97,82 @@ export default function FormPage() {
         }
         formData.append('status', data.status);
         formData.append('isVerified', data.isVerified.toString());
-        formData.append('password', data.password);
-        formData.append('confirmPassword', data.confirmPassword);
-        const response = await usersService.form.create(formData);
+        console.log(data);
+        if (id) {
+          if (data.password && !data.confirmPassword) {
+            setError('confirmPassword', {
+              message: 'Confirm password is required!',
+              type: 'required',
+            });
+            return;
+          }
+          if (data.confirmPassword && !data.password) {
+            setError('password', {
+              message: 'Password is required!',
+              type: 'required',
+            });
+            return;
+          }
+
+          if (data.password && data.confirmPassword && data.password !== data.confirmPassword) {
+            setError('confirmPassword', {
+              message: 'Passwords do not match!',
+              type: 'required',
+            });
+            return;
+          }
+        } else {
+          if (!data.password) {
+            setError('password', {
+              message: 'Password is required!',
+              type: 'required',
+            });
+            return;
+          }
+          if (!data.confirmPassword) {
+            setError('confirmPassword', {
+              message: 'Confirm password is required!',
+              type: 'required',
+            });
+            return;
+          }
+          if (data.password && data.confirmPassword && data.password !== data.confirmPassword) {
+            setError('confirmPassword', {
+              message: 'Passwords do not match!',
+              type: 'required',
+            });
+            return;
+          }
+        }
+
+        if (data.password) {
+          formData.append('password', data.password);
+        }
+
+        await mutateAsync(formData);
       }
-      reset();
-      toast.success('Create success!');
-      router.push(paths.dashboard.users.root);
     } catch (error) {
       console.error(error);
     }
   });
 
+  const updatePassword = watch('updatePassword');
+
+  const showPasswordFields = useMemo(() => {
+    if (id) {
+      return updatePassword;
+    }
+    return true;
+  }, [id, updatePassword]);
+
   return (
     <DashboardContent>
       <CustomBreadcrumbs
-        heading="Create a new user"
+        heading={id ? 'Update user' : 'Create a new user'}
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
           { name: 'User', href: paths.dashboard.user.root },
-          { name: 'Create' },
+          { name: id ? 'Update' : 'Create' },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}
       />
@@ -190,6 +268,26 @@ export default function FormPage() {
                 sx={{ mx: 0, width: 1, justifyContent: 'space-between' }}
               />
 
+              {id ? (
+                <Field.Switch
+                  slotProps={{
+                    wrapper: {
+                      sx: {
+                        mt: 2,
+                      },
+                    },
+                  }}
+                  name="updatePassword"
+                  labelPlacement="start"
+                  label={
+                    <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
+                      Update Password
+                    </Typography>
+                  }
+                  sx={{ mx: 0, width: 1, justifyContent: 'space-between' }}
+                />
+              ) : null}
+
               {/* {currentUser && ( */}
               {/* <Stack sx={{ mt: 3, alignItems: 'center', justifyContent: 'center' }}>
                   <Button variant="soft" color="error">
@@ -274,18 +372,67 @@ export default function FormPage() {
                   ]}
                 />
 
-                <Field.Text name="password" label="Password" />
-                <Field.Text name="confirmPassword" label="Confirm password" type="password" />
+                {showPasswordFields ? (
+                  <>
+                    <Field.Text
+                      name="password"
+                      label="Password"
+                      type={showPassword.value ? 'text' : 'password'}
+                      placeholder="6+ characters"
+                      slotProps={{
+                        inputLabel: { shrink: true },
+                        input: {
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              <IconButton onClick={showPassword.onToggle} edge="end">
+                                <Iconify
+                                  icon={
+                                    showPassword.value ? 'solar:eye-bold' : 'solar:eye-closed-bold'
+                                  }
+                                />
+                              </IconButton>
+                            </InputAdornment>
+                          ),
+                        },
+                      }}
+                    />
+                    <Field.Text
+                      name="confirmPassword"
+                      label="Confirm password"
+                      type={showConfirmPassword.value ? 'text' : 'password'}
+                      placeholder="6+ characters"
+                      slotProps={{
+                        inputLabel: { shrink: true },
+                        input: {
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              <IconButton onClick={showConfirmPassword.onToggle} edge="end">
+                                <Iconify
+                                  icon={
+                                    showConfirmPassword.value
+                                      ? 'solar:eye-bold'
+                                      : 'solar:eye-closed-bold'
+                                  }
+                                />
+                              </IconButton>
+                            </InputAdornment>
+                          ),
+                        },
+                      }}
+                    />
+                  </>
+                ) : null}
               </Box>
 
               <Stack sx={{ mt: 3, alignItems: 'flex-end' }}>
                 <Button type="submit" variant="contained" loading={isSubmitting}>
-                  Create user
+                  {id ? 'Update user' : 'Create user'}
                 </Button>
               </Stack>
             </Card>
           </Grid>
         </Grid>
+        <SetValues />
       </Form>
     </DashboardContent>
   );
