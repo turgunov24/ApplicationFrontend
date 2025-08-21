@@ -123,6 +123,24 @@ export const paths = {
       create: `${ROOTS.DASHBOARD}/users/create`,
       edit: (id: string) => `${ROOTS.DASHBOARD}/users/edit/${id}`,
     },
+    references: {
+      root: `${ROOTS.DASHBOARD}/references`,
+      countries: {
+        root: `${ROOTS.DASHBOARD}/references/countries`,
+        create: `${ROOTS.DASHBOARD}/references/countries/create`,
+        edit: (id: string) => `${ROOTS.DASHBOARD}/references/countries/edit/${id}`,
+      },
+      regions: {
+        root: `${ROOTS.DASHBOARD}/references/regions`,
+        create: `${ROOTS.DASHBOARD}/references/regions/create`,
+        edit: (id: string) => `${ROOTS.DASHBOARD}/references/regions/edit/${id}`,
+      },
+      districts: {
+        root: `${ROOTS.DASHBOARD}/references/districts`,
+        create: `${ROOTS.DASHBOARD}/references/districts/create`,
+        edit: (id: string) => `${ROOTS.DASHBOARD}/references/districts/edit/${id}`,
+      },
+    },
     product: {
       root: `${ROOTS.DASHBOARD}/product`,
       new: `${ROOTS.DASHBOARD}/product/new`,

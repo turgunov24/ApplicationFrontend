@@ -90,6 +90,16 @@ export const navData: NavSectionProps['data'] = [
         // children: [{ title: 'Profile', path: paths.dashboard.user.root }],
       },
       {
+        title: 'References',
+        path: paths.dashboard.references.root,
+        icon: ICONS.user,
+        children: [
+          { title: 'Countries', path: paths.dashboard.references.countries.root },
+          { title: 'Regions', path: paths.dashboard.references.regions.root },
+          { title: 'Districts', path: paths.dashboard.references.districts.root },
+        ],
+      },
+      {
         title: 'User',
         path: paths.dashboard.user.root,
         icon: ICONS.user,

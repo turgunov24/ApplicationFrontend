@@ -87,6 +87,10 @@ const BlankPage = lazy(() => import('src/pages/dashboard/blank'));
 const UsersPage = lazy(() => import('src/pages/core/admin/users/index'));
 const UsersFormPage = lazy(() => import('src/pages/core/admin/users/form'));
 
+const ReferencesCountriesPage = lazy(() => import('src/pages/core/references/countries/index'));
+const ReferencesRegionsPage = lazy(() => import('src/pages/core/references/regions/index'));
+const ReferencesDistrictsPage = lazy(() => import('src/pages/core/references/districts/index'));
+
 // ----------------------------------------------------------------------
 
 function SuspenseOutlet() {
@@ -137,6 +141,14 @@ export const dashboardRoutes: RouteObject[] = [
             path: 'edit/:id',
             element: <UsersFormPage />,
           },
+        ],
+      },
+      {
+        path: 'references',
+        children: [
+          { path: 'countries', index: true, element: <ReferencesCountriesPage /> },
+          { path: 'regions', element: <ReferencesRegionsPage /> },
+          { path: 'districts', element: <ReferencesDistrictsPage /> },
         ],
       },
       {
