@@ -1,4 +1,5 @@
-import type { IIndexResponse, IGetCountsByStatusResponse } from './types';
+import type { IForm } from '../form/form';
+import type { IIndexResponse, IGetCountsByStatusResponse, IGetResponse } from './types';
 
 import axiosInstance from 'src/lib/axios';
 
@@ -10,25 +11,24 @@ export const referencesRegionsService = {
     return response.data;
   },
   form: {
-    create: async (data: FormData) => {
-      const response = await axiosInstance.post('/references/regions', data, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+    create: async (data: IForm) => {
+      const response = await axiosInstance.post('/references/regions', data);
       return response.data;
     },
-    update: async (id: IIndexResponse['result'][number]['id'], data: FormData) => {
-      const response = await axiosInstance.put('references/regions', data, {
+    update: async (id: IIndexResponse['result'][number]['id'], data: IForm) => {
+      const response = await axiosInstance.put('/references/regions', data, {
         params: { id },
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
       });
       return response.data;
     },
     delete: async (id: IIndexResponse['result'][number]['id']) => {
       const response = await axiosInstance.delete('/references/regions', { params: { id } });
+      return response.data;
+    },
+    get: async (id: IIndexResponse['result'][number]['id']) => {
+      const response = await axiosInstance.get<IGetResponse>('/references/regions', {
+        params: { id },
+      });
       return response.data;
     },
   },

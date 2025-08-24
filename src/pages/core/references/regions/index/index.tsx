@@ -3,7 +3,13 @@ import type { IIndexResponse } from '../services/types';
 
 import { useMemo, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { parseAsString, useQueryStates, parseAsInteger, parseAsStringEnum } from 'nuqs';
+import {
+  parseAsString,
+  useQueryStates,
+  parseAsInteger,
+  parseAsBoolean,
+  parseAsStringEnum,
+} from 'nuqs';
 import {
   flexRender,
   useReactTable,
@@ -32,8 +38,6 @@ import TablePagination from '@mui/material/TablePagination';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
 import { paths } from 'src/routes/paths';
-import { useRouter } from 'src/routes/hooks';
-import { RouterLink } from 'src/routes/components';
 
 import { CONFIG } from 'src/global-config';
 import { DashboardContent } from 'src/layouts/dashboard';
@@ -46,6 +50,7 @@ import { Scrollbar } from 'src/components/scrollbar';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
+import FormComponent from '../form';
 import Filters from './components/filters';
 import Statuses from './components/statuses';
 import FilterResults from './components/filterResults';
@@ -56,19 +61,18 @@ import { referencesRegionsService, REFERENCES_REGIONS_BASE_QUERY_KEY } from '../
 
 type IRegion = IIndexResponse['result'][number];
 
-const metadata = { title: `Users - ${CONFIG.appName}` };
+const metadata = { title: `Regions - ${CONFIG.appName}` };
 const fallBackData: any[] = [];
 
 export default function Page() {
   const queryClient = useQueryClient();
-  const router = useRouter();
 
   const [idForDeleteUser, setIdForDeleteUser] = useState<IRegion['id'] | null>(null);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState({});
   const [dense, setDense] = useState(false);
 
-  const [{ status, search, ...pagination }, setQueryStates] = useQueryStates(
+  const [{ status, search, formOpen, ...pagination }, setQueryStates] = useQueryStates(
     {
       status: parseAsStringEnum<StatusesEnum>(Object.values(StatusesEnum)).withDefault(
         StatusesEnum.all
@@ -77,6 +81,9 @@ export default function Page() {
 
       currentPage: parseAsInteger.withDefault(0),
       dataPerPage: parseAsInteger.withDefault(5),
+
+      formOpen: parseAsBoolean,
+      regionId: parseAsInteger,
     },
     {
       history: 'push',
@@ -139,7 +146,7 @@ export default function Page() {
               <IconButton
                 color="info"
                 onClick={() => {
-                  router.push(paths.dashboard.users.edit(info.getValue().toString()));
+                  setQueryStates({ formOpen: true, regionId: info.getValue() });
                 }}
               >
                 <Iconify icon="solar:pen-bold" />
@@ -153,7 +160,7 @@ export default function Page() {
         ),
       }),
     ],
-    [columnHelper, router]
+    [columnHelper, setQueryStates]
   );
 
   const {
@@ -309,15 +316,14 @@ export default function Page() {
       <DashboardContent>
         <CustomBreadcrumbs
           heading="List"
-          links={[{ name: 'Dashboard', href: paths.dashboard.root }, { name: 'Users' }]}
+          links={[{ name: 'Dashboard', href: paths.dashboard.root }, { name: 'Regions' }]}
           action={
             <Button
-              component={RouterLink}
-              href={paths.dashboard.users.create}
               variant="contained"
               startIcon={<Iconify icon="mingcute:add-line" />}
+              onClick={() => setQueryStates({ formOpen: true })}
             >
-              Add user
+              Add region
             </Button>
           }
           sx={{ mb: { xs: 3, md: 5 } }}
@@ -522,6 +528,7 @@ export default function Page() {
         </Card>
       </DashboardContent>
       {renderConfirmDialog()}
+      {formOpen && <FormComponent />}
     </>
   );
 }

@@ -483,7 +483,6 @@ export default function Page() {
                     table.getRowModel().rows.map((row, index) => (
                       <TableRow
                         key={row.id}
-                        onDoubleClick={row.getToggleSelectedHandler()}
                         sx={{
                           '&:hover #actions': {
                             opacity: 1,

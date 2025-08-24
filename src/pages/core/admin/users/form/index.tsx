@@ -97,7 +97,6 @@ export default function FormPage() {
         }
         formData.append('status', data.status);
         formData.append('isVerified', data.isVerified.toString());
-        console.log(data);
         if (id) {
           if (data.password && !data.confirmPassword) {
             setError('confirmPassword', {

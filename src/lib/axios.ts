@@ -62,6 +62,9 @@ axiosInstance.interceptors.response.use(
             }
           }
           break;
+        case HttpStatusCode.NotFound:
+          toast.error('Not Found');
+          break;
         case HttpStatusCode.InternalServerError:
           toast.error('Internal Server Error');
           break;

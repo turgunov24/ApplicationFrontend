@@ -1,3 +1,4 @@
+import type { IForm } from '../form/form';
 import type { IIndexResponse, IGetCountsByStatusResponse } from './types';
 
 import axiosInstance from 'src/lib/axios';
@@ -10,20 +11,19 @@ export const referencesCountriesService = {
     return response.data;
   },
   form: {
-    create: async (data: FormData) => {
-      const response = await axiosInstance.post('/references/countries', data, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+    get: async (id: IIndexResponse['result'][number]['id']) => {
+      const response = await axiosInstance.get<IForm>('references/countries', {
+        params: { id },
       });
       return response.data;
     },
-    update: async (id: IIndexResponse['result'][number]['id'], data: FormData) => {
-      const response = await axiosInstance.put('references/countries', data, {
+    create: async (data: IForm) => {
+      const response = await axiosInstance.post('/references/countries', data);
+      return response.data;
+    },
+    update: async (id: IIndexResponse['result'][number]['id'], data: IForm) => {
+      const response = await axiosInstance.put('/references/countries', data, {
         params: { id },
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
       });
       return response.data;
     },
@@ -37,6 +37,12 @@ export const referencesCountriesService = {
       const response = await axiosInstance.get<IGetCountsByStatusResponse>(
         '/references/countries/counts-by-status'
       );
+      return response.data;
+    },
+    list: async () => {
+      const response = await axiosInstance.get<
+        Array<{ id: number; nameUz: string; nameRu: string }>
+      >('/references/countries/list');
       return response.data;
     },
   },
