@@ -24,3 +24,10 @@ export interface IIndexResponse {
     hasPrevPage: boolean;
   };
 }
+
+export interface IGetResponse {
+  id: number;
+  nameUz: string;
+  nameRu: string;
+  regionId: number;
+}

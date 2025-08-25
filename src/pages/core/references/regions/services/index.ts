@@ -39,5 +39,11 @@ export const referencesRegionsService = {
       );
       return response.data;
     },
+    list: async () => {
+      const response = await axiosInstance.get<
+        Array<{ id: number; nameUz: string; nameRu: string }>
+      >('/references/regions/list');
+      return response.data;
+    },
   },
 };

@@ -1,11 +1,11 @@
-import { useMemo, type FC } from 'react';
-import { parseAsString, parseAsArrayOf, useQueryStates, parseAsStringEnum } from 'nuqs';
+import { useMemo, type FC } from 'react'
+import { parseAsString, useQueryStates, parseAsStringEnum } from 'nuqs'
 
-import Chip from '@mui/material/Chip';
+import Chip from '@mui/material/Chip'
 
-import { chipProps, FiltersBlock, FiltersResult } from 'src/components/filters-result';
+import { chipProps, FiltersBlock, FiltersResult } from 'src/components/filters-result'
 
-import { Statuses } from '../../services/types';
+import { Statuses } from '../../services/types'
 
 interface IProps {
   totalResults: number;

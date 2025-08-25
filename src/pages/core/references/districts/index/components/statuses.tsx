@@ -18,7 +18,7 @@ interface IProps {
 const Statuses: FC<IProps> = ({ countsByStatus }) => {
   const [{ status }, setQueryStates] = useQueryStates(
     {
-      status: parseAsStringEnum<StatusesEnum>(Object.values(Statuses)).withDefault(
+      status: parseAsStringEnum<StatusesEnum>(Object.values(StatusesEnum)).withDefault(
         StatusesEnum.all
       ),
     },

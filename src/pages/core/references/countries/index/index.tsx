@@ -128,7 +128,7 @@ export default function Page() {
               (info.getValue() === 'deleted' && 'error') ||
               'default'
             }
-          >
+          > 
             {info.getValue()}
           </Label>
         ),

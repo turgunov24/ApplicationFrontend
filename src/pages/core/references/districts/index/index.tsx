@@ -1,13 +1,15 @@
-import type { SortingState } from '@tanstack/react-table'
-import type { IIndexResponse } from '../services/types'
+import type { SortingState } from '@tanstack/react-table';
+import type { IIndexResponse } from '../services/types';
 
-import { useMemo, useState } from 'react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMemo, useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
-  parseAsString, useQueryStates,
+  parseAsString,
+  useQueryStates,
   parseAsInteger,
-  parseAsStringEnum
-} from 'nuqs'
+  parseAsBoolean,
+  parseAsStringEnum,
+} from 'nuqs';
 import {
   flexRender,
   useReactTable,
@@ -15,64 +17,62 @@ import {
   getSortedRowModel,
   createColumnHelper,
   getPaginationRowModel,
-} from '@tanstack/react-table'
+} from '@tanstack/react-table';
 
-import Box from '@mui/material/Box'
-import Card from '@mui/material/Card'
-import Table from '@mui/material/Table'
-import Stack from '@mui/material/Stack'
-import Button from '@mui/material/Button'
-import Switch from '@mui/material/Switch'
-import Tooltip from '@mui/material/Tooltip'
-import TableRow from '@mui/material/TableRow'
-import Checkbox from '@mui/material/Checkbox'
-import Skeleton from '@mui/material/Skeleton'
-import TableHead from '@mui/material/TableHead'
-import TableCell from '@mui/material/TableCell'
-import TableBody from '@mui/material/TableBody'
-import Typography from '@mui/material/Typography'
-import IconButton from '@mui/material/IconButton'
-import TablePagination from '@mui/material/TablePagination'
-import FormControlLabel from '@mui/material/FormControlLabel'
+import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
+import Table from '@mui/material/Table';
+import Stack from '@mui/material/Stack';
+import Button from '@mui/material/Button';
+import Switch from '@mui/material/Switch';
+import Tooltip from '@mui/material/Tooltip';
+import TableRow from '@mui/material/TableRow';
+import Checkbox from '@mui/material/Checkbox';
+import Skeleton from '@mui/material/Skeleton';
+import TableHead from '@mui/material/TableHead';
+import TableCell from '@mui/material/TableCell';
+import TableBody from '@mui/material/TableBody';
+import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
+import TablePagination from '@mui/material/TablePagination';
+import FormControlLabel from '@mui/material/FormControlLabel';
 
-import { paths } from 'src/routes/paths'
-import { useRouter } from 'src/routes/hooks'
-import { RouterLink } from 'src/routes/components'
+import { paths } from 'src/routes/paths';
 
-import { CONFIG } from 'src/global-config'
-import { DashboardContent } from 'src/layouts/dashboard'
+import { CONFIG } from 'src/global-config';
+import { DashboardContent } from 'src/layouts/dashboard';
 
-import { Label } from 'src/components/label'
-import { toast } from 'src/components/snackbar'
-import { Iconify } from 'src/components/iconify'
-import { TableNoData } from 'src/components/table'
-import { Scrollbar } from 'src/components/scrollbar'
-import { ConfirmDialog } from 'src/components/custom-dialog'
-import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs'
+import { Label } from 'src/components/label';
+import { toast } from 'src/components/snackbar';
+import { Iconify } from 'src/components/iconify';
+import { TableNoData } from 'src/components/table';
+import { Scrollbar } from 'src/components/scrollbar';
+import { ConfirmDialog } from 'src/components/custom-dialog';
+import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
-import Filters from './components/filters'
-import Statuses from './components/statuses'
-import FilterResults from './components/filterResults'
-import { Statuses as StatusesEnum } from '../services/types'
-import { referencesDistrictsService, REFERENCES_DISTRICTS_BASE_QUERY_KEY } from '../services'
+import FormComponent from '../form';
+import Filters from './components/filters';
+import Statuses from './components/statuses';
+import FilterResults from './components/filterResults';
+import { Statuses as StatusesEnum } from '../services/types';
+import { REFERENCES_DISTRICTS_BASE_QUERY_KEY, referencesDistrictsService } from '../services';
 
 // ----------------------------------------------------------------------
 
-type ICountry = IIndexResponse['result'][number];
+type IRegion = IIndexResponse['result'][number];
 
-const metadata = { title: `Users - ${CONFIG.appName}` };
+const metadata = { title: `Regions - ${CONFIG.appName}` };
 const fallBackData: any[] = [];
 
 export default function Page() {
   const queryClient = useQueryClient();
-  const router = useRouter();
 
-  const [idForDeleteUser, setIdForDeleteUser] = useState<ICountry['id'] | null>(null);
+  const [idForDeleteUser, setIdForDeleteUser] = useState<IRegion['id'] | null>(null);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState({});
   const [dense, setDense] = useState(false);
 
-  const [{ status, search, ...pagination }, setQueryStates] = useQueryStates(
+  const [{ status, search, formOpen, ...pagination }, setQueryStates] = useQueryStates(
     {
       status: parseAsStringEnum<StatusesEnum>(Object.values(StatusesEnum)).withDefault(
         StatusesEnum.all
@@ -81,13 +81,16 @@ export default function Page() {
 
       currentPage: parseAsInteger.withDefault(0),
       dataPerPage: parseAsInteger.withDefault(5),
+
+      formOpen: parseAsBoolean,
+      districtId: parseAsInteger,
     },
     {
       history: 'push',
     }
   );
 
-  const columnHelper = createColumnHelper<ICountry>();
+  const columnHelper = createColumnHelper<IRegion>();
 
   const columns = useMemo(
     () => [
@@ -143,7 +146,7 @@ export default function Page() {
               <IconButton
                 color="info"
                 onClick={() => {
-                  router.push(paths.dashboard.users.edit(info.getValue().toString()));
+                  setQueryStates({ formOpen: true, districtId: info.getValue() });
                 }}
               >
                 <Iconify icon="solar:pen-bold" />
@@ -157,7 +160,7 @@ export default function Page() {
         ),
       }),
     ],
-    [columnHelper, router]
+    [columnHelper, setQueryStates]
   );
 
   const {
@@ -235,7 +238,7 @@ export default function Page() {
 
   const { mutate: deleteUser } = useMutation({
     mutationKey: [REFERENCES_DISTRICTS_BASE_QUERY_KEY, 'delete'],
-    mutationFn: async (id: ICountry['id']) => {
+    mutationFn: async (id: IRegion['id']) => {
       try {
         const response = await referencesDistrictsService.form.delete(id);
         return response;
@@ -247,7 +250,7 @@ export default function Page() {
     onSuccess: () => {
       toast.success('Delete success!');
       setIdForDeleteUser(null);
-        queryClient.invalidateQueries({ queryKey: [REFERENCES_DISTRICTS_BASE_QUERY_KEY] });
+      queryClient.invalidateQueries({ queryKey: [REFERENCES_DISTRICTS_BASE_QUERY_KEY] });
     },
     onError: () => {
       toast.error('Delete failed!');
@@ -313,15 +316,14 @@ export default function Page() {
       <DashboardContent>
         <CustomBreadcrumbs
           heading="List"
-          links={[{ name: 'Dashboard', href: paths.dashboard.root }, { name: 'Users' }]}
+          links={[{ name: 'Dashboard', href: paths.dashboard.root }, { name: 'Districts' }]}
           action={
             <Button
-              component={RouterLink}
-              href={paths.dashboard.users.create}
               variant="contained"
               startIcon={<Iconify icon="mingcute:add-line" />}
+              onClick={() => setQueryStates({ formOpen: true })}
             >
-              Add user
+              Add district
             </Button>
           }
           sx={{ mb: { xs: 3, md: 5 } }}
@@ -526,6 +528,7 @@ export default function Page() {
         </Card>
       </DashboardContent>
       {renderConfirmDialog()}
+      {formOpen && <FormComponent />}
     </>
   );
 }
