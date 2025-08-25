@@ -140,6 +140,9 @@ export const paths = {
       permissions: {
         root: `${ROOTS.DASHBOARD}/references/permissions`,
       },
+      roles: {
+        root: `${ROOTS.DASHBOARD}/references/roles`,
+      },
     },
     product: {
       root: `${ROOTS.DASHBOARD}/product`,

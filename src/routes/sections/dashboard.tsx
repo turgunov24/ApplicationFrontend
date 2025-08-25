@@ -94,6 +94,7 @@ const ReferencesPermissionGroupsPage = lazy(
   () => import('src/pages/core/references/permission-groups/index')
 );
 const ReferencesPermissionsPage = lazy(() => import('src/pages/core/references/permissions/index'));
+const ReferencesRolesPage = lazy(() => import('src/pages/core/references/roles/index'));
 
 // ----------------------------------------------------------------------
 
@@ -155,6 +156,7 @@ export const dashboardRoutes: RouteObject[] = [
           { path: 'districts', element: <ReferencesDistrictsPage /> },
           { path: 'permission-groups', element: <ReferencesPermissionGroupsPage /> },
           { path: 'permissions', element: <ReferencesPermissionsPage /> },
+          { path: 'roles', element: <ReferencesRolesPage /> },
         ],
       },
       {

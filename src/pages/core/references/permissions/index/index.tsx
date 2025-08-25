@@ -372,7 +372,7 @@ export default function Page() {
                           }}
                         />
                       </TableCell>
-                      <TableCell colSpan={5}>
+                      <TableCell colSpan={6}>
                         <Stack direction="row" alignItems="center" justifyContent="space-between">
                           <Typography
                             variant="subtitle2"
@@ -463,7 +463,6 @@ export default function Page() {
                     table.getRowModel().rows.map((row, index) => (
                       <TableRow
                         key={row.id}
-                        onDoubleClick={row.getToggleSelectedHandler()}
                         sx={{
                           '&:hover #actions': {
                             opacity: 1,

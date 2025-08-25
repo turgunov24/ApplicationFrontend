@@ -55,19 +55,19 @@ import Filters from './components/filters';
 import Statuses from './components/statuses';
 import FilterResults from './components/filterResults';
 import { Statuses as StatusesEnum } from '../services/types';
-import { referencesRegionsService, REFERENCES_REGIONS_BASE_QUERY_KEY } from '../services';
+import { REFERENCES_ROLES_BASE_QUERY_KEY, referencesRolesService } from '../services';
 
 // ----------------------------------------------------------------------
 
-type IRegion = IIndexResponse['result'][number];
+type IRole = IIndexResponse['result'][number];
 
-const metadata = { title: `Regions - ${CONFIG.appName}` };
+const metadata = { title: `Roles - ${CONFIG.appName}` };
 const fallBackData: any[] = [];
 
 export default function Page() {
   const queryClient = useQueryClient();
 
-  const [idForDeleteUser, setIdForDeleteUser] = useState<IRegion['id'] | null>(null);
+  const [idForDeleteUser, setIdForDeleteUser] = useState<IRole['id'] | null>(null);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState({});
   const [dense, setDense] = useState(false);
@@ -83,14 +83,14 @@ export default function Page() {
       dataPerPage: parseAsInteger.withDefault(5),
 
       formOpen: parseAsBoolean,
-      regionId: parseAsInteger,
+      roleId: parseAsInteger,
     },
     {
       history: 'push',
     }
   );
 
-  const columnHelper = createColumnHelper<IRegion>();
+  const columnHelper = createColumnHelper<IRole>();
 
   const columns = useMemo(
     () => [
@@ -101,11 +101,6 @@ export default function Page() {
       }),
       columnHelper.accessor('nameRu', {
         header: 'Name Ru',
-        sortingFn: 'alphanumeric',
-        cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor('countryName', {
-        header: 'Country Name',
         sortingFn: 'alphanumeric',
         cell: (info) => info.getValue(),
       }),
@@ -146,7 +141,7 @@ export default function Page() {
               <IconButton
                 color="info"
                 onClick={() => {
-                  setQueryStates({ formOpen: true, regionId: info.getValue() });
+                  setQueryStates({ roleId: info.getValue(), formOpen: true });
                 }}
               >
                 <Iconify icon="solar:pen-bold" />
@@ -171,10 +166,10 @@ export default function Page() {
       [StatusesEnum.deleted]: 0,
     },
   } = useQuery({
-    queryKey: [REFERENCES_REGIONS_BASE_QUERY_KEY, 'getCountsByStatus'],
+    queryKey: [REFERENCES_ROLES_BASE_QUERY_KEY, 'getCountsByStatus'],
     queryFn: async () => {
       try {
-        const response = await referencesRegionsService.helpers.getCountsByStatus();
+        const response = await referencesRolesService.helpers.getCountsByStatus();
         return response;
       } catch (error: unknown) {
         console.log('error', error);
@@ -202,7 +197,7 @@ export default function Page() {
     },
   } = useQuery({
     queryKey: [
-      REFERENCES_REGIONS_BASE_QUERY_KEY,
+      REFERENCES_ROLES_BASE_QUERY_KEY,
       'index',
       pagination.currentPage,
       pagination.dataPerPage,
@@ -212,7 +207,7 @@ export default function Page() {
     enabled: isFetched,
     queryFn: async () => {
       try {
-        const response = await referencesRegionsService.index({
+        const response = await referencesRolesService.index({
           status,
           search,
           currentPage: pagination.currentPage,
@@ -237,10 +232,10 @@ export default function Page() {
   });
 
   const { mutate: deleteUser } = useMutation({
-    mutationKey: [REFERENCES_REGIONS_BASE_QUERY_KEY, 'delete'],
-    mutationFn: async (id: IRegion['id']) => {
+    mutationKey: [REFERENCES_ROLES_BASE_QUERY_KEY, 'delete'],
+    mutationFn: async (id: IRole['id']) => {
       try {
-        const response = await referencesRegionsService.form.delete(id);
+        const response = await referencesRolesService.form.delete(id);
         return response;
       } catch (error: unknown) {
         console.log('error', error);
@@ -250,7 +245,7 @@ export default function Page() {
     onSuccess: () => {
       toast.success('Delete success!');
       setIdForDeleteUser(null);
-      queryClient.invalidateQueries({ queryKey: [REFERENCES_REGIONS_BASE_QUERY_KEY] });
+      queryClient.invalidateQueries({ queryKey: [REFERENCES_ROLES_BASE_QUERY_KEY] });
     },
     onError: () => {
       toast.error('Delete failed!');
@@ -316,14 +311,14 @@ export default function Page() {
       <DashboardContent>
         <CustomBreadcrumbs
           heading="List"
-          links={[{ name: 'Dashboard', href: paths.dashboard.root }, { name: 'Regions' }]}
+          links={[{ name: 'Dashboard', href: paths.dashboard.root }, { name: 'Roles' }]}
           action={
             <Button
               variant="contained"
               startIcon={<Iconify icon="mingcute:add-line" />}
               onClick={() => setQueryStates({ formOpen: true })}
             >
-              Add region
+              Add Role
             </Button>
           }
           sx={{ mb: { xs: 3, md: 5 } }}
@@ -372,7 +367,7 @@ export default function Page() {
                           }}
                         />
                       </TableCell>
-                      <TableCell colSpan={6}>
+                      <TableCell colSpan={5}>
                         <Stack direction="row" alignItems="center" justifyContent="space-between">
                           <Typography
                             variant="subtitle2"
