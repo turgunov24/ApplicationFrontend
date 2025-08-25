@@ -97,6 +97,8 @@ export const navData: NavSectionProps['data'] = [
           { title: 'Countries', path: paths.dashboard.references.countries.root },
           { title: 'Regions', path: paths.dashboard.references.regions.root },
           { title: 'Districts', path: paths.dashboard.references.districts.root },
+          { title: 'Permission Groups', path: paths.dashboard.references.permissionGroups.root },
+          { title: 'Permissions', path: paths.dashboard.references.permissions.root },
         ],
       },
       {

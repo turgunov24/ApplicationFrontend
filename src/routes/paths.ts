@@ -127,18 +127,18 @@ export const paths = {
       root: `${ROOTS.DASHBOARD}/references`,
       countries: {
         root: `${ROOTS.DASHBOARD}/references/countries`,
-        create: `${ROOTS.DASHBOARD}/references/countries/create`,
-        edit: (id: string) => `${ROOTS.DASHBOARD}/references/countries/edit/${id}`,
       },
       regions: {
         root: `${ROOTS.DASHBOARD}/references/regions`,
-        create: `${ROOTS.DASHBOARD}/references/regions/create`,
-        edit: (id: string) => `${ROOTS.DASHBOARD}/references/regions/edit/${id}`,
       },
       districts: {
         root: `${ROOTS.DASHBOARD}/references/districts`,
-        create: `${ROOTS.DASHBOARD}/references/districts/create`,
-        edit: (id: string) => `${ROOTS.DASHBOARD}/references/districts/edit/${id}`,
+      },
+      permissionGroups: {
+        root: `${ROOTS.DASHBOARD}/references/permission-groups`,
+      },
+      permissions: {
+        root: `${ROOTS.DASHBOARD}/references/permissions`,
       },
     },
     product: {

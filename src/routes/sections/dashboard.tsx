@@ -90,6 +90,10 @@ const UsersFormPage = lazy(() => import('src/pages/core/admin/users/form'));
 const ReferencesCountriesPage = lazy(() => import('src/pages/core/references/countries/index'));
 const ReferencesRegionsPage = lazy(() => import('src/pages/core/references/regions/index'));
 const ReferencesDistrictsPage = lazy(() => import('src/pages/core/references/districts/index'));
+const ReferencesPermissionGroupsPage = lazy(
+  () => import('src/pages/core/references/permission-groups/index')
+);
+const ReferencesPermissionsPage = lazy(() => import('src/pages/core/references/permissions/index'));
 
 // ----------------------------------------------------------------------
 
@@ -149,6 +153,8 @@ export const dashboardRoutes: RouteObject[] = [
           { path: 'countries', index: true, element: <ReferencesCountriesPage /> },
           { path: 'regions', element: <ReferencesRegionsPage /> },
           { path: 'districts', element: <ReferencesDistrictsPage /> },
+          { path: 'permission-groups', element: <ReferencesPermissionGroupsPage /> },
+          { path: 'permissions', element: <ReferencesPermissionsPage /> },
         ],
       },
       {
