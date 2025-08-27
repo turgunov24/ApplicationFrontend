@@ -1,12 +1,12 @@
-import type { NavSectionProps } from 'src/components/nav-section';
+import type { NavSectionProps } from 'src/components/nav-section'
 
-import { paths } from 'src/routes/paths';
+import { paths } from 'src/routes/paths'
 
-import { CONFIG } from 'src/global-config';
+import { CONFIG } from 'src/global-config'
 
-import { Label } from 'src/components/label';
-import { Iconify } from 'src/components/iconify';
-import { SvgColor } from 'src/components/svg-color';
+import { Label } from 'src/components/label'
+import { Iconify } from 'src/components/iconify'
+import { SvgColor } from 'src/components/svg-color'
 
 // ----------------------------------------------------------------------
 
@@ -100,6 +100,7 @@ export const navData: NavSectionProps['data'] = [
           { title: 'Permission Groups', path: paths.dashboard.references.permissionGroups.root },
           { title: 'Permissions', path: paths.dashboard.references.permissions.root },
           { title: 'Roles', path: paths.dashboard.references.roles.root },
+          { title: 'Assign Permissions to Roles', path: paths.dashboard.references.assignPermissionsToRoles.root },
         ],
       },
       {
