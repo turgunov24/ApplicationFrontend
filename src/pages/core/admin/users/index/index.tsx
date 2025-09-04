@@ -58,8 +58,8 @@ import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 import Filters from './components/filters';
 import Statuses from './components/statuses';
 import FilterResults from './components/filterResults';
+import { Statuses as StatusesEnum } from '../services/types';
 import { usersService, USERS_BASE_QUERY_KEY } from '../services';
-import { Roles, Statuses as StatusesEnum } from '../services/types';
 
 // ----------------------------------------------------------------------
 
@@ -77,7 +77,7 @@ export default function Page() {
   const queryClient = useQueryClient();
   const [{ status, roles, search, ...pagination }, setQueryStates] = useQueryStates(
     {
-      roles: parseAsArrayOf(parseAsStringEnum<Roles>(Object.values(Roles))).withDefault([]),
+      roles: parseAsArrayOf(parseAsInteger).withDefault([]),
       status: parseAsStringEnum<StatusesEnum>(Object.values(StatusesEnum)).withDefault(
         StatusesEnum.all
       ),

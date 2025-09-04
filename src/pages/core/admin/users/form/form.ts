@@ -35,19 +35,18 @@ export const IFormSchema = z.object({
     },
     { error: 'City is required!' }
   ),
-  roleId: z.object(
-    {
-      id: z.number(),
-      label: z.string(),
-    },
-    { error: 'Role is required!' }
-  ),
   // Not required
   status: z.string(),
   isVerified: z.boolean(),
   password: z.string().optional(),
   confirmPassword: z.string().optional(),
   updatePassword: z.boolean().optional(),
+  roles: z.array(
+    z.object({
+      id: z.number(),
+      label: z.string(),
+    })
+  ),
 });
 // .refine((data) => data.password === data.confirmPassword, {
 //   error: 'Passwords do not match!',
@@ -68,9 +67,8 @@ export const defaultValues: IForm = {
   stateId: null,
   // @ts-expect-error number emasligi uchun error beryapti
   cityId: null,
-  // @ts-expect-error number emasligi uchun error beryapti
-  roleId: null,
   password: '',
   confirmPassword: '',
   updatePassword: false,
+  roles:[]
 };

@@ -1,6 +1,10 @@
-
+import { useQuery } from '@tanstack/react-query'
 import { usePopover } from 'minimal-shared/hooks'
-import { parseAsString, parseAsArrayOf, useQueryStates, parseAsStringEnum } from 'nuqs'
+import {
+  parseAsString,
+  parseAsArrayOf,
+  useQueryStates, parseAsInteger
+} from 'nuqs'
 
 import Box from '@mui/material/Box'
 import Select from '@mui/material/Select'
@@ -13,23 +17,41 @@ import IconButton from '@mui/material/IconButton'
 import FormControl from '@mui/material/FormControl'
 import InputAdornment from '@mui/material/InputAdornment'
 
+import { referencesRolesService } from 'src/pages/core/references/roles/services'
+
 import { Iconify } from 'src/components/iconify'
 import { CustomPopover } from 'src/components/custom-popover'
 
-import { Roles } from '../../services/types'
+import { USERS_BASE_QUERY_KEY } from '../../services'
 
 const Filters = () => {
   const menuActions = usePopover();
 
   const [{ roles, search }, setQueryStates] = useQueryStates(
     {
-      roles: parseAsArrayOf(parseAsStringEnum<Roles>(Object.values(Roles))).withDefault([]),
+      roles: parseAsArrayOf(parseAsInteger).withDefault([]),
       search: parseAsString.withDefault(''),
     },
     {
       history: 'push',
     }
   );
+
+  const { data: rolesList = [] } = useQuery({
+    queryKey: [USERS_BASE_QUERY_KEY, 'rolesList'],
+    queryFn: async () => {
+      try {
+        const response = await referencesRolesService.helpers.list();
+        return response.map((role) => ({
+          id: role.id,
+          label: role.nameUz,
+        }));
+      } catch (error: unknown) {
+        console.log('error while getting roles list', error);
+        return [];
+      }
+    },
+  });
 
   const renderMenuActions = () => (
     <CustomPopover
@@ -79,21 +101,23 @@ const Filters = () => {
               // @ts-expect-error string buladi devotiyu bu
               setQueryStates({ roles: event.target.value });
             }}
-            renderValue={(selected) => selected.map((value) => value).join(', ')}
+            renderValue={(selected) =>
+              selected.map((value) => rolesList.find((role) => role.id === value)?.label).join(', ')
+            }
             inputProps={{ id: 'filter-role-select' }}
             MenuProps={{
               slotProps: { paper: { sx: { maxHeight: 240 } } },
             }}
           >
-            {Object.values(Roles).map((option) => (
-              <MenuItem key={option} value={option}>
+            {rolesList.map((option) => (
+              <MenuItem key={option.id} value={option.id}>
                 <Checkbox
                   disableRipple
                   size="small"
-                  checked={roles.includes(option)}
+                  checked={roles.includes(option.id)}
                   slotProps={{ input: { id: `${option}-checkbox` } }}
                 />
-                {option}
+                {option.label}
               </MenuItem>
             ))}
           </Select>

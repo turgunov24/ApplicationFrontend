@@ -6,14 +6,7 @@ export enum Statuses {
   rejected = 'rejected',
 }
 
-export enum Roles {
-  admin = 'admin',
-  user = 'user',
-  moderator = 'moderator',
-  editor = 'editor',
-  contributor = 'contributor',
-  subscriber = 'subscriber',
-}
+
 
 export type IGetCountsByStatusResponse = Record<Statuses, number>;
 
@@ -44,7 +37,7 @@ export interface IGetResponse {
   countryId: number;
   regionId: number;
   cityId: number;
-  roleId: number;
+  roles: number[];
   token: string | null;
   password: string;
   status: string;

@@ -13,7 +13,7 @@ const SetValues = () => {
   const form = useFormContext<IForm>();
   const queryClient = useQueryClient();
 
-  const { data } = useQuery({
+  useQuery({
     enabled: !!id,
     queryKey: [USERS_BASE_QUERY_KEY, 'get', id],
     queryFn: async () => {
@@ -27,7 +27,10 @@ const SetValues = () => {
         form.setValue('stateId', { id: response.regionId, label: 'Andijan' });
         form.setValue('countryId', { id: response.countryId, label: 'Uzbekistan' });
         form.setValue('cityId', { id: response.cityId, label: 'Andijan' });
-        form.setValue('roleId', { id: response.roleId, label: 'Andijan' });
+        form.setValue(
+          'roles',
+          response.roles.map((role) => ({ id: role, label: 'Andijan' }))
+        );
         form.setValue('status', response.status);
         form.setValue('isVerified', true);
         // form.setValue('file', response.avatarPath);

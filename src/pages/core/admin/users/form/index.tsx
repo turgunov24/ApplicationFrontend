@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { useBoolean } from 'minimal-shared/hooks';
-import { useMutation } from '@tanstack/react-query';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useQuery, useMutation } from '@tanstack/react-query';
 
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -19,6 +19,7 @@ import { useParams, useRouter } from 'src/routes/hooks';
 import { fData } from 'src/utils/format-number';
 
 import { DashboardContent } from 'src/layouts/dashboard';
+import { referencesRolesService } from 'src/pages/core/references/roles/services';
 
 import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
@@ -90,10 +91,10 @@ export default function FormPage() {
             formData.append('cityId', data.cityId.id.toString());
           }
         }
-        if (data.roleId) {
-          if (data.roleId.id) {
-            formData.append('roleId', data.roleId.id.toString());
-          }
+        if (data.roles.length > 0) {
+          data.roles.forEach((role, index) => {
+            formData.append(`roles[${index}]`, role.id.toString());
+          });
         }
         formData.append('status', data.status);
         formData.append('isVerified', data.isVerified.toString());
@@ -163,6 +164,22 @@ export default function FormPage() {
     }
     return true;
   }, [id, updatePassword]);
+
+  const { data: rolesList = [] } = useQuery({
+    queryKey: [USERS_BASE_QUERY_KEY, 'rolesList'],
+    queryFn: async () => {
+      try {
+        const response = await referencesRolesService.helpers.list();
+        return response.map((role) => ({
+          id: role.id,
+          label: role.nameUz,
+        }));
+      } catch (error: unknown) {
+        console.log('error while getting roles list', error);
+        return [];
+      }
+    },
+  });
 
   return (
     <DashboardContent>
@@ -360,15 +377,13 @@ export default function FormPage() {
 
                 <Field.Autocomplete
                   fullWidth
-                  name="roleId"
-                  label="Role"
-                  placeholder="Choose a role"
-                  options={[
-                    {
-                      label: 'Admin',
-                      id: 1,
-                    },
-                  ]}
+                  multiple
+                  name="roles"
+                  label="Roles"
+                  disableCloseOnSelect
+                  placeholder="Choose roles"
+                  options={rolesList}
+                  isOptionEqualToValue={(option, value) => option.id === value.id}
                 />
 
                 {showPasswordFields ? (
