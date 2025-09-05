@@ -82,8 +82,11 @@ export default function FormPage() {
         formData.append('cityId', data.cityId.toString());
 
         if (data.roles.length > 0) {
-          formData.append('roles', data.roles.toString());
+          data.roles.forEach((role, index) => {
+            formData.append(`roles[${index}]`, role.toString());
+          });
         }
+
         formData.append('status', data.status);
         formData.append('isVerified', data.isVerified.toString());
         if (id) {
@@ -137,6 +140,7 @@ export default function FormPage() {
           formData.append('password', data.password);
         }
 
+        console.log('🚀 ~ FormPage ~ formData:', formData);
         await mutateAsync(formData);
       }
     } catch (error) {
