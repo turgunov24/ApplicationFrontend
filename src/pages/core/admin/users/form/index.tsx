@@ -140,7 +140,6 @@ export default function FormPage() {
           formData.append('password', data.password);
         }
 
-        console.log('🚀 ~ FormPage ~ formData:', formData);
         await mutateAsync(formData);
       }
     } catch (error) {

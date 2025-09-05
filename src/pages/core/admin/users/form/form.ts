@@ -6,7 +6,8 @@ import { schemaUtils } from 'src/components/hook-form';
 export type IForm = z.infer<typeof IFormSchema>;
 
 export const IFormSchema = z.object({
-  file: schemaUtils.file({ error: 'Avatar is required!' }),
+  // file: schemaUtils.file({ error: 'Avatar is required!' }),
+  file: schemaUtils.file().optional(),
   fullName: z.string().min(1, { error: 'Full name is required!' }),
   username: z.string().min(1, { error: 'Username is required!' }),
   email: schemaUtils.email(),
