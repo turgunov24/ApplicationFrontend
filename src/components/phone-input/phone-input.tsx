@@ -1,21 +1,20 @@
-import type { TextFieldProps } from '@mui/material/TextField';
-import type { PhoneValue, PhoneCountry, PhoneInputProps } from './types';
+import type { TextFieldProps } from '@mui/material/TextField'
+import type { PhoneValue, PhoneCountry, PhoneInputProps } from './types'
 
-import { debounce } from 'es-toolkit';
-import { useMemo, useState, useCallback } from 'react';
-import PhoneNumberInput, { parsePhoneNumber } from 'react-phone-number-input/input';
+import { debounce } from 'es-toolkit'
+import { useMemo, useState, useCallback } from 'react'
+import PhoneNumberInput, { parsePhoneNumber } from 'react-phone-number-input/input'
 
-import Box from '@mui/material/Box';
-import { useTheme } from '@mui/material/styles';
-import TextField from '@mui/material/TextField';
-import IconButton from '@mui/material/IconButton';
-import InputAdornment from '@mui/material/InputAdornment';
-import { inputBaseClasses } from '@mui/material/InputBase';
+import Box from '@mui/material/Box'
+import { useTheme } from '@mui/material/styles'
+import TextField from '@mui/material/TextField'
+import IconButton from '@mui/material/IconButton'
+import InputAdornment from '@mui/material/InputAdornment'
+import { inputBaseClasses } from '@mui/material/InputBase'
 
-import { countries } from 'src/assets/data/countries';
-
-import { Iconify } from '../iconify';
-import { CountryListPopover } from './list-popover';
+// import { countries } from 'src/assets/data/countries';
+import { Iconify } from '../iconify'
+import { CountryListPopover } from './list-popover'
 
 // ----------------------------------------------------------------------
 
@@ -84,7 +83,8 @@ export function PhoneInput({
 
   const renderSelect = () => (
     <CountryListPopover
-      options={countries}
+      // options={countries}
+      options={[{ code: 'UZ', label: 'Uzbekistan', phone: '998' }]}
       searchCountry={searchCountry}
       selectedCountry={activeCountry}
       onSearchCountry={handleSearchCountry}

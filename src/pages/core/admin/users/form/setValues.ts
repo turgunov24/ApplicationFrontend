@@ -24,13 +24,10 @@ const SetValues = () => {
         form.setValue('username', response.username);
         form.setValue('email', response.email);
         form.setValue('phoneNumber', response.phone.padStart(13, '+'));
-        form.setValue('stateId', { id: response.regionId, label: 'Andijan' });
-        form.setValue('countryId', { id: response.countryId, label: 'Uzbekistan' });
-        form.setValue('cityId', { id: response.cityId, label: 'Andijan' });
-        form.setValue(
-          'roles',
-          response.roles.map((role) => ({ id: role, label: 'Andijan' }))
-        );
+        form.setValue('stateId', response.regionId);
+        form.setValue('countryId', response.countryId);
+        form.setValue('cityId', response.cityId);
+        form.setValue('roles', response.roles);
         form.setValue('status', response.status);
         form.setValue('isVerified', true);
         // form.setValue('file', response.avatarPath);

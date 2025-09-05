@@ -23,3 +23,5 @@ export interface IIndexResponse {
     hasPrevPage: boolean;
   };
 }
+
+export type IListResponse = Array<{ id: number; nameUz: string; nameRu: string }>;

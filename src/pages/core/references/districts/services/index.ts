@@ -1,5 +1,5 @@
 import type { IForm } from '../form/form'
-import type { IGetResponse, IIndexResponse, IGetCountsByStatusResponse } from './types'
+import type { IGetResponse, IListResponse, IIndexResponse, IGetCountsByStatusResponse } from './types'
 
 import axiosInstance from 'src/lib/axios'
 
@@ -37,6 +37,10 @@ export const referencesDistrictsService = {
       const response = await axiosInstance.get<IGetCountsByStatusResponse>(
         '/references/districts/counts-by-status'
       );
+      return response.data;
+    },
+    list: async () => {
+      const response = await axiosInstance.get<IListResponse>('/references/districts/list');
       return response.data;
     },
   },

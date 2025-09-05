@@ -31,3 +31,5 @@ export interface IGetResponse {
   nameRu: string;
   countryId: number;
 }
+
+export type IListResponse = Array<{ id: number; nameUz: string; nameRu: string }>;

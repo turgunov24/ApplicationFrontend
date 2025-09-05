@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { useBoolean } from 'minimal-shared/hooks';
+import { useMutation } from '@tanstack/react-query';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useQuery, useMutation } from '@tanstack/react-query';
 
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -16,10 +16,11 @@ import InputAdornment from '@mui/material/InputAdornment';
 import { paths } from 'src/routes/paths';
 import { useParams, useRouter } from 'src/routes/hooks';
 
+import useList from 'src/hooks/useList/v1/Index';
+
 import { fData } from 'src/utils/format-number';
 
 import { DashboardContent } from 'src/layouts/dashboard';
-import { referencesRolesService } from 'src/pages/core/references/roles/services';
 
 import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
@@ -76,25 +77,12 @@ export default function FormPage() {
         formData.append('username', data.username);
         formData.append('email', data.email);
         formData.append('phone', data.phoneNumber);
-        if (data.countryId) {
-          if (data.countryId.id) {
-            formData.append('countryId', data.countryId.id.toString());
-          }
-        }
-        if (data.stateId) {
-          if (data.stateId.id) {
-            formData.append('regionId', data.stateId.id.toString());
-          }
-        }
-        if (data.cityId) {
-          if (data.cityId.id) {
-            formData.append('cityId', data.cityId.id.toString());
-          }
-        }
+        formData.append('countryId', data.countryId.toString());
+        formData.append('regionId', data.stateId.toString());
+        formData.append('cityId', data.cityId.toString());
+
         if (data.roles.length > 0) {
-          data.roles.forEach((role, index) => {
-            formData.append(`roles[${index}]`, role.id.toString());
-          });
+          formData.append('roles', data.roles.toString());
         }
         formData.append('status', data.status);
         formData.append('isVerified', data.isVerified.toString());
@@ -165,21 +153,10 @@ export default function FormPage() {
     return true;
   }, [id, updatePassword]);
 
-  const { data: rolesList = [] } = useQuery({
-    queryKey: [USERS_BASE_QUERY_KEY, 'rolesList'],
-    queryFn: async () => {
-      try {
-        const response = await referencesRolesService.helpers.list();
-        return response.map((role) => ({
-          id: role.id,
-          label: role.nameUz,
-        }));
-      } catch (error: unknown) {
-        console.log('error while getting roles list', error);
-        return [];
-      }
-    },
-  });
+  const { data: countriesList = [] } = useList({ listType: 'countries' });
+  const { data: regionsList = [] } = useList({ listType: 'regions' });
+  const { data: districtsList = [] } = useList({ listType: 'districts' });
+  const { data: rolesList = [] } = useList({ listType: 'roles' });
 
   return (
     <DashboardContent>
@@ -327,7 +304,12 @@ export default function FormPage() {
                 <Field.Text name="fullName" label="Full name" />
                 <Field.Text name="username" label="Username" />
                 <Field.Text name="email" label="Email address" />
-                <Field.Phone name="phoneNumber" label="Phone number" defaultCountry="US" />
+                <Field.Phone
+                  name="phoneNumber"
+                  label="Phone number"
+                  defaultCountry="UZ"
+                  // country="UZ"
+                />
 
                 {/* <Field.CountrySelect
                   fullWidth
@@ -336,54 +318,50 @@ export default function FormPage() {
                   placeholder="Choose a country"
                 /> */}
 
-                <Field.Autocomplete
+                <Field.AutocompleteMatchId
                   fullWidth
                   name="countryId"
                   label="Country"
                   placeholder="Choose a country"
-                  options={[
-                    {
-                      label: 'Uzbekistan',
-                      id: 1,
-                    },
-                  ]}
+                  options={countriesList.map((country) => ({
+                    id: country.id,
+                    label: country.nameUz,
+                  }))}
                 />
 
-                <Field.Autocomplete
+                <Field.AutocompleteMatchId
                   fullWidth
                   name="stateId"
                   label="State/region"
                   placeholder="Choose a state/region"
-                  options={[
-                    {
-                      label: 'Andijan',
-                      id: 1,
-                    },
-                  ]}
+                  options={regionsList.map((region) => ({
+                    id: region.id,
+                    label: region.nameUz,
+                  }))}
                 />
 
-                <Field.Autocomplete
+                <Field.AutocompleteMatchId
                   fullWidth
                   name="cityId"
                   label="City"
                   placeholder="Choose a city"
-                  options={[
-                    {
-                      label: 'Andijan',
-                      id: 1,
-                    },
-                  ]}
+                  options={districtsList.map((district) => ({
+                    id: district.id,
+                    label: district.nameUz,
+                  }))}
                 />
 
-                <Field.Autocomplete
+                <Field.AutocompleteMatchId
                   fullWidth
                   multiple
                   name="roles"
                   label="Roles"
                   disableCloseOnSelect
                   placeholder="Choose roles"
-                  options={rolesList}
-                  isOptionEqualToValue={(option, value) => option.id === value.id}
+                  options={rolesList.map((role) => ({
+                    id: role.id,
+                    label: role.nameUz,
+                  }))}
                 />
 
                 {showPasswordFields ? (

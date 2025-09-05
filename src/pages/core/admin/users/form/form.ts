@@ -14,39 +14,16 @@ export const IFormSchema = z.object({
   // countryId: schemaUtils.nullableInput(z.string().min(1, { error: 'Country is required!' }), {
   //   error: 'Country is required!',
   // }),
-  countryId: z.object(
-    {
-      id: z.number(),
-      label: z.string(),
-    },
-    { error: 'Country is required!' }
-  ),
-  stateId: z.object(
-    {
-      id: z.number(),
-      label: z.string(),
-    },
-    { error: 'State is required!' }
-  ),
-  cityId: z.object(
-    {
-      id: z.number(),
-      label: z.string(),
-    },
-    { error: 'City is required!' }
-  ),
+  countryId: z.number({ error: 'Country is required!' }),
+  stateId: z.number({ error: 'State is required!' }),
+  cityId: z.number({ error: 'City is required!' }),
   // Not required
   status: z.string(),
   isVerified: z.boolean(),
   password: z.string().optional(),
   confirmPassword: z.string().optional(),
   updatePassword: z.boolean().optional(),
-  roles: z.array(
-    z.object({
-      id: z.number(),
-      label: z.string(),
-    })
-  ),
+  roles: z.array(z.number()),
 });
 // .refine((data) => data.password === data.confirmPassword, {
 //   error: 'Passwords do not match!',
@@ -70,5 +47,5 @@ export const defaultValues: IForm = {
   password: '',
   confirmPassword: '',
   updatePassword: false,
-  roles:[]
+  roles: [],
 };
