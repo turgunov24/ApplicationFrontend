@@ -1,12 +1,16 @@
 import type { QueryOptions } from '@tanstack/react-query'
-import type { IListResponse as IReferencesRolesListResponse } from 'src/pages/core/references/roles/services/types'
 import type { IListResponse as IReferencesRegionsListResponse } from 'src/pages/core/references/regions/services/types'
 import type { IListResponse as IReferencesCountriesListResponse } from 'src/pages/core/references/countries/services/types'
 import type { IListResponse as IReferencesDistrictsListResponse } from 'src/pages/core/references/districts/services/types'
+import type {
+  IResourcesListResponse,
+  IListResponse as IReferencesRolesListResponse,
+} from 'src/pages/core/references/roles/services/types'
 
 import { useMemo, useEffect } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 
+import axiosInstance from 'src/lib/axios'
 import { referencesRolesService } from 'src/pages/core/references/roles/services'
 import { referencesRegionsService } from 'src/pages/core/references/regions/services'
 import { referencesCountriesService } from 'src/pages/core/references/countries/services'
@@ -17,6 +21,7 @@ type ListTypeMap = {
   regions: IReferencesRegionsListResponse;
   districts: IReferencesDistrictsListResponse;
   roles: IReferencesRolesListResponse;
+  resources: IResourcesListResponse;
 };
 
 interface IUseListProps<T> extends QueryOptions {
@@ -57,6 +62,10 @@ export default function useList<T extends keyof ListTypeMap>({
         if (listType === 'roles') {
           const response = await referencesRolesService.helpers.list();
           return response as unknown as ListTypeMap[T];
+        }
+        if (listType === 'resources') {
+          const response = await axiosInstance.get<IResourcesListResponse>('/references/resources');
+          return response.data as unknown as ListTypeMap[T];
         }
         return [];
       } catch (error: unknown) {

@@ -15,7 +15,7 @@ type DisableClearable = boolean | undefined;
 
 type OptionType = {
   label: string;
-  id: number;
+  id: number | string;
 };
 
 type ExcludedProps = 'renderInput';
@@ -34,6 +34,7 @@ export type RHFAutocompleteProps = AutocompleteBaseProps & {
   slotProps?: AutocompleteBaseProps['slotProps'] & {
     textField?: Partial<TextFieldProps>;
   };
+  customOnChange?: AutocompleteBaseProps['onChange'];
 };
 
 export function RHFAutocompleteMatchId({
@@ -43,6 +44,7 @@ export function RHFAutocompleteMatchId({
   helperText,
   placeholder,
   options = [],
+  customOnChange,
   ...other
 }: RHFAutocompleteProps) {
   const { control, setValue } = useFormContext();
@@ -63,7 +65,7 @@ export function RHFAutocompleteMatchId({
       return fieldValue.map((id) => safeOptions.find((option) => option.id === id)).filter(Boolean);
     }
 
-    if (typeof fieldValue === 'number') {
+    if (typeof fieldValue === 'number' || typeof fieldValue === 'string') {
       // For single selection with ID, find the full object
       return safeOptions.find((option) => option.id === fieldValue) || null;
     }
@@ -80,7 +82,7 @@ export function RHFAutocompleteMatchId({
           {...field}
           value={getDisplayValue(field.value)}
           id={`${name}-custom-autocomplete`}
-          onChange={(event, newValue) => {
+          onChange={(event, newValue, reason) => {
             if (newValue) {
               if (Array.isArray(newValue)) {
                 setValue(
@@ -95,6 +97,10 @@ export function RHFAutocompleteMatchId({
               // For multiple selection, set empty array instead of null
               setValue(name, other.multiple ? [] : null, { shouldValidate: true });
             }
+
+            if (customOnChange) {
+              customOnChange(event, newValue, reason);
+            }
           }}
           getOptionKey={(option) => option.id}
           isOptionEqualToValue={(option, value) => option.id === value.id}
@@ -102,10 +108,11 @@ export function RHFAutocompleteMatchId({
             if (Array.isArray(option)) {
               return option.map((item) => item.label).join(', ');
             }
-            if (typeof option === 'number') {
+            if (typeof option === 'number' || typeof option === 'string') {
               const foundOption = safeOptions.find((item) => item.id === option);
               return foundOption ? foundOption.label : String(option);
             }
+
             return option.label;
           }}
           options={safeOptions}

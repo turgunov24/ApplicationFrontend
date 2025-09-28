@@ -28,3 +28,8 @@ export interface IIndexResponse {
 }
 
 export type IListResponse = Array<{ id: number; nameUz: string; nameRu: string }>;
+export type IResourcesListResponse = Array<{
+  name: string;
+  endpoint: string;
+  allowedActions: Array<string>;
+}>;

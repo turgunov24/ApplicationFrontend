@@ -29,5 +29,7 @@ export interface IGetResponse {
   id: number;
   nameUz: string;
   nameRu: string;
-  permissionId: number;
+  permissionGroupId: number;
+  resource: string;
+  action: string;
 }

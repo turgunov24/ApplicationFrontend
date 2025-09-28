@@ -22,23 +22,9 @@ const SetValues = () => {
       if (response) {
         form.setValue('nameUz', response.nameUz);
         form.setValue('nameRu', response.nameRu);
-
-        if (response.permissionId) {
-          const permissionGroups = queryClient.getQueryData<
-            Array<{ id: number; nameUz: string; nameRu: string }>
-          >([REFERENCES_PERMISSIONS_BASE_QUERY_KEY, 'permission-groups-list']);
-
-          if (Array.isArray(permissionGroups)) {
-            const found = permissionGroups.find((permissionGroup) => permissionGroup.id === response.permissionId);
-
-            if (found) {
-              form.setValue('permissionGroupId', {
-                id: found.id,
-                label: found.nameUz,
-              });
-            }
-          }
-        }
+        form.setValue('permissionGroupId', response.permissionGroupId);
+        form.setValue('resource', response.resource);
+        form.setValue('action', response.action);
       }
       return response;
     },

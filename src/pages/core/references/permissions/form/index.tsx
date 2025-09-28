@@ -1,5 +1,6 @@
 import type { IForm } from './form';
 
+import { useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQuery, useMutation } from '@tanstack/react-query';
@@ -12,6 +13,8 @@ import Divider from '@mui/material/Divider';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
+
+import useList from 'src/hooks/useList/v1/Index';
 
 import { toast } from 'src/components/snackbar';
 import { Form, Field } from 'src/components/hook-form';
@@ -38,6 +41,8 @@ export default function FormComponent() {
     defaultValues,
   });
 
+  const resource = form.watch('resource');
+
   const { data: permissionGroups = [] } = useQuery({
     queryKey: [REFERENCES_PERMISSIONS_BASE_QUERY_KEY, 'permission-groups-list'],
     queryFn: async () => {
@@ -46,22 +51,31 @@ export default function FormComponent() {
     },
   });
 
+  const { data: resourcesList = [] } = useList({ listType: 'resources' });
+
+  const actions = useMemo(() => {
+    if (!resource) return [];
+
+    const found = resourcesList.find((r) => r.endpoint === resource);
+    if (!found) return [];
+
+    return found.allowedActions.map((action) => ({
+      label: action,
+      id: action,
+    }));
+  }, [resource, resourcesList]);
+
   const { mutateAsync } = useMutation({
     mutationKey: [REFERENCES_PERMISSIONS_BASE_QUERY_KEY, 'save'],
     mutationFn: async (values: IForm) => {
       if (permissionId) {
-        const response = await referencesPermissionsService.form.update(Number(permissionId), {
-          ...values,
-          // @ts-expect-error object emasligi uchun error beryapti
-          permissionGroupId: values.permissionGroupId.id,
-        });
+        const response = await referencesPermissionsService.form.update(
+          Number(permissionId),
+          values
+        );
         return response;
       }
-      const response = await referencesPermissionsService.form.create({
-        ...values,
-        // @ts-expect-error object emasligi uchun error beryapti
-        permissionGroupId: values.permissionGroupId.id,
-      });
+      const response = await referencesPermissionsService.form.create(values);
       return response;
     },
     onSuccess: () => {
@@ -71,7 +85,7 @@ export default function FormComponent() {
   });
 
   return (
-    <Dialog open fullWidth>
+    <Dialog open fullWidth maxWidth="md">
       <Form methods={form} onSubmit={form.handleSubmit((values) => mutateAsync(values))}>
         <SetValues />
         <DialogTitle>Add Permission</DialogTitle>
@@ -81,9 +95,15 @@ export default function FormComponent() {
             py: 2,
           }}
         >
-          <Grid container gap={2}>
+          <Grid container spacing={2}>
             <Grid size={{ xs: 12 }}>
-              <Field.Autocomplete
+              <Field.Text name="nameUz" label="Name Uz" required />
+            </Grid>
+            <Grid size={{ xs: 12 }}>
+              <Field.Text name="nameRu" label="Name Ru" required />
+            </Grid>
+            <Grid size={{ xs: 12 }}>
+              <Field.AutocompleteMatchId
                 fullWidth
                 name="permissionGroupId"
                 label="Permission Group"
@@ -94,11 +114,30 @@ export default function FormComponent() {
                 }))}
               />
             </Grid>
-            <Grid size={{ xs: 12 }}>
-              <Field.Text name="nameUz" label="Name Uz" required />
+            <Grid size={6}>
+              <Field.AutocompleteMatchId
+                fullWidth
+                name="resource"
+                label="Resource"
+                placeholder="Choose a resource"
+                options={resourcesList.map((r) => ({
+                  label: r.name,
+                  id: r.endpoint,
+                }))}
+                customOnChange={() => {
+                  form.setValue('action', defaultValues.action);
+                }}
+              />
             </Grid>
-            <Grid size={{ xs: 12 }}>
-              <Field.Text name="nameRu" label="Name Ru" required />
+
+            <Grid size={6}>
+              <Field.AutocompleteMatchId
+                fullWidth
+                name="action"
+                label="Action"
+                placeholder="Choose a action"
+                options={actions}
+              />
             </Grid>
           </Grid>
         </DialogContent>

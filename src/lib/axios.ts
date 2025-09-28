@@ -6,6 +6,8 @@ import { CONFIG } from 'src/global-config';
 
 import { toast } from 'src/components/snackbar';
 
+import { useAuthStore } from 'src/auth/store';
+
 // ----------------------------------------------------------------------
 
 const axiosInstance = axios.create({
@@ -15,18 +17,14 @@ const axiosInstance = axios.create({
   },
 });
 
-/**
- * Optional: Add token (if using auth)
- *
- axiosInstance.interceptors.request.use((config) => {
-  const token = localStorage.getItem('accessToken');
+axiosInstance.interceptors.request.use((config) => {
+  const token = useAuthStore.getState().accessToken;
+
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });
-*
-*/
 
 axiosInstance.interceptors.response.use(
   (response) => response,
@@ -67,6 +65,9 @@ axiosInstance.interceptors.response.use(
           break;
         case HttpStatusCode.InternalServerError:
           toast.error('Internal Server Error');
+          break;
+        case HttpStatusCode.Forbidden:
+          toast.error('Forbidden');
           break;
         default:
           toast.error('Axios Error');
