@@ -44,6 +44,8 @@ axiosInstance.interceptors.response.use(
               }
             }
           }
+
+          useAuthStore.setState({ accessToken: null, user: null });
           // /login
           break;
         case HttpStatusCode.BadRequest:
@@ -106,7 +108,7 @@ export const endpoints = {
   calendar: '/api/calendar',
   auth: {
     me: '/auth/me',
-    login: '/auth/login',
+    login: 'api/auth/login',
     register: '/auth/register',
   },
   mail: {

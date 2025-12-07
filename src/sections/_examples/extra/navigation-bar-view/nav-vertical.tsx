@@ -76,7 +76,7 @@ export function NavVertical() {
       >
         <NavSectionVertical
           data={NAV_SECTION_ITEMS}
-          checkPermissions={(allowedRoles) => !allowedRoles?.includes(config.currentRole)}
+          // checkPermissions={(allowedRoles) => !allowedRoles?.includes(config.currentRole)}
           sx={{ flex: '1 1 auto' }}
           cssVars={{ '--nav-item-gap': `${config.gap}px` }}
           slotProps={{

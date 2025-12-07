@@ -105,7 +105,7 @@ export const NAV_BASIC_ITEMS: NavBasicProps['data'] = [
  * - `path`: The URL path the item links to.
  * - `icon`: An optional icon component to display alongside the title.
  * - `info`: Optional additional information to display, such as a label.
- * - `allowedRoles`: An optional array of roles that are allowed to see the item.
+ * - `allowedRoles(allowedPermissions ga o'zgardi)`: An optional array of roles that are allowed to see the item.
  * - `caption`: An optional caption to display below the title.
  * - `children`: An optional array of nested navigation items.
  * - `disabled`: An optional boolean to disable the item.
@@ -113,9 +113,9 @@ export const NAV_BASIC_ITEMS: NavBasicProps['data'] = [
 
 /**
  * Permissions can be set for each item by using the `allowedRoles` property.
- * - If `allowedRoles` is not set (default), all roles can see the item.
- * - If `allowedRoles` is an empty array `[]`, no one can see the item.
- * - If `allowedRoles` contains specific roles, only those roles can see the item.
+ * - If `allowedRoles(allowedPermissions ga o'zgardi)` is not set (default), all roles can see the item.
+ * - If `allowedRoles(allowedPermissions ga o'zgardi)` is an empty array `[]`, no one can see the item.
+ * - If `allowedRoles(allowedPermissions ga o'zgardi)` contains specific roles, only those roles can see the item.
  *
  * Examples:
  * - `allowedRoles: ['user']` - only users with the 'user' role can see this item.
@@ -140,7 +140,7 @@ export const NAV_SECTION_ITEMS: NavSectionProps['data'] = [
         title: 'Services',
         path: '#',
         icon: <SvgColor src={`${CONFIG.assetsDir}/assets/icons/navbar/ic-analytics.svg`} />,
-        allowedRoles: ['admin'],
+        // allowedRoles: ['admin'],
         caption: 'Only admin can see this item.',
       },
       {
@@ -148,7 +148,7 @@ export const NAV_SECTION_ITEMS: NavSectionProps['data'] = [
         path: '#',
         icon: <SvgColor src={`${CONFIG.assetsDir}/assets/icons/navbar/ic-blog.svg`} />,
         info: <Label color="info">+3 </Label>,
-        allowedRoles: ['admin', 'manager'],
+        // allowedRoles: ['admin', 'manager'],
         caption: 'Only admin / manager can see this item.',
         children: [
           {

@@ -95,7 +95,9 @@ const ReferencesPermissionGroupsPage = lazy(
 );
 const ReferencesPermissionsPage = lazy(() => import('src/pages/core/references/permissions/index'));
 const ReferencesRolesPage = lazy(() => import('src/pages/core/references/roles/index'));
-const ReferencesAssignPermissionsToRolesPage = lazy(() => import('src/pages/core/references/assign-permissions-to-roles/index'));
+const ReferencesAssignPermissionsToRolesPage = lazy(
+  () => import('src/pages/core/references/assign-permissions-to-roles/index')
+);
 
 // ----------------------------------------------------------------------
 
@@ -138,6 +140,10 @@ export const dashboardRoutes: RouteObject[] = [
           {
             index: true,
             element: <UsersPage />,
+            loader: () => {
+              console.log('loader');
+              return false;
+            },
           },
           {
             path: 'create',
@@ -158,7 +164,10 @@ export const dashboardRoutes: RouteObject[] = [
           { path: 'permission-groups', element: <ReferencesPermissionGroupsPage /> },
           { path: 'permissions', element: <ReferencesPermissionsPage /> },
           { path: 'roles', element: <ReferencesRolesPage /> },
-          { path: 'assign-permissions-to-roles', element: <ReferencesAssignPermissionsToRolesPage /> },
+          {
+            path: 'assign-permissions-to-roles',
+            element: <ReferencesAssignPermissionsToRolesPage />,
+          },
         ],
       },
       {

@@ -6,17 +6,22 @@ export enum Statuses {
   rejected = 'rejected',
 }
 
-
-
 export type IGetCountsByStatusResponse = Record<Statuses, number>;
 
 export interface IIndexResponse {
   result: Array<{
     id: number;
-    name: string;
+    fullName: string;
     username: string;
+    email: string;
+    phone: string;
+    countryId: number;
+    regionId: number;
+    districtId: number;
+    avatarPath: string;
+    roles: Array<number>;
     createdAt: Date;
-    status: 'active' | 'pending' | 'banned' | 'rejected' ;
+    status: 'active' | 'pending' | 'banned' | 'rejected';
   }>;
   pagination: {
     currentPage: number;
@@ -36,12 +41,19 @@ export interface IGetResponse {
   phone: string;
   countryId: number;
   regionId: number;
-  cityId: number;
-  roles: number[];
-  token: string | null;
-  password: string;
-  status: string;
+  districtId: number;
+  roles: Array<number>;
   avatarPath: string;
   createdAt: Date;
+}
+
+export interface ICreateResponse {
+  id: number;
+  fullName: string;
+  username: string;
+  email: string;
+  phone: string;
+  createdAt: Date;
   updatedAt: Date;
+  status: string;
 }

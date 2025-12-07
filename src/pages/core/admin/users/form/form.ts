@@ -11,16 +11,16 @@ export const IFormSchema = z.object({
   fullName: z.string().min(1, { error: 'Full name is required!' }),
   username: z.string().min(1, { error: 'Username is required!' }),
   email: schemaUtils.email(),
-  phoneNumber: schemaUtils.phoneNumber({ isValid: isValidPhoneNumber }),
+  phone: schemaUtils.phoneNumber({ isValid: isValidPhoneNumber }),
   // countryId: schemaUtils.nullableInput(z.string().min(1, { error: 'Country is required!' }), {
   //   error: 'Country is required!',
   // }),
   countryId: z.number({ error: 'Country is required!' }),
-  stateId: z.number({ error: 'State is required!' }),
-  cityId: z.number({ error: 'City is required!' }),
+  regionId: z.number({ error: 'Region is required!' }),
+  districtId: z.number({ error: 'District is required!' }),
   // Not required
-  status: z.string(),
-  isVerified: z.boolean(),
+  // status: z.string(),
+  // isVerified: z.boolean(),
   password: z.string().optional(),
   confirmPassword: z.string().optional(),
   updatePassword: z.boolean().optional(),
@@ -32,19 +32,19 @@ export const IFormSchema = z.object({
 // });
 
 export const defaultValues: IForm = {
-  status: '',
+  // status: '',
   file: null,
-  isVerified: true,
+  // isVerified: true,
   fullName: '',
   username: '',
   email: '',
-  phoneNumber: '',
+  phone: '',
   // @ts-expect-error number emasligi uchun error beryapti
   countryId: null,
   // @ts-expect-error number emasligi uchun error beryapti
-  stateId: null,
+  regionId: null,
   // @ts-expect-error number emasligi uchun error beryapti
-  cityId: null,
+  districtId: null,
   password: '',
   confirmPassword: '',
   updatePassword: false,

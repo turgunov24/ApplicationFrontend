@@ -32,4 +32,4 @@ export interface IGetResponse {
   regionId: number;
 }
 
-export type IListResponse = Array<{ id: number; nameUz: string; nameRu: string }>;
+export type IListResponse = Array<{ id: number; nameUz: string; nameRu: string; regionId: number }>;

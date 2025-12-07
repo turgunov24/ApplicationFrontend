@@ -3,6 +3,7 @@ import type { NavItemProps, NavSectionProps } from 'src/components/nav-section';
 import type { MainSectionProps, HeaderSectionProps, LayoutSectionProps } from '../core';
 
 import { merge } from 'es-toolkit';
+import { isEqual } from 'es-toolkit/compat';
 import { useBoolean } from 'minimal-shared/hooks';
 
 import Box from '@mui/material/Box';
@@ -16,7 +17,7 @@ import { _contacts, _notifications } from 'src/_mock';
 import { Logo } from 'src/components/logo';
 import { useSettingsContext } from 'src/components/settings';
 
-import { useMockedUser } from 'src/auth/hooks';
+import { useAuthStore } from 'src/auth/store';
 
 import { NavMobile } from './nav-mobile';
 import { VerticalDivider } from './content';
@@ -60,9 +61,8 @@ export function DashboardLayout({
 }: DashboardLayoutProps) {
   const theme = useTheme();
 
-  const { user } = useMockedUser();
-
   const settings = useSettingsContext();
+  const { permissions } = useAuthStore();
 
   const navVars = dashboardNavColorVars(theme, settings.state.navColor, settings.state.navLayout);
 
@@ -74,8 +74,22 @@ export function DashboardLayout({
   const isNavHorizontal = settings.state.navLayout === 'horizontal';
   const isNavVertical = isNavMini || settings.state.navLayout === 'vertical';
 
-  const canDisplayItemByRole = (allowedRoles: NavItemProps['allowedRoles']): boolean =>
-    !allowedRoles?.includes(user?.role);
+  const canDisplayItemByPermission = (
+    allowedPermissions: NavItemProps['allowedPermissions']
+  ): boolean => {
+    if (!allowedPermissions || !permissions.length) {
+      return false;
+    }
+    const found = permissions.find((permission) =>
+      allowedPermissions.find((allowedPermission) =>
+        isEqual(allowedPermission, {
+          action: permission.action,
+          resource: permission.resource,
+        })
+      )
+    );
+    return !!found;
+  };
 
   const renderHeader = () => {
     const headerSlotProps: HeaderSectionProps['slotProps'] = {
@@ -103,7 +117,7 @@ export function DashboardLayout({
           data={navData}
           layoutQuery={layoutQuery}
           cssVars={navVars.section}
-          checkPermissions={canDisplayItemByRole}
+          checkPermissions={canDisplayItemByPermission}
         />
       ) : null,
       leftArea: (
@@ -118,7 +132,7 @@ export function DashboardLayout({
             open={open}
             onClose={onClose}
             cssVars={navVars.section}
-            checkPermissions={canDisplayItemByRole}
+            checkPermissions={canDisplayItemByPermission}
           />
 
           {/** @slot Logo */}
@@ -184,7 +198,7 @@ export function DashboardLayout({
       isNavMini={isNavMini}
       layoutQuery={layoutQuery}
       cssVars={navVars.section}
-      checkPermissions={canDisplayItemByRole}
+      checkPermissions={canDisplayItemByPermission}
       onToggleNav={() =>
         settings.setField(
           'navLayout',

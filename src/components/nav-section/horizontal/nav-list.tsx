@@ -132,11 +132,11 @@ export function NavList({
       </NavDropdown>
     );
 
-  // Hidden item by role
-  if (data.allowedRoles && checkPermissions && checkPermissions(data.allowedRoles)) {
-    return null;
+  // Hidden item by permissions
+  if (data.allowedPermissions && checkPermissions) {
+    const show = checkPermissions(data.allowedPermissions);
+    if (!show) return null;
   }
-
   return (
     <NavLi disabled={data.disabled}>
       {renderNavItem()}

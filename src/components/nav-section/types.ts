@@ -1,5 +1,6 @@
-import type { ButtonBaseProps } from '@mui/material/ButtonBase';
-import type { Theme, SxProps, CSSObject } from '@mui/material/styles';
+import type { ButtonBaseProps } from '@mui/material/ButtonBase'
+import type { Theme, SxProps, CSSObject } from '@mui/material/styles'
+import type { IPermission } from 'src/auth/permissions/types'
 
 // ----------------------------------------------------------------------
 
@@ -52,7 +53,7 @@ export type NavItemDataProps = Pick<NavItemStateProps, 'disabled'> & {
   info?: string[] | React.ReactNode;
   caption?: string;
   deepMatch?: boolean;
-  allowedRoles?: string | string[];
+  allowedPermissions?: Array<IPermission>;
   children?: NavItemDataProps[];
 };
 
@@ -68,7 +69,7 @@ export type NavListProps = Pick<NavItemProps, 'render' | 'depth' | 'enabledRootR
   cssVars?: CSSObject;
   data: NavItemDataProps;
   slotProps?: NavSlotProps;
-  checkPermissions?: (allowedRoles?: NavItemProps['allowedRoles']) => boolean;
+  checkPermissions?: (allowedPermissions?: NavItemProps['allowedPermissions']) => boolean;
 };
 
 export type NavSubListProps = Omit<NavListProps, 'data'> & {

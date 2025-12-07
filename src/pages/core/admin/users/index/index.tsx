@@ -1,15 +1,15 @@
-import type { SortingState } from '@tanstack/react-table';
-import type { IIndexResponse } from '../services/types';
+import type { SortingState } from '@tanstack/react-table'
+import type { IIndexResponse } from '../services/types'
 
-import { useMemo, useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMemo, useState } from 'react'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   parseAsString,
   parseAsArrayOf,
   useQueryStates,
   parseAsInteger,
   parseAsStringEnum,
-} from 'nuqs';
+} from 'nuqs'
 import {
   flexRender,
   useReactTable,
@@ -17,49 +17,53 @@ import {
   getSortedRowModel,
   createColumnHelper,
   getPaginationRowModel,
-} from '@tanstack/react-table';
+} from '@tanstack/react-table'
 
-import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import Link from '@mui/material/Link';
-import Table from '@mui/material/Table';
-import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
-import Switch from '@mui/material/Switch';
-import Avatar from '@mui/material/Avatar';
-import Tooltip from '@mui/material/Tooltip';
-import TableRow from '@mui/material/TableRow';
-import Checkbox from '@mui/material/Checkbox';
-import Skeleton from '@mui/material/Skeleton';
-import TableHead from '@mui/material/TableHead';
-import TableCell from '@mui/material/TableCell';
-import TableBody from '@mui/material/TableBody';
-import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
-import TablePagination from '@mui/material/TablePagination';
-import FormControlLabel from '@mui/material/FormControlLabel';
+import Box from '@mui/material/Box'
+import Card from '@mui/material/Card'
+import Link from '@mui/material/Link'
+import Table from '@mui/material/Table'
+import Stack from '@mui/material/Stack'
+import Button from '@mui/material/Button'
+import Switch from '@mui/material/Switch'
+import Avatar from '@mui/material/Avatar'
+import Tooltip from '@mui/material/Tooltip'
+import TableRow from '@mui/material/TableRow'
+import Checkbox from '@mui/material/Checkbox'
+import Skeleton from '@mui/material/Skeleton'
+import TableHead from '@mui/material/TableHead'
+import TableCell from '@mui/material/TableCell'
+import TableBody from '@mui/material/TableBody'
+import Typography from '@mui/material/Typography'
+import IconButton from '@mui/material/IconButton'
+import TablePagination from '@mui/material/TablePagination'
+import FormControlLabel from '@mui/material/FormControlLabel'
 
-import { paths } from 'src/routes/paths';
-import { useRouter } from 'src/routes/hooks';
-import { RouterLink } from 'src/routes/components';
+import { paths } from 'src/routes/paths'
+import { useRouter } from 'src/routes/hooks'
+import { RouterLink } from 'src/routes/components'
 
-import { _mock } from 'src/_mock';
-import { CONFIG } from 'src/global-config';
-import { DashboardContent } from 'src/layouts/dashboard';
+import { fDateTime } from 'src/utils/format-time'
 
-import { Label } from 'src/components/label';
-import { toast } from 'src/components/snackbar';
-import { Iconify } from 'src/components/iconify';
-import { TableNoData } from 'src/components/table';
-import { Scrollbar } from 'src/components/scrollbar';
-import { ConfirmDialog } from 'src/components/custom-dialog';
-import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
+import { CONFIG } from 'src/global-config'
+import { DashboardContent } from 'src/layouts/dashboard'
 
-import Filters from './components/filters';
-import Statuses from './components/statuses';
-import FilterResults from './components/filterResults';
-import { Statuses as StatusesEnum } from '../services/types';
-import { usersService, USERS_BASE_QUERY_KEY } from '../services';
+import { Label } from 'src/components/label'
+import { toast } from 'src/components/snackbar'
+import { Iconify } from 'src/components/iconify'
+import { TableNoData } from 'src/components/table'
+import { Scrollbar } from 'src/components/scrollbar'
+import { ConfirmDialog } from 'src/components/custom-dialog'
+import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs'
+
+import { RenderElementByPermission } from 'src/auth/guard'
+
+import Filters from './components/filters'
+import Statuses from './components/statuses'
+import FilterResults from './components/filterResults'
+import { usersPermissions } from '../helpers/permissions'
+import { Statuses as StatusesEnum } from '../services/types'
+import { usersService, USERS_BASE_QUERY_KEY } from '../services'
 
 // ----------------------------------------------------------------------
 
@@ -92,29 +96,34 @@ export default function Page() {
   );
 
   const columnHelper = createColumnHelper<IUser>();
-
+  // _mock.image.avatar(row.index)
   const columns = useMemo(
     () => [
-      columnHelper.accessor('name', {
+      columnHelper.accessor('fullName', {
         header: 'Name',
-        cell: ({ row }) => (
-          <Box sx={{ gap: 2, display: 'flex', alignItems: 'center' }}>
-            <Avatar alt={row.original.name} src={_mock.image.avatar(row.index)} />
-            <Stack sx={{ typography: 'body2', flex: '1 1 auto', alignItems: 'flex-start' }}>
-              <Link
-                component={RouterLink}
-                href={paths.dashboard.user.edit(row.original.id.toString())}
-                color="inherit"
-                sx={{ cursor: 'pointer' }}
-              >
-                {row.original.name}
-              </Link>
-              <Box component="span" sx={{ color: 'text.disabled' }}>
-                {row.original.username}
-              </Box>
-            </Stack>
-          </Box>
-        ),
+        cell: ({ row }) => {
+          const avatarUrl = row.original.avatarPath
+            ? new URL(row.original.avatarPath, import.meta.env.VITE_SERVER_URL).toString()
+            : '';
+          return (
+            <Box sx={{ gap: 2, display: 'flex', alignItems: 'center' }}>
+              <Avatar alt={row.original.username} src={avatarUrl} />
+              <Stack sx={{ typography: 'body2', flex: '1 1 auto', alignItems: 'flex-start' }}>
+                <Link
+                  component={RouterLink}
+                  href={paths.dashboard.users.edit(row.original.id.toString())}
+                  color="inherit"
+                  sx={{ cursor: 'pointer' }}
+                >
+                  {row.original.fullName}
+                </Link>
+                <Box component="span" sx={{ color: 'text.disabled' }}>
+                  {row.original.username}
+                </Box>
+              </Stack>
+            </Box>
+          );
+        },
       }),
       columnHelper.accessor('username', {
         header: 'Username',
@@ -124,16 +133,7 @@ export default function Page() {
       columnHelper.accessor('createdAt', {
         header: 'Created At',
         sortingFn: 'datetime',
-        cell: (info) => {
-          const date = new Date(info.getValue());
-          return date.toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-          });
-        },
+        cell: (info) => fDateTime(info.getValue()),
       }),
       columnHelper.accessor('status', {
         header: 'Status',
@@ -155,20 +155,24 @@ export default function Page() {
         header: 'Actions',
         cell: (info) => (
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Tooltip title="Quick edit" placement="top" arrow>
-              <IconButton
-                color="info"
-                onClick={() => {
-                  router.push(paths.dashboard.users.edit(info.getValue().toString()));
-                }}
-              >
-                <Iconify icon="solar:pen-bold" />
-              </IconButton>
-            </Tooltip>
+            <RenderElementByPermission permissions={[usersPermissions.update]}>
+              <Tooltip title="Quick edit" placement="top" arrow>
+                <IconButton
+                  color="info"
+                  onClick={() => {
+                    router.push(paths.dashboard.users.edit(info.getValue().toString()));
+                  }}
+                >
+                  <Iconify icon="solar:pen-bold" />
+                </IconButton>
+              </Tooltip>
+            </RenderElementByPermission>
 
-            <IconButton color="error" onClick={() => setIdForDeleteUser(info.getValue())}>
-              <Iconify icon="solar:trash-bin-trash-bold" />
-            </IconButton>
+            <RenderElementByPermission permissions={[usersPermissions.delete]}>
+              <IconButton color="error" onClick={() => setIdForDeleteUser(info.getValue())}>
+                <Iconify icon="solar:trash-bin-trash-bold" />
+              </IconButton>
+            </RenderElementByPermission>
           </Box>
         ),
       }),
@@ -337,14 +341,16 @@ export default function Page() {
           heading="List"
           links={[{ name: 'Dashboard', href: paths.dashboard.root }, { name: 'Users' }]}
           action={
-            <Button
-              component={RouterLink}
-              href={paths.dashboard.users.create}
-              variant="contained"
-              startIcon={<Iconify icon="mingcute:add-line" />}
-            >
-              Add user
-            </Button>
+            <RenderElementByPermission permissions={[usersPermissions.create]}>
+              <Button
+                component={RouterLink}
+                href={paths.dashboard.users.create}
+                variant="contained"
+                startIcon={<Iconify icon="mingcute:add-line" />}
+              >
+                Add user
+              </Button>
+            </RenderElementByPermission>
           }
           sx={{ mb: { xs: 3, md: 5 } }}
         />

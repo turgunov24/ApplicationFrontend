@@ -50,11 +50,14 @@ import { Scrollbar } from 'src/components/scrollbar';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
+import { RenderElementByPermission } from 'src/auth/guard';
+
 import FormComponent from '../form';
 import Filters from './components/filters';
 import Statuses from './components/statuses';
 import FilterResults from './components/filterResults';
 import { Statuses as StatusesEnum } from '../services/types';
+import { referencesCountriesPermissions } from '../helpers/permissions';
 import { referencesCountriesService, REFERENCES_COUNTRIES_BASE_QUERY_KEY } from '../services';
 
 // ----------------------------------------------------------------------
@@ -128,7 +131,7 @@ export default function Page() {
               (info.getValue() === 'deleted' && 'error') ||
               'default'
             }
-          > 
+          >
             {info.getValue()}
           </Label>
         ),
@@ -215,7 +218,6 @@ export default function Page() {
         });
         return response;
       } catch (error: unknown) {
-        console.log('error', error);
         return {
           result: fallBackData,
           pagination: {
@@ -313,13 +315,15 @@ export default function Page() {
           heading="List"
           links={[{ name: 'Dashboard', href: paths.dashboard.root }, { name: 'Countries' }]}
           action={
-            <Button
-              variant="contained"
-              startIcon={<Iconify icon="mingcute:add-line" />}
-              onClick={() => setQueryStates({ formOpen: true })}
-            >
-              Add Country
-            </Button>
+            <RenderElementByPermission permissions={[referencesCountriesPermissions.create]}>
+              <Button
+                variant="contained"
+                startIcon={<Iconify icon="mingcute:add-line" />}
+                onClick={() => setQueryStates({ formOpen: true })}
+              >
+                Add Country
+              </Button>
+            </RenderElementByPermission>
           }
           sx={{ mb: { xs: 3, md: 5 } }}
         />

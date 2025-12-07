@@ -1,4 +1,8 @@
+import type { IForm } from './form';
+
 import { useMemo } from 'react';
+import { HttpStatusCode } from 'axios';
+import { omit } from 'es-toolkit/compat';
 import { useForm } from 'react-hook-form';
 import { useBoolean } from 'minimal-shared/hooks';
 import { useMutation } from '@tanstack/react-query';
@@ -44,22 +48,40 @@ export default function FormPage() {
     defaultValues,
   });
 
-  const {
-    watch,
-    setError,
-    handleSubmit,
-    formState: { isSubmitting },
-  } = methods;
+  const { watch, setError, handleSubmit } = methods;
+  console.log('file', watch('file'));
 
-  const { mutateAsync } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationKey: [USERS_BASE_QUERY_KEY, 'save'],
-    mutationFn: async (formData: FormData) => {
+    mutationFn: async (formData: IForm) => {
       if (id) {
-        const response = await usersService.form.update(Number(id), formData);
-        return response;
+        const valuesToSend = watch('updatePassword')
+          ? omit(formData, ['file', 'updatePassword', 'confirmPassword'])
+          : omit(formData, ['file', 'updatePassword', 'password', 'confirmPassword']);
+        const response = await usersService.form.update(Number(id), valuesToSend);
+
+        if (response.status === HttpStatusCode.Ok) {
+          const avatarResponse = await usersService.helpers.uploadAvatar(
+            response.data.id,
+            formData.file as File
+          );
+          if (avatarResponse.status === HttpStatusCode.Ok) {
+            return response;
+          }
+        }
+      } else {
+        const response = await usersService.form.create(omit(formData, ['file', 'updatePassword']));
+        if (response.status === HttpStatusCode.Created) {
+          const avatarResponse = await usersService.helpers.uploadAvatar(
+            response.data.id,
+            formData.file as File
+          );
+          if (avatarResponse.status === HttpStatusCode.Ok) {
+            return response;
+          }
+        }
       }
-      const response = await usersService.form.create(formData);
-      return response;
+      return false;
     },
     onSuccess: () => {
       toast.success(id ? 'Update success!' : 'Create success!');
@@ -68,51 +90,11 @@ export default function FormPage() {
   });
 
   const onSubmit = handleSubmit(async (data) => {
+    console.log('data', data);
+
     try {
-      const file = data.file;
-      if (file) {
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('fullName', data.fullName);
-        formData.append('username', data.username);
-        formData.append('email', data.email);
-        formData.append('phone', data.phoneNumber);
-        formData.append('countryId', data.countryId.toString());
-        formData.append('regionId', data.stateId.toString());
-        formData.append('cityId', data.cityId.toString());
-
-        if (data.roles.length > 0) {
-          data.roles.forEach((role, index) => {
-            formData.append(`roles[${index}]`, role.toString());
-          });
-        }
-
-        formData.append('status', data.status);
-        formData.append('isVerified', data.isVerified.toString());
-        if (id) {
-          if (data.password && !data.confirmPassword) {
-            setError('confirmPassword', {
-              message: 'Confirm password is required!',
-              type: 'required',
-            });
-            return;
-          }
-          if (data.confirmPassword && !data.password) {
-            setError('password', {
-              message: 'Password is required!',
-              type: 'required',
-            });
-            return;
-          }
-
-          if (data.password && data.confirmPassword && data.password !== data.confirmPassword) {
-            setError('confirmPassword', {
-              message: 'Passwords do not match!',
-              type: 'required',
-            });
-            return;
-          }
-        } else {
+      if (id) {
+        if (watch('updatePassword')) {
           if (!data.password) {
             setError('password', {
               message: 'Password is required!',
@@ -135,13 +117,31 @@ export default function FormPage() {
             return;
           }
         }
-
-        if (data.password) {
-          formData.append('password', data.password);
+      } else {
+        if (!data.password) {
+          setError('password', {
+            message: 'Password is required!',
+            type: 'required',
+          });
+          return;
         }
-
-        await mutateAsync(formData);
+        if (!data.confirmPassword) {
+          setError('confirmPassword', {
+            message: 'Confirm password is required!',
+            type: 'required',
+          });
+          return;
+        }
+        if (data.password && data.confirmPassword && data.password !== data.confirmPassword) {
+          setError('confirmPassword', {
+            message: 'Passwords do not match!',
+            type: 'required',
+          });
+          return;
+        }
       }
+
+      mutate(data);
     } catch (error) {
       console.error(error);
     }
@@ -248,7 +248,7 @@ export default function FormPage() {
                 /> */}
               {/* )} */}
 
-              <Field.Switch
+              {/* <Field.Switch
                 name="isVerified"
                 labelPlacement="start"
                 label={
@@ -262,7 +262,7 @@ export default function FormPage() {
                   </>
                 }
                 sx={{ mx: 0, width: 1, justifyContent: 'space-between' }}
-              />
+              /> */}
 
               {id ? (
                 <Field.Switch
@@ -308,7 +308,7 @@ export default function FormPage() {
                 <Field.Text name="username" label="Username" />
                 <Field.Text name="email" label="Email address" />
                 <Field.Phone
-                  name="phoneNumber"
+                  name="phone"
                   label="Phone number"
                   defaultCountry="UZ"
                   // country="UZ"
@@ -330,28 +330,36 @@ export default function FormPage() {
                     id: country.id,
                     label: country.nameUz,
                   }))}
+                  customOnChange={(event, option) => {
+                    methods.setValue('regionId', defaultValues.regionId);
+                    methods.setValue('districtId', defaultValues.districtId);
+                  }}
                 />
 
                 <Field.AutocompleteMatchId
                   fullWidth
-                  name="stateId"
-                  label="State/region"
-                  placeholder="Choose a state/region"
-                  options={regionsList.map((region) => ({
-                    id: region.id,
-                    label: region.nameUz,
-                  }))}
+                  name="regionId"
+                  label="Region"
+                  placeholder="Choose a region"
+                  options={regionsList
+                    .filter((region) => region.countryId === watch('countryId'))
+                    .map((region) => ({
+                      id: region.id,
+                      label: region.nameUz,
+                    }))}
                 />
 
                 <Field.AutocompleteMatchId
                   fullWidth
-                  name="cityId"
-                  label="City"
-                  placeholder="Choose a city"
-                  options={districtsList.map((district) => ({
-                    id: district.id,
-                    label: district.nameUz,
-                  }))}
+                  name="districtId"
+                  label="District"
+                  placeholder="Choose a district"
+                  options={districtsList
+                    .filter((district) => district.regionId === watch('regionId'))
+                    .map((district) => ({
+                      id: district.id,
+                      label: district.nameUz,
+                    }))}
                 />
 
                 <Field.AutocompleteMatchId
@@ -420,7 +428,7 @@ export default function FormPage() {
               </Box>
 
               <Stack sx={{ mt: 3, alignItems: 'flex-end' }}>
-                <Button type="submit" variant="contained" loading={isSubmitting}>
+                <Button type="submit" variant="contained" loading={isPending}>
                   {id ? 'Update user' : 'Create user'}
                 </Button>
               </Stack>
