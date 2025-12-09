@@ -1,48 +1,52 @@
 import type { IForm } from '../form/form';
-import type { IIndexResponse, IGetCountsByStatusResponse } from './types';
+import type { IIndexResponse, IGetCountsByStatusResponse, IListResponse } from './types';
 
 import axiosInstance from 'src/lib/axios';
+
+import { referencesPermissionGroupsUrls } from './urls';
 
 export const REFERENCES_PERMISSION_GROUPS_BASE_QUERY_KEY = 'references-permission-groups';
 
 export const referencesPermissionGroupsService = {
   index: async (params: any) => {
-    const response = await axiosInstance.get<IIndexResponse>('/references/permission-groups', { params });
+    const response = await axiosInstance.get<IIndexResponse>(referencesPermissionGroupsUrls.index, {
+      params,
+    });
     return response.data;
   },
   form: {
     get: async (id: IIndexResponse['result'][number]['id']) => {
-      const response = await axiosInstance.get<IForm>('references/permission-groups', {
+      const response = await axiosInstance.get<IForm>(referencesPermissionGroupsUrls.index, {
         params: { id },
       });
       return response.data;
     },
     create: async (data: IForm) => {
-      const response = await axiosInstance.post('/references/permission-groups', data);
+      const response = await axiosInstance.post(referencesPermissionGroupsUrls.index, data);
       return response.data;
     },
     update: async (id: IIndexResponse['result'][number]['id'], data: IForm) => {
-      const response = await axiosInstance.put('/references/permission-groups', data, {
+      const response = await axiosInstance.put(referencesPermissionGroupsUrls.index, data, {
         params: { id },
       });
       return response.data;
     },
     delete: async (id: IIndexResponse['result'][number]['id']) => {
-      const response = await axiosInstance.delete('/references/permission-groups', { params: { id } });
+      const response = await axiosInstance.delete(referencesPermissionGroupsUrls.index, {
+        params: { id },
+      });
       return response.data;
     },
   },
   helpers: {
     getCountsByStatus: async () => {
       const response = await axiosInstance.get<IGetCountsByStatusResponse>(
-        '/references/permission-groups/counts-by-status'
+        referencesPermissionGroupsUrls.countsByStatus
       );
       return response.data;
     },
     list: async () => {
-      const response = await axiosInstance.get<
-        Array<{ id: number; nameUz: string; nameRu: string }>
-      >('/references/permission-groups/list');
+      const response = await axiosInstance.get<IListResponse>(referencesPermissionGroupsUrls.list);
       return response.data;
     },
   },

@@ -1,14 +1,12 @@
-import { useState } from 'react';
 import { isEqual } from 'es-toolkit';
-import { HttpStatusCode } from 'axios';
-import { Fragment } from 'react/jsx-runtime';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMemo, Fragment, useState, useEffect } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 import Card from '@mui/material/Card';
 import Table from '@mui/material/Table';
 import Button from '@mui/material/Button';
-import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
+import TableRow from '@mui/material/TableRow';
 import TableHead from '@mui/material/TableHead';
 import TableBody from '@mui/material/TableBody';
 import { useTheme } from '@mui/material/styles';
@@ -18,45 +16,67 @@ import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 
 import { paths } from 'src/routes/paths';
 
-import axiosInstance from 'src/lib/axios';
+import useList from 'src/hooks/useList/v1/Index';
+
 import { CONFIG } from 'src/global-config';
 import { DashboardContent } from 'src/layouts/dashboard';
 
 import { Iconify } from 'src/components/iconify';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
+import {
+  referencesAssignPermissionsToRolesService,
+  REFERENCES_ASSIGN_PERMISSIONS_TO_ROLES_BASE_QUERY_KEY,
+} from '../services';
+
 // ----------------------------------------------------------------------
 
-type IRolesListResponse = Array<{
-  id: number;
-  nameUz: string;
-  nameRu: string;
-  descriptionUz: string;
-  descriptionRu: string;
-}>;
-
-type IPermissionGroupsListResponse = Array<{
-  id: number;
-  nameUz: string;
-  nameRu: string;
-  permissions: Array<{
-    id: number;
-    nameUz: string;
-    nameRu: string;
-  }>;
-}>;
-
-type IRolesPermissionsListResponse = Record<string, Array<number>>;
+type IRolesPermissionsMap = Record<string, Array<number>>;
 
 const metadata = { title: `Roles - ${CONFIG.appName}` };
-
-export const REFERENCES_ASSIGN_PERMISSIONS_TO_ROLES_BASE_QUERY_KEY =
-  'REFERENCES_ASSIGN_PERMISSIONS_TO_ROLES_BASE_QUERY_KEY';
 
 export default function Page() {
   const theme = useTheme();
   const queryClient = useQueryClient();
-  const [assignments, setAssignments] = useState<IRolesPermissionsListResponse>({});
+  const [assignments, setAssignments] = useState<IRolesPermissionsMap>({});
+
+  const { data: rolesList = [], isFetched: isRolesListFetched } = useList({ listType: 'roles' });
+  const { data: permissionGroupsList = [], isFetched: isPermissionGroupsListFetched } = useList({
+    listType: 'permissionGroups',
+  });
+
+  const { data: rolesPermissionsResponse } = useQuery({
+    enabled: isRolesListFetched && isPermissionGroupsListFetched,
+    queryKey: [REFERENCES_ASSIGN_PERMISSIONS_TO_ROLES_BASE_QUERY_KEY, 'roles-permissions'],
+    queryFn: async () => {
+      try {
+        const response = await referencesAssignPermissionsToRolesService.getAssignments();
+        return response.data;
+      } catch (error: unknown) {
+        console.log('error while getting roles permissions list', error);
+        return [];
+      }
+    },
+  });
+
+  // Transform backend response to internal format: Record<roleId, permissionIds[]>
+  const initialAssignments = useMemo<IRolesPermissionsMap>(() => {
+    if (!rolesPermissionsResponse) return {};
+
+    const map: IRolesPermissionsMap = {};
+    rolesPermissionsResponse.forEach((item) => {
+      // Sort to ensure consistent comparison
+      map[item.id.toString()] = [...item.permissions].sort((a, b) => a - b);
+    });
+    return map;
+  }, [rolesPermissionsResponse]);
+
+  // Initialize assignments from backend response
+  useEffect(() => {
+    if (rolesPermissionsResponse && Object.keys(initialAssignments).length > 0) {
+      setAssignments(initialAssignments);
+    }
+  }, [initialAssignments, rolesPermissionsResponse]);
 
   const isChecked = (roleId: string, permissionId: number) =>
     assignments[roleId]?.includes(permissionId) || false;
@@ -72,78 +92,41 @@ export default function Page() {
       rolePermissions.push(permissionId);
     }
 
+    // Sort to ensure consistent comparison with initialAssignments
+    rolePermissions.sort((a, b) => a - b);
+
     setAssignments({
       ...assignments,
       [roleId]: rolePermissions,
     });
   };
 
-  const { data: rolesList = [], isFetched: isRolesListFetched } = useQuery({
-    queryKey: [REFERENCES_ASSIGN_PERMISSIONS_TO_ROLES_BASE_QUERY_KEY, 'roles-list'],
-    queryFn: async () => {
-      try {
-        const response = await axiosInstance.get<IRolesListResponse>('/references/roles/list');
-        return response.data;
-      } catch (error: unknown) {
-        console.log('error while getting roles list', error);
-        return [];
-      }
-    },
-  });
-
-  const { data: permissionGroupsList = [], isFetched: isPermissionGroupsListFetched } = useQuery({
-    enabled: isRolesListFetched,
-    queryKey: [REFERENCES_ASSIGN_PERMISSIONS_TO_ROLES_BASE_QUERY_KEY, 'permissions-groups-list'],
-    queryFn: async () => {
-      try {
-        const response = await axiosInstance.get<IPermissionGroupsListResponse>(
-          '/references/permission-groups/list'
-        );
-        return response.data;
-      } catch (error: unknown) {
-        console.log('error while getting permissions groups list', error);
-        return [];
-      }
-    },
-  });
-
-  const { data: rolesPermissions = [] } = useQuery({
-    enabled: isPermissionGroupsListFetched,
-    queryKey: [REFERENCES_ASSIGN_PERMISSIONS_TO_ROLES_BASE_QUERY_KEY, 'roles-permissions'],
-    queryFn: async () => {
-      try {
-        const response = await axiosInstance.get<IRolesPermissionsListResponse>(
-          '/references/roles-permissions'
-        );
-
-        if (response.status === HttpStatusCode.Ok) setAssignments(response.data);
-        return response.data;
-      } catch (error: unknown) {
-        console.log('error while getting roles permissions list', error);
-        return [];
-      }
-    },
-  });
-
   const { mutate: saveAssignments, isPending: isSavingAssignments } = useMutation({
     mutationKey: [REFERENCES_ASSIGN_PERMISSIONS_TO_ROLES_BASE_QUERY_KEY, 'save-assignments'],
     mutationFn: async () => {
       const values = [];
-      for (const [key, value] of Object.entries(assignments)) {
+      for (const [roleId, permissionIds] of Object.entries(assignments)) {
         values.push({
-          roleId: key,
-          permissionIds: value,
+          roleId: Number(roleId),
+          permissionIds,
         });
       }
 
-      await axiosInstance.put('/references/roles-permissions', { values });
+      await referencesAssignPermissionsToRolesService.updateAssignments({ values });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: [REFERENCES_ASSIGN_PERMISSIONS_TO_ROLES_BASE_QUERY_KEY, 'roles-permissions'],
       });
+      // Reset assignments to initial state after successful save
+      setAssignments(initialAssignments);
     },
   });
+
+  const hasChanges = useMemo(
+    () => !isEqual(assignments, initialAssignments),
+    [assignments, initialAssignments]
+  );
 
   return (
     <>
@@ -161,9 +144,8 @@ export default function Page() {
               variant="contained"
               // @ts-expect-error icon namesi uchun bervotti
               startIcon={<Iconify icon="mynaui:save" />}
-              disabled={isEqual(assignments, rolesPermissions)}
+              disabled={!hasChanges || isSavingAssignments}
               onClick={() => saveAssignments()}
-              loading={isSavingAssignments}
             >
               Save
             </Button>

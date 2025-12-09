@@ -1,12 +1,18 @@
-import type { NavSectionProps } from 'src/components/nav-section';
+import type { NavSectionProps } from 'src/components/nav-section'
 
-import { paths } from 'src/routes/paths';
+import { paths } from 'src/routes/paths'
 
-import { CONFIG } from 'src/global-config';
-import { usersPermissions } from 'src/pages/core/admin/users/helpers/permissions';
-import { referencesCountriesPermissions } from 'src/pages/core/references/countries/helpers/permissions';
+import { CONFIG } from 'src/global-config'
+import { usersPermissions } from 'src/pages/core/admin/users/helpers/permissions'
+import { referencesRolesPermissions } from 'src/pages/core/references/roles/helpers/permissions'
+import { referencesRegionsPermissions } from 'src/pages/core/references/regions/helpers/permissions'
+import { referencesCountriesPermissions } from 'src/pages/core/references/countries/helpers/permissions'
+import { referencesDistrictsPermissions } from 'src/pages/core/references/districts/helpers/permissions'
+import { referencesPermissionsPermissions } from 'src/pages/core/references/permissions/helpers/permissions'
+import { referencesPermissionGroupsPermissions } from 'src/pages/core/references/permission-groups/helpers/permissions'
+import { assignPermissionsToRolesPermissions } from 'src/pages/core/references/assign-permissions-to-roles/helpers/permissions'
 
-import { SvgColor } from 'src/components/svg-color';
+import { SvgColor } from 'src/components/svg-color'
 
 // ----------------------------------------------------------------------
 
@@ -99,14 +105,35 @@ export const navData: NavSectionProps['data'] = [
             path: paths.dashboard.references.countries.root,
             allowedPermissions: [referencesCountriesPermissions.index],
           },
-          { title: 'Regions', path: paths.dashboard.references.regions.root },
-          { title: 'Districts', path: paths.dashboard.references.districts.root },
-          { title: 'Permission Groups', path: paths.dashboard.references.permissionGroups.root },
-          { title: 'Permissions', path: paths.dashboard.references.permissions.root },
-          { title: 'Roles', path: paths.dashboard.references.roles.root },
+          {
+            title: 'Regions',
+            path: paths.dashboard.references.regions.root,
+            allowedPermissions: [referencesRegionsPermissions.index],
+          },
+          {
+            title: 'Districts',
+            path: paths.dashboard.references.districts.root,
+            allowedPermissions: [referencesDistrictsPermissions.index],
+          },
+          {
+            title: 'Permission Groups',
+            path: paths.dashboard.references.permissionGroups.root,
+            allowedPermissions: [referencesPermissionGroupsPermissions.index],
+          },
+          {
+            title: 'Permissions',
+            path: paths.dashboard.references.permissions.root,
+            allowedPermissions: [referencesPermissionsPermissions.index],
+          },
+          {
+            title: 'Roles',
+            path: paths.dashboard.references.roles.root,
+            allowedPermissions: [referencesRolesPermissions.index],
+          },
           {
             title: 'Assign Permissions to Roles',
             path: paths.dashboard.references.assignPermissionsToRoles.root,
+            allowedPermissions: [assignPermissionsToRolesPermissions.index],
           },
         ],
       },

@@ -2,6 +2,7 @@ import type { QueryOptions } from '@tanstack/react-query'
 import type { IListResponse as IReferencesRegionsListResponse } from 'src/pages/core/references/regions/services/types'
 import type { IListResponse as IReferencesCountriesListResponse } from 'src/pages/core/references/countries/services/types'
 import type { IListResponse as IReferencesDistrictsListResponse } from 'src/pages/core/references/districts/services/types'
+import type { IListResponse as IReferencesPermissionGroupsListResponse } from 'src/pages/core/references/permission-groups/services/types'
 import type {
   IResourcesListResponse,
   IListResponse as IReferencesRolesListResponse,
@@ -15,6 +16,7 @@ import { referencesRolesService } from 'src/pages/core/references/roles/services
 import { referencesRegionsService } from 'src/pages/core/references/regions/services'
 import { referencesCountriesService } from 'src/pages/core/references/countries/services'
 import { referencesDistrictsService } from 'src/pages/core/references/districts/services'
+import { referencesPermissionGroupsService } from 'src/pages/core/references/permission-groups/services'
 
 type ListTypeMap = {
   countries: IReferencesCountriesListResponse;
@@ -22,6 +24,7 @@ type ListTypeMap = {
   districts: IReferencesDistrictsListResponse;
   roles: IReferencesRolesListResponse;
   resources: IResourcesListResponse;
+  permissionGroups: IReferencesPermissionGroupsListResponse;
 };
 
 interface IUseListProps<T> extends QueryOptions {
@@ -66,6 +69,10 @@ export default function useList<T extends keyof ListTypeMap>({
         if (listType === 'resources') {
           const response = await axiosInstance.get<IResourcesListResponse>('/references/resources');
           return response.data as unknown as ListTypeMap[T];
+        }
+        if (listType === 'permissionGroups') {
+          const response = await referencesPermissionGroupsService.helpers.list();
+          return response as unknown as ListTypeMap[T];
         }
         return [];
       } catch (error: unknown) {
