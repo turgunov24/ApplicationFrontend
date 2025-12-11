@@ -16,9 +16,12 @@ import DialogActions from '@mui/material/DialogActions'
 import { toast } from 'src/components/snackbar'
 import { Form, Field } from 'src/components/hook-form'
 
+import { RoleBasedGuard } from 'src/auth/guard'
+
 import SetValues from './setValues'
 import { IFormSchema, defaultValues } from './form'
 import { referencesCountriesService } from '../../countries/services'
+import { referencesRegionsPermissions } from '../helpers/permissions'
 import { referencesRegionsService, REFERENCES_REGIONS_BASE_QUERY_KEY } from '../services'
 
 export default function FormComponent() {
@@ -72,9 +75,14 @@ export default function FormComponent() {
 
   return (
     <Dialog open fullWidth>
-      <Form methods={form} onSubmit={form.handleSubmit((values) => mutateAsync(values))}>
-        <SetValues />
-        <DialogTitle>Add Region</DialogTitle>
+      <RoleBasedGuard
+        allowedPermissions={[
+          regionId ? referencesRegionsPermissions.update : referencesRegionsPermissions.create,
+        ]}
+      >
+        <Form methods={form} onSubmit={form.handleSubmit((values) => mutateAsync(values))}>
+          <SetValues />
+          <DialogTitle>Add Region</DialogTitle>
         <Divider />
         <DialogContent
           sx={{
@@ -121,6 +129,7 @@ export default function FormComponent() {
           </Button>
         </DialogActions>
       </Form>
+      </RoleBasedGuard>
     </Dialog>
   );
 }

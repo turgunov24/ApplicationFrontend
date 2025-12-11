@@ -1,4 +1,4 @@
-import type { IForm} from './form';
+import type { IForm } from './form'
 
 import { useForm } from 'react-hook-form'
 import { useMutation } from '@tanstack/react-query'
@@ -16,8 +16,11 @@ import DialogActions from '@mui/material/DialogActions'
 import { toast } from 'src/components/snackbar'
 import { Form, Field } from 'src/components/hook-form'
 
+import { RoleBasedGuard } from 'src/auth/guard'
+
 import SetValues from './setValues'
 import { IFormSchema, defaultValues } from './form'
+import { referencesPermissionGroupsPermissions } from '../helpers/permissions'
 import { referencesPermissionGroupsService, REFERENCES_PERMISSION_GROUPS_BASE_QUERY_KEY } from '../services'
 
 export default function FormComponent() {
@@ -55,9 +58,16 @@ export default function FormComponent() {
 
   return (
     <Dialog open fullWidth>
-      <Form methods={form} onSubmit={form.handleSubmit((values) => mutateAsync(values))}>
-        <SetValues />
-        <DialogTitle>Add Permission Group</DialogTitle>
+      <RoleBasedGuard
+        allowedPermissions={[
+          permissionGroupId
+            ? referencesPermissionGroupsPermissions.update
+            : referencesPermissionGroupsPermissions.create,
+        ]}
+      >
+        <Form methods={form} onSubmit={form.handleSubmit((values) => mutateAsync(values))}>
+          <SetValues />
+          <DialogTitle>Add Permission Group</DialogTitle>
         <Divider />
         <DialogContent
           sx={{
@@ -92,6 +102,7 @@ export default function FormComponent() {
           </Button>
         </DialogActions>
       </Form>
+      </RoleBasedGuard>
     </Dialog>
   );
 }

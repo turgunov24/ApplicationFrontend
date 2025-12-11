@@ -1,28 +1,31 @@
-import type { IForm } from './form';
+import type { IForm } from './form'
 
-import { useMemo } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useQuery, useMutation } from '@tanstack/react-query';
-import { parseAsInteger, useQueryStates, parseAsBoolean } from 'nuqs';
+import { useMemo } from 'react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useQuery, useMutation } from '@tanstack/react-query'
+import { parseAsInteger, useQueryStates, parseAsBoolean } from 'nuqs'
 
-import Grid from '@mui/material/Grid';
-import Dialog from '@mui/material/Dialog';
-import Button from '@mui/material/Button';
-import Divider from '@mui/material/Divider';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
-import DialogActions from '@mui/material/DialogActions';
+import Grid from '@mui/material/Grid'
+import Dialog from '@mui/material/Dialog'
+import Button from '@mui/material/Button'
+import Divider from '@mui/material/Divider'
+import DialogTitle from '@mui/material/DialogTitle'
+import DialogContent from '@mui/material/DialogContent'
+import DialogActions from '@mui/material/DialogActions'
 
-import useList from 'src/hooks/useList/v1/Index';
+import useList from 'src/hooks/useList/v1/Index'
 
-import { toast } from 'src/components/snackbar';
-import { Form, Field } from 'src/components/hook-form';
+import { toast } from 'src/components/snackbar'
+import { Form, Field } from 'src/components/hook-form'
 
-import SetValues from './setValues';
-import { IFormSchema, defaultValues } from './form';
-import { referencesPermissionGroupsService } from '../../permission-groups/services';
-import { referencesPermissionsService, REFERENCES_PERMISSIONS_BASE_QUERY_KEY } from '../services';
+import { RoleBasedGuard } from 'src/auth/guard'
+
+import SetValues from './setValues'
+import { IFormSchema, defaultValues } from './form'
+import { referencesPermissionsPermissions } from '../helpers/permissions'
+import { referencesPermissionGroupsService } from '../../permission-groups/services'
+import { referencesPermissionsService, REFERENCES_PERMISSIONS_BASE_QUERY_KEY } from '../services'
 
 export default function FormComponent() {
   const [{ permissionId }, setQueryStates] = useQueryStates(
@@ -86,9 +89,14 @@ export default function FormComponent() {
 
   return (
     <Dialog open fullWidth maxWidth="md">
-      <Form methods={form} onSubmit={form.handleSubmit((values) => mutateAsync(values))}>
-        <SetValues />
-        <DialogTitle>Add Permission</DialogTitle>
+      <RoleBasedGuard
+        allowedPermissions={[
+          permissionId ? referencesPermissionsPermissions.update : referencesPermissionsPermissions.create,
+        ]}
+      >
+        <Form methods={form} onSubmit={form.handleSubmit((values) => mutateAsync(values))}>
+          <SetValues />
+          <DialogTitle>Add Permission</DialogTitle>
         <Divider />
         <DialogContent
           sx={{
@@ -160,6 +168,7 @@ export default function FormComponent() {
           </Button>
         </DialogActions>
       </Form>
+      </RoleBasedGuard>
     </Dialog>
   );
 }

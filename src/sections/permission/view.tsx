@@ -1,19 +1,20 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback } from 'react'
 
-import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import CardHeader from '@mui/material/CardHeader';
-import Typography from '@mui/material/Typography';
-import ToggleButton from '@mui/material/ToggleButton';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import Box from '@mui/material/Box'
+import Card from '@mui/material/Card'
+import CardHeader from '@mui/material/CardHeader'
+import Typography from '@mui/material/Typography'
+import ToggleButton from '@mui/material/ToggleButton'
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
 
-import { paths } from 'src/routes/paths';
+import { paths } from 'src/routes/paths'
 
-import { DashboardContent } from 'src/layouts/dashboard';
+import { DashboardContent } from 'src/layouts/dashboard'
+import { usersPermissions } from 'src/pages/core/admin/users/helpers/permissions'
 
-import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
+import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs'
 
-import { RoleBasedGuard } from 'src/auth/guard';
+import { RoleBasedGuard } from 'src/auth/guard'
 
 // ----------------------------------------------------------------------
 
@@ -50,7 +51,7 @@ export function PermissionDeniedView() {
         </ToggleButtonGroup>
       </Box>
 
-      <RoleBasedGuard hasContent currentRole={currentRole} allowedRoles={['admin']} sx={{ py: 10 }}>
+      <RoleBasedGuard hasContent allowedPermissions={[usersPermissions.index]} sx={{ py: 10 }}>
         <Box sx={{ gap: 3, display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)' }}>
           {Array.from({ length: 8 }, (_, index) => (
             <Card key={index}>

@@ -1,24 +1,27 @@
-import type { IForm } from './form';
+import type { IForm } from './form'
 
-import { useForm } from 'react-hook-form';
-import { useMutation } from '@tanstack/react-query';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { parseAsInteger, useQueryStates, parseAsBoolean } from 'nuqs';
+import { useForm } from 'react-hook-form'
+import { useMutation } from '@tanstack/react-query'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { parseAsInteger, useQueryStates, parseAsBoolean } from 'nuqs'
 
-import Grid from '@mui/material/Grid';
-import Dialog from '@mui/material/Dialog';
-import Button from '@mui/material/Button';
-import Divider from '@mui/material/Divider';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
-import DialogActions from '@mui/material/DialogActions';
+import Grid from '@mui/material/Grid'
+import Dialog from '@mui/material/Dialog'
+import Button from '@mui/material/Button'
+import Divider from '@mui/material/Divider'
+import DialogTitle from '@mui/material/DialogTitle'
+import DialogContent from '@mui/material/DialogContent'
+import DialogActions from '@mui/material/DialogActions'
 
-import { toast } from 'src/components/snackbar';
-import { Form, Field } from 'src/components/hook-form';
+import { toast } from 'src/components/snackbar'
+import { Form, Field } from 'src/components/hook-form'
 
-import SetValues from './setValues';
-import { IFormSchema, defaultValues } from './form';
-import { REFERENCES_ROLES_BASE_QUERY_KEY, referencesRolesService } from '../services';
+import { RoleBasedGuard } from 'src/auth/guard'
+
+import SetValues from './setValues'
+import { IFormSchema, defaultValues } from './form'
+import { referencesRolesPermissions } from '../helpers/permissions'
+import { referencesRolesService, REFERENCES_ROLES_BASE_QUERY_KEY } from '../services'
 
 export default function FormComponent() {
   const [{ roleId }, setQueryStates] = useQueryStates(
@@ -55,9 +58,14 @@ export default function FormComponent() {
 
   return (
     <Dialog open fullWidth>
-      <Form methods={form} onSubmit={form.handleSubmit((values) => mutateAsync(values))}>
-        <SetValues />
-        <DialogTitle>Add Role</DialogTitle>
+      <RoleBasedGuard
+        allowedPermissions={[
+          roleId ? referencesRolesPermissions.update : referencesRolesPermissions.create,
+        ]}
+      >
+        <Form methods={form} onSubmit={form.handleSubmit((values) => mutateAsync(values))}>
+          <SetValues />
+          <DialogTitle>Add Role</DialogTitle>
         <Divider />
         <DialogContent
           sx={{
@@ -98,6 +106,7 @@ export default function FormComponent() {
           </Button>
         </DialogActions>
       </Form>
+      </RoleBasedGuard>
     </Dialog>
   );
 }

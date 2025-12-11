@@ -124,11 +124,11 @@ const dashboardLayout = () => (
   </DashboardLayout>
 );
 
-const accountLayout = () => (
-  <AccountLayout>
-    <SuspenseOutlet />
-  </AccountLayout>
-);
+// const accountLayout = () => (
+//   <AccountLayout>
+//     <SuspenseOutlet />
+//   </AccountLayout>
+// );
 
 export const dashboardRoutes: RouteObject[] = [
   {
