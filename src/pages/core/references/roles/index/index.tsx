@@ -1,15 +1,15 @@
-import type { SortingState } from '@tanstack/react-table';
-import type { IIndexResponse } from '../services/types';
+import type { SortingState } from '@tanstack/react-table'
+import type { IIndexResponse } from '../services/types'
 
-import { useMemo, useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMemo, useState } from 'react'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   parseAsString,
   useQueryStates,
   parseAsInteger,
   parseAsBoolean,
   parseAsStringEnum,
-} from 'nuqs';
+} from 'nuqs'
 import {
   flexRender,
   useReactTable,
@@ -17,45 +17,48 @@ import {
   getSortedRowModel,
   createColumnHelper,
   getPaginationRowModel,
-} from '@tanstack/react-table';
+} from '@tanstack/react-table'
 
-import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import Table from '@mui/material/Table';
-import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
-import Switch from '@mui/material/Switch';
-import Tooltip from '@mui/material/Tooltip';
-import TableRow from '@mui/material/TableRow';
-import Checkbox from '@mui/material/Checkbox';
-import Skeleton from '@mui/material/Skeleton';
-import TableHead from '@mui/material/TableHead';
-import TableCell from '@mui/material/TableCell';
-import TableBody from '@mui/material/TableBody';
-import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
-import TablePagination from '@mui/material/TablePagination';
-import FormControlLabel from '@mui/material/FormControlLabel';
+import Box from '@mui/material/Box'
+import Card from '@mui/material/Card'
+import Table from '@mui/material/Table'
+import Stack from '@mui/material/Stack'
+import Button from '@mui/material/Button'
+import Switch from '@mui/material/Switch'
+import Tooltip from '@mui/material/Tooltip'
+import TableRow from '@mui/material/TableRow'
+import Checkbox from '@mui/material/Checkbox'
+import Skeleton from '@mui/material/Skeleton'
+import TableHead from '@mui/material/TableHead'
+import TableCell from '@mui/material/TableCell'
+import TableBody from '@mui/material/TableBody'
+import Typography from '@mui/material/Typography'
+import IconButton from '@mui/material/IconButton'
+import TablePagination from '@mui/material/TablePagination'
+import FormControlLabel from '@mui/material/FormControlLabel'
 
-import { paths } from 'src/routes/paths';
+import { paths } from 'src/routes/paths'
 
-import { CONFIG } from 'src/global-config';
-import { DashboardContent } from 'src/layouts/dashboard';
+import { CONFIG } from 'src/global-config'
+import { DashboardContent } from 'src/layouts/dashboard'
 
-import { Label } from 'src/components/label';
-import { toast } from 'src/components/snackbar';
-import { Iconify } from 'src/components/iconify';
-import { TableNoData } from 'src/components/table';
-import { Scrollbar } from 'src/components/scrollbar';
-import { ConfirmDialog } from 'src/components/custom-dialog';
-import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
+import { Label } from 'src/components/label'
+import { toast } from 'src/components/snackbar'
+import { Iconify } from 'src/components/iconify'
+import { TableNoData } from 'src/components/table'
+import { Scrollbar } from 'src/components/scrollbar'
+import { ConfirmDialog } from 'src/components/custom-dialog'
+import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs'
 
-import FormComponent from '../form';
-import Filters from './components/filters';
-import Statuses from './components/statuses';
-import FilterResults from './components/filterResults';
-import { Statuses as StatusesEnum } from '../services/types';
-import { REFERENCES_ROLES_BASE_QUERY_KEY, referencesRolesService } from '../services';
+import { RenderElementByPermission } from 'src/auth/guard'
+
+import FormComponent from '../form'
+import Filters from './components/filters'
+import Statuses from './components/statuses'
+import FilterResults from './components/filterResults'
+import { Statuses as StatusesEnum } from '../services/types'
+import { referencesRolesPermissions } from '../helpers/permissions'
+import { referencesRolesService, REFERENCES_ROLES_BASE_QUERY_KEY } from '../services'
 
 // ----------------------------------------------------------------------
 
@@ -137,20 +140,24 @@ export default function Page() {
         header: 'Actions',
         cell: (info) => (
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Tooltip title="Quick edit" placement="top" arrow>
-              <IconButton
-                color="info"
-                onClick={() => {
-                  setQueryStates({ roleId: info.getValue(), formOpen: true });
-                }}
-              >
-                <Iconify icon="solar:pen-bold" />
-              </IconButton>
-            </Tooltip>
+            <RenderElementByPermission permissions={[referencesRolesPermissions.update]}>
+              <Tooltip title="Quick edit" placement="top" arrow>
+                <IconButton
+                  color="info"
+                  onClick={() => {
+                    setQueryStates({ roleId: info.getValue(), formOpen: true });
+                  }}
+                >
+                  <Iconify icon="solar:pen-bold" />
+                </IconButton>
+              </Tooltip>
+            </RenderElementByPermission>
 
-            <IconButton color="error" onClick={() => setIdForDeleteUser(info.getValue())}>
-              <Iconify icon="solar:trash-bin-trash-bold" />
-            </IconButton>
+            <RenderElementByPermission permissions={[referencesRolesPermissions.delete]}>
+              <IconButton color="error" onClick={() => setIdForDeleteUser(info.getValue())}>
+                <Iconify icon="solar:trash-bin-trash-bold" />
+              </IconButton>
+            </RenderElementByPermission>
           </Box>
         ),
       }),
@@ -313,13 +320,15 @@ export default function Page() {
           heading="List"
           links={[{ name: 'Dashboard', href: paths.dashboard.root }, { name: 'Roles' }]}
           action={
-            <Button
-              variant="contained"
-              startIcon={<Iconify icon="mingcute:add-line" />}
-              onClick={() => setQueryStates({ formOpen: true })}
-            >
-              Add Role
-            </Button>
+            <RenderElementByPermission permissions={[referencesRolesPermissions.create]}>
+              <Button
+                variant="contained"
+                startIcon={<Iconify icon="mingcute:add-line" />}
+                onClick={() => setQueryStates({ formOpen: true })}
+              >
+                Add Role
+              </Button>
+            </RenderElementByPermission>
           }
           sx={{ mb: { xs: 3, md: 5 } }}
         />

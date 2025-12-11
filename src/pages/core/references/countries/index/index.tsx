@@ -140,20 +140,24 @@ export default function Page() {
         header: 'Actions',
         cell: (info) => (
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Tooltip title="Quick edit" placement="top" arrow>
-              <IconButton
-                color="info"
-                onClick={() => {
-                  setQueryStates({ countryId: info.getValue(), formOpen: true });
-                }}
-              >
-                <Iconify icon="solar:pen-bold" />
-              </IconButton>
-            </Tooltip>
+            <RenderElementByPermission permissions={[referencesCountriesPermissions.update]}>
+              <Tooltip title="Quick edit" placement="top" arrow>
+                <IconButton
+                  color="info"
+                  onClick={() => {
+                    setQueryStates({ countryId: info.getValue(), formOpen: true });
+                  }}
+                >
+                  <Iconify icon="solar:pen-bold" />
+                </IconButton>
+              </Tooltip>
+            </RenderElementByPermission>
 
-            <IconButton color="error" onClick={() => setIdForDeleteUser(info.getValue())}>
-              <Iconify icon="solar:trash-bin-trash-bold" />
-            </IconButton>
+            <RenderElementByPermission permissions={[referencesCountriesPermissions.delete]}>
+              <IconButton color="error" onClick={() => setIdForDeleteUser(info.getValue())}>
+                <Iconify icon="solar:trash-bin-trash-bold" />
+              </IconButton>
+            </RenderElementByPermission>
           </Box>
         ),
       }),

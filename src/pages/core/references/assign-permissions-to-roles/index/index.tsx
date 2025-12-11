@@ -24,6 +24,9 @@ import { DashboardContent } from 'src/layouts/dashboard';
 import { Iconify } from 'src/components/iconify';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
+import { RenderElementByPermission } from 'src/auth/guard';
+
+import { assignPermissionsToRolesPermissions } from '../helpers/permissions';
 import {
   referencesAssignPermissionsToRolesService,
   REFERENCES_ASSIGN_PERMISSIONS_TO_ROLES_BASE_QUERY_KEY,
@@ -140,15 +143,17 @@ export default function Page() {
           ]}
           sx={{ mb: { xs: 3, md: 5 } }}
           action={
-            <Button
-              variant="contained"
-              // @ts-expect-error icon namesi uchun bervotti
-              startIcon={<Iconify icon="mynaui:save" />}
-              disabled={!hasChanges || isSavingAssignments}
-              onClick={() => saveAssignments()}
-            >
-              Save
-            </Button>
+            <RenderElementByPermission permissions={[assignPermissionsToRolesPermissions.update]}>
+              <Button
+                variant="contained"
+                // @ts-expect-error icon namesi uchun bervotti
+                startIcon={<Iconify icon="mynaui:save" />}
+                disabled={!hasChanges || isSavingAssignments}
+                onClick={() => saveAssignments()}
+              >
+                Save
+              </Button>
+            </RenderElementByPermission>
           }
         />
         <Card>
@@ -211,10 +216,14 @@ export default function Page() {
                         <TableCell>{permission.nameUz}</TableCell>
                         {rolesList.map((role) => (
                           <TableCell key={role.id}>
-                            <Checkbox
-                              checked={isChecked(role.id.toString(), permission.id)}
-                              onChange={() => togglePermission(role.id.toString(), permission.id)}
-                            />
+                            <RenderElementByPermission
+                              permissions={[assignPermissionsToRolesPermissions.update]}
+                            >
+                              <Checkbox
+                                checked={isChecked(role.id.toString(), permission.id)}
+                                onChange={() => togglePermission(role.id.toString(), permission.id)}
+                              />
+                            </RenderElementByPermission>
                           </TableCell>
                         ))}
                       </TableRow>
