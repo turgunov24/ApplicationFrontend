@@ -1,7 +1,7 @@
-import type { IAuthStore } from './types'
+import type { IAuthStore } from './types';
 
-import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 export const useAuthStore = create<IAuthStore>()(
   persist(

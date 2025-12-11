@@ -1,6 +1,9 @@
 import type { Theme, SxProps } from '@mui/material/styles';
+import type { IPermission } from '../permissions/types';
 
+import { useMemo } from 'react';
 import { m } from 'framer-motion';
+import { isEqual } from 'es-toolkit';
 
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
@@ -8,6 +11,8 @@ import Typography from '@mui/material/Typography';
 import { ForbiddenIllustration } from 'src/assets/illustrations';
 
 import { varBounce, MotionContainer } from 'src/components/animate';
+
+import { useAuthStore } from '../store';
 
 // ----------------------------------------------------------------------
 
@@ -19,20 +24,32 @@ import { varBounce, MotionContainer } from 'src/components/animate';
 
 export type RoleBasedGuardProp = {
   sx?: SxProps<Theme>;
-  currentRole: string;
   hasContent?: boolean;
-  allowedRoles: string | string[];
+  allowedPermissions?: Array<IPermission>;
   children: React.ReactNode;
 };
 
 export function RoleBasedGuard({
   sx,
   children,
-  hasContent,
-  currentRole,
-  allowedRoles,
+  hasContent = true,
+  allowedPermissions = [],
 }: RoleBasedGuardProp) {
-  if (currentRole && allowedRoles && !allowedRoles.includes(currentRole)) {
+  const { permissions } = useAuthStore();
+
+  const hasAccess = useMemo(() => {
+    const found = permissions.find((permission) =>
+      allowedPermissions.find((allowedPermission) =>
+        isEqual(allowedPermission, {
+          action: permission.action,
+          resource: permission.resource,
+        })
+      )
+    );
+    return !!found;
+  }, [permissions, allowedPermissions]);
+
+  if (!hasAccess) {
     return hasContent ? (
       <Container
         component={MotionContainer}

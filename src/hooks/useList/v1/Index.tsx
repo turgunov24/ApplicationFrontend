@@ -67,7 +67,7 @@ export default function useList<T extends keyof ListTypeMap>({
           return response as unknown as ListTypeMap[T];
         }
         if (listType === 'resources') {
-          const response = await axiosInstance.get<IResourcesListResponse>('/references/resources');
+          const response = await axiosInstance.get<IResourcesListResponse>('/api/references/resources');
           return response.data as unknown as ListTypeMap[T];
         }
         if (listType === 'permissionGroups') {
