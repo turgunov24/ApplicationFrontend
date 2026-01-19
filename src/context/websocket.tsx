@@ -112,8 +112,7 @@ export function WebSocketProvider({ children }: WebSocketProviderProps) {
 
     isConnectingRef.current = true;
 
-    const serverUrl = import.meta.env.VITE_SERVER_URL || 'http://localhost:3005';
-    const wsUrl = serverUrl.replace('http', 'ws');
+    const wsUrl = import.meta.env.VITE_WS_URL || 'ws://localhost:3006';
 
     console.log('Connecting to WebSocket:', wsUrl);
     const ws = new WebSocket(wsUrl);
