@@ -1,23 +1,24 @@
-import 'src/global.css'
+import 'src/global.css';
 
-import React, { useEffect } from 'react'
-import { NuqsAdapter } from 'nuqs/adapters/react-router/v7'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import React, { useEffect } from 'react';
+import { NuqsAdapter } from 'nuqs/adapters/react-router/v7';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-import { usePathname } from 'src/routes/hooks'
+import { usePathname } from 'src/routes/hooks';
 
-import { LocalizationProvider } from 'src/locales'
-import { themeConfig, ThemeProvider } from 'src/theme'
-import { I18nProvider } from 'src/locales/i18n-provider'
+import { LocalizationProvider } from 'src/locales';
+import { themeConfig, ThemeProvider } from 'src/theme';
+import { I18nProvider } from 'src/locales/i18n-provider';
+import { WebSocketProvider } from 'src/context/websocket';
 
-import { Snackbar } from 'src/components/snackbar'
-import { ProgressBar } from 'src/components/progress-bar'
-import { MotionLazy } from 'src/components/animate/motion-lazy'
-import { SettingsDrawer, defaultSettings, SettingsProvider } from 'src/components/settings'
+import { Snackbar } from 'src/components/snackbar';
+import { ProgressBar } from 'src/components/progress-bar';
+import { MotionLazy } from 'src/components/animate/motion-lazy';
+import { SettingsDrawer, defaultSettings, SettingsProvider } from 'src/components/settings';
 
-import { CheckoutProvider } from 'src/sections/checkout/context'
+import { CheckoutProvider } from 'src/sections/checkout/context';
 
-import { AuthProvider } from 'src/auth/context/jwt'
+import { AuthProvider } from 'src/auth/context/jwt';
 
 // import { AuthProvider as Auth0AuthProvider } from 'src/auth/context/auth0'
 // import { AuthProvider as AmplifyAuthProvider } from 'src/auth/context/amplify'
@@ -48,25 +49,27 @@ export default function App({ children }: AppProps) {
     <QueryClientProvider client={queryClient}>
       <NuqsAdapter>
         <I18nProvider>
-          <AuthProvider>
-            <SettingsProvider defaultSettings={defaultSettings}>
-              <LocalizationProvider>
-                <ThemeProvider
-                  modeStorageKey={themeConfig.modeStorageKey}
-                  defaultMode={themeConfig.defaultMode}
-                >
-                  <MotionLazy>
-                    <CheckoutProvider>
-                      <Snackbar />
-                      <ProgressBar />
-                      <SettingsDrawer defaultSettings={defaultSettings} />
-                      {children}
-                    </CheckoutProvider>
-                  </MotionLazy>
-                </ThemeProvider>
-              </LocalizationProvider>
-            </SettingsProvider>
-          </AuthProvider>
+          <WebSocketProvider>
+            <AuthProvider>
+              <SettingsProvider defaultSettings={defaultSettings}>
+                <LocalizationProvider>
+                  <ThemeProvider
+                    modeStorageKey={themeConfig.modeStorageKey}
+                    defaultMode={themeConfig.defaultMode}
+                  >
+                    <MotionLazy>
+                      <CheckoutProvider>
+                        <Snackbar />
+                        <ProgressBar />
+                        <SettingsDrawer defaultSettings={defaultSettings} />
+                        {children}
+                      </CheckoutProvider>
+                    </MotionLazy>
+                  </ThemeProvider>
+                </LocalizationProvider>
+              </SettingsProvider>
+            </AuthProvider>
+          </WebSocketProvider>
         </I18nProvider>
       </NuqsAdapter>
     </QueryClientProvider>

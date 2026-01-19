@@ -10,3 +10,7 @@ export interface ILoginResponse {
   user: any;
   permissions: Array<IPermission>;
 }
+
+export interface IGetUserPermissionsResponse {
+  permissions: Array<IPermission>;
+}

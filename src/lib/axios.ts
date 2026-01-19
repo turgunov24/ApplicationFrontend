@@ -110,6 +110,7 @@ export const endpoints = {
     me: '/auth/me',
     login: 'api/auth/login',
     register: '/auth/register',
+    getUserPermissions: '/api/auth/get-user-permissions',
   },
   mail: {
     list: '/api/mail/list',
