@@ -146,6 +146,15 @@ export const paths = {
       assignPermissionsToRoles: {
         root: `${ROOTS.DASHBOARD}/references/assign-permissions-to-roles`,
       },
+      currencies: {
+        root: `${ROOTS.DASHBOARD}/references/currencies`,
+      },
+      clientTypes: {
+        root: `${ROOTS.DASHBOARD}/references/client-types`,
+      },
+      tariffs: {
+        root: `${ROOTS.DASHBOARD}/references/tariffs`,
+      },
     },
     product: {
       root: `${ROOTS.DASHBOARD}/product`,

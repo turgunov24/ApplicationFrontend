@@ -1,26 +1,27 @@
-import type { RouteObject } from 'react-router'
+import type { RouteObject } from 'react-router';
 
-import { Outlet } from 'react-router'
-import { lazy, Suspense } from 'react'
+import { Outlet } from 'react-router';
+import { lazy, Suspense } from 'react';
 
-import { CONFIG } from 'src/global-config'
-import { DashboardLayout } from 'src/layouts/dashboard'
-import { usersPermissions } from 'src/pages/core/admin/users/helpers/permissions'
-import { referencesRolesPermissions } from 'src/pages/core/references/roles/helpers/permissions'
-import { referencesRegionsPermissions } from 'src/pages/core/references/regions/helpers/permissions'
-import { referencesDistrictsPermissions } from 'src/pages/core/references/districts/helpers/permissions'
-import { referencesCountriesPermissions } from 'src/pages/core/references/countries/helpers/permissions'
-import { referencesPermissionsPermissions } from 'src/pages/core/references/permissions/helpers/permissions'
-import { referencesPermissionGroupsPermissions } from 'src/pages/core/references/permission-groups/helpers/permissions'
-import { assignPermissionsToRolesPermissions } from 'src/pages/core/references/assign-permissions-to-roles/helpers/permissions'
+import { CONFIG } from 'src/global-config';
+import { DashboardLayout } from 'src/layouts/dashboard';
+import { usersPermissions } from 'src/pages/core/admin/users/helpers/permissions';
+import { referencesRolesPermissions } from 'src/pages/core/references/roles/helpers/permissions';
+import { referencesRegionsPermissions } from 'src/pages/core/references/regions/helpers/permissions';
+import { referencesTariffsPermissions } from 'src/pages/core/references/tariffs/helpers/permissions';
+import { referencesDistrictsPermissions } from 'src/pages/core/references/districts/helpers/permissions';
+import { referencesCountriesPermissions } from 'src/pages/core/references/countries/helpers/permissions';
+import { referencesCurrenciesPermissions } from 'src/pages/core/references/currencies/helpers/permissions';
+import { referencesPermissionsPermissions } from 'src/pages/core/references/permissions/helpers/permissions';
+import { referencesClientTypesPermissions } from 'src/pages/core/references/client-types/helpers/permissions';
+import { referencesPermissionGroupsPermissions } from 'src/pages/core/references/permission-groups/helpers/permissions';
+import { assignPermissionsToRolesPermissions } from 'src/pages/core/references/assign-permissions-to-roles/helpers/permissions';
 
-import { LoadingScreen } from 'src/components/loading-screen'
+import { LoadingScreen } from 'src/components/loading-screen';
 
-import { AccountLayout } from 'src/sections/account/account-layout'
+import { AuthGuard, RoleBasedGuard } from 'src/auth/guard';
 
-import { AuthGuard, RoleBasedGuard } from 'src/auth/guard'
-
-import { usePathname } from '../hooks'
+import { usePathname } from '../hooks';
 
 // ----------------------------------------------------------------------
 
@@ -106,6 +107,11 @@ const ReferencesRolesPage = lazy(() => import('src/pages/core/references/roles/i
 const ReferencesAssignPermissionsToRolesPage = lazy(
   () => import('src/pages/core/references/assign-permissions-to-roles/index')
 );
+const ReferencesCurrenciesPage = lazy(() => import('src/pages/core/references/currencies/index'));
+const ReferencesClientTypesPage = lazy(
+  () => import('src/pages/core/references/client-types/index')
+);
+const ReferencesTariffsPage = lazy(() => import('src/pages/core/references/tariffs/index'));
 
 // ----------------------------------------------------------------------
 
@@ -232,6 +238,30 @@ export const dashboardRoutes: RouteObject[] = [
             element: (
               <RoleBasedGuard allowedPermissions={[assignPermissionsToRolesPermissions.index]}>
                 <ReferencesAssignPermissionsToRolesPage />
+              </RoleBasedGuard>
+            ),
+          },
+          {
+            path: 'currencies',
+            element: (
+              <RoleBasedGuard allowedPermissions={[referencesCurrenciesPermissions.index]}>
+                <ReferencesCurrenciesPage />
+              </RoleBasedGuard>
+            ),
+          },
+          {
+            path: 'client-types',
+            element: (
+              <RoleBasedGuard allowedPermissions={[referencesClientTypesPermissions.index]}>
+                <ReferencesClientTypesPage />
+              </RoleBasedGuard>
+            ),
+          },
+          {
+            path: 'tariffs',
+            element: (
+              <RoleBasedGuard allowedPermissions={[referencesTariffsPermissions.index]}>
+                <ReferencesTariffsPage />
               </RoleBasedGuard>
             ),
           },

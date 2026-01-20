@@ -1,18 +1,21 @@
-import type { NavSectionProps } from 'src/components/nav-section'
+import type { NavSectionProps } from 'src/components/nav-section';
 
-import { paths } from 'src/routes/paths'
+import { paths } from 'src/routes/paths';
 
-import { CONFIG } from 'src/global-config'
-import { usersPermissions } from 'src/pages/core/admin/users/helpers/permissions'
-import { referencesRolesPermissions } from 'src/pages/core/references/roles/helpers/permissions'
-import { referencesRegionsPermissions } from 'src/pages/core/references/regions/helpers/permissions'
-import { referencesCountriesPermissions } from 'src/pages/core/references/countries/helpers/permissions'
-import { referencesDistrictsPermissions } from 'src/pages/core/references/districts/helpers/permissions'
-import { referencesPermissionsPermissions } from 'src/pages/core/references/permissions/helpers/permissions'
-import { referencesPermissionGroupsPermissions } from 'src/pages/core/references/permission-groups/helpers/permissions'
-import { assignPermissionsToRolesPermissions } from 'src/pages/core/references/assign-permissions-to-roles/helpers/permissions'
+import { CONFIG } from 'src/global-config';
+import { usersPermissions } from 'src/pages/core/admin/users/helpers/permissions';
+import { referencesRolesPermissions } from 'src/pages/core/references/roles/helpers/permissions';
+import { referencesTariffsPermissions } from 'src/pages/core/references/tariffs/helpers/permissions';
+import { referencesRegionsPermissions } from 'src/pages/core/references/regions/helpers/permissions';
+import { referencesCountriesPermissions } from 'src/pages/core/references/countries/helpers/permissions';
+import { referencesDistrictsPermissions } from 'src/pages/core/references/districts/helpers/permissions';
+import { referencesCurrenciesPermissions } from 'src/pages/core/references/currencies/helpers/permissions';
+import { referencesPermissionsPermissions } from 'src/pages/core/references/permissions/helpers/permissions';
+import { referencesClientTypesPermissions } from 'src/pages/core/references/client-types/helpers/permissions';
+import { referencesPermissionGroupsPermissions } from 'src/pages/core/references/permission-groups/helpers/permissions';
+import { assignPermissionsToRolesPermissions } from 'src/pages/core/references/assign-permissions-to-roles/helpers/permissions';
 
-import { SvgColor } from 'src/components/svg-color'
+import { SvgColor } from 'src/components/svg-color';
 
 // ----------------------------------------------------------------------
 
@@ -134,6 +137,21 @@ export const navData: NavSectionProps['data'] = [
             title: 'Assign Permissions to Roles',
             path: paths.dashboard.references.assignPermissionsToRoles.root,
             allowedPermissions: [assignPermissionsToRolesPermissions.index],
+          },
+          {
+            title: 'Currencies',
+            path: paths.dashboard.references.currencies.root,
+            allowedPermissions: [referencesCurrenciesPermissions.index],
+          },
+          {
+            title: 'Client Types',
+            path: paths.dashboard.references.clientTypes.root,
+            allowedPermissions: [referencesClientTypesPermissions.index],
+          },
+          {
+            title: 'Tariffs',
+            path: paths.dashboard.references.tariffs.root,
+            allowedPermissions: [referencesTariffsPermissions.index],
           },
         ],
       },
