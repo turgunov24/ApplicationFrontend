@@ -6,6 +6,7 @@ import { lazy, Suspense } from 'react';
 import { CONFIG } from 'src/global-config';
 import { DashboardLayout } from 'src/layouts/dashboard';
 import { usersPermissions } from 'src/pages/core/admin/users/helpers/permissions';
+import { principalsPermissions } from 'src/pages/core/admin/principals/helpers/permissions';
 import { referencesRolesPermissions } from 'src/pages/core/references/roles/helpers/permissions';
 import { referencesRegionsPermissions } from 'src/pages/core/references/regions/helpers/permissions';
 import { referencesTariffsPermissions } from 'src/pages/core/references/tariffs/helpers/permissions';
@@ -96,6 +97,9 @@ const IndexPage = lazy(() => import('src/pages/dashboard'));
 const UsersPage = lazy(() => import('src/pages/core/admin/users/index'));
 const UsersFormPage = lazy(() => import('src/pages/core/admin/users/form'));
 
+const PrincipalsPage = lazy(() => import('src/pages/core/admin/principals/index'));
+const PrincipalsFormPage = lazy(() => import('src/pages/core/admin/principals/form'));
+
 const ReferencesCountriesPage = lazy(() => import('src/pages/core/references/countries/index'));
 const ReferencesRegionsPage = lazy(() => import('src/pages/core/references/regions/index'));
 const ReferencesDistrictsPage = lazy(() => import('src/pages/core/references/districts/index'));
@@ -176,6 +180,35 @@ export const dashboardRoutes: RouteObject[] = [
             element: (
               <RoleBasedGuard allowedPermissions={[usersPermissions.update]}>
                 <UsersFormPage />
+              </RoleBasedGuard>
+            ),
+          },
+        ],
+      },
+      {
+        path: 'principals',
+        children: [
+          {
+            index: true,
+            element: (
+              <RoleBasedGuard allowedPermissions={[principalsPermissions.index]}>
+                <PrincipalsPage />
+              </RoleBasedGuard>
+            ),
+          },
+          {
+            path: 'create',
+            element: (
+              <RoleBasedGuard allowedPermissions={[principalsPermissions.create]}>
+                <PrincipalsFormPage />
+              </RoleBasedGuard>
+            ),
+          },
+          {
+            path: 'edit/:id',
+            element: (
+              <RoleBasedGuard allowedPermissions={[principalsPermissions.update]}>
+                <PrincipalsFormPage />
               </RoleBasedGuard>
             ),
           },

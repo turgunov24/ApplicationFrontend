@@ -4,6 +4,7 @@ import { paths } from 'src/routes/paths';
 
 import { CONFIG } from 'src/global-config';
 import { usersPermissions } from 'src/pages/core/admin/users/helpers/permissions';
+import { principalsPermissions } from 'src/pages/core/admin/principals/helpers/permissions';
 import { referencesRolesPermissions } from 'src/pages/core/references/roles/helpers/permissions';
 import { referencesTariffsPermissions } from 'src/pages/core/references/tariffs/helpers/permissions';
 import { referencesRegionsPermissions } from 'src/pages/core/references/regions/helpers/permissions';
@@ -97,6 +98,12 @@ export const navData: NavSectionProps['data'] = [
         path: paths.dashboard.users.root,
         icon: ICONS.user,
         allowedPermissions: [usersPermissions.index],
+      },
+      {
+        title: 'Principals',
+        path: paths.dashboard.principals.root,
+        icon: ICONS.user,
+        allowedPermissions: [principalsPermissions.index],
       },
       {
         title: 'References',
