@@ -1,3 +1,3 @@
 export const referencesAssignPermissionsToRolesUrls = {
-  assignments: '/api/references/roles-permissions',
+  assignments: '/api/core/references/roles-permissions',
 };

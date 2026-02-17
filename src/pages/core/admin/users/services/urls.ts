@@ -1,5 +1,5 @@
 export const usersUrls = {
-  index: '/api/users',
-  countsByStatus: '/api/users/counts-by-status',
-  uploadAvatar: '/api/users/upload-avatar',
+  index: '/api/core/users',
+  countsByStatus: '/api/core/users/counts-by-status',
+  uploadAvatar: '/api/core/users/upload-avatar',
 };

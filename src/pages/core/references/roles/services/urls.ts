@@ -1,5 +1,5 @@
 export const referencesRolesUrls = {
-  index: '/api/references/roles',
-  countsByStatus: '/api/references/roles/counts-by-status',
-  list: '/api/references/roles/list',
+  index: '/api/core/references/roles',
+  countsByStatus: '/api/core/references/roles/counts-by-status',
+  list: '/api/core/references/roles/list',
 };

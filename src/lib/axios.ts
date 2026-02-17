@@ -108,9 +108,9 @@ export const endpoints = {
   calendar: '/api/calendar',
   auth: {
     me: '/auth/me',
-    login: 'api/auth/login',
+    login: 'api/core/auth/login',
     register: '/auth/register',
-    getUserPermissions: '/api/auth/get-user-permissions',
+    getUserPermissions: '/api/core/auth/get-user-permissions',
   },
   mail: {
     list: '/api/mail/list',

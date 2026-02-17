@@ -1,5 +1,5 @@
 export const referencesPermissionsUrls = {
-  index: '/api/references/permissions',
-  countsByStatus: '/api/references/permissions/counts-by-status',
-  list: '/api/references/permissions/list',
+  index: '/api/core/references/permissions',
+  countsByStatus: '/api/core/references/permissions/counts-by-status',
+  list: '/api/core/references/permissions/list',
 };

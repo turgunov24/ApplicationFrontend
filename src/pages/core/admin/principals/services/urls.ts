@@ -1,5 +1,5 @@
 export const principalsUrls = {
-  index: '/api/principals',
-  countsByStatus: '/api/principals/counts-by-status',
-  uploadAvatar: '/api/principals/upload-avatar',
+  index: '/api/core/principals',
+  countsByStatus: '/api/core/principals/counts-by-status',
+  uploadAvatar: '/api/core/principals/upload-avatar',
 };

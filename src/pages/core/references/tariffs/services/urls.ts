@@ -1,5 +1,5 @@
 export const referencesTariffsUrls = {
-  index: '/api/references/tariffs',
-  countsByStatus: '/api/references/tariffs/counts-by-status',
-  list: '/api/references/tariffs/list',
+  index: '/api/core/references/tariffs',
+  countsByStatus: '/api/core/references/tariffs/counts-by-status',
+  list: '/api/core/references/tariffs/list',
 };

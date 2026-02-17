@@ -1,22 +1,22 @@
-import type { QueryOptions } from '@tanstack/react-query'
-import type { IListResponse as IReferencesRegionsListResponse } from 'src/pages/core/references/regions/services/types'
-import type { IListResponse as IReferencesCountriesListResponse } from 'src/pages/core/references/countries/services/types'
-import type { IListResponse as IReferencesDistrictsListResponse } from 'src/pages/core/references/districts/services/types'
-import type { IListResponse as IReferencesPermissionGroupsListResponse } from 'src/pages/core/references/permission-groups/services/types'
+import type { QueryOptions } from '@tanstack/react-query';
+import type { IListResponse as IReferencesRegionsListResponse } from 'src/pages/core/references/regions/services/types';
+import type { IListResponse as IReferencesCountriesListResponse } from 'src/pages/core/references/countries/services/types';
+import type { IListResponse as IReferencesDistrictsListResponse } from 'src/pages/core/references/districts/services/types';
+import type { IListResponse as IReferencesPermissionGroupsListResponse } from 'src/pages/core/references/permission-groups/services/types';
 import type {
   IResourcesListResponse,
   IListResponse as IReferencesRolesListResponse,
-} from 'src/pages/core/references/roles/services/types'
+} from 'src/pages/core/references/roles/services/types';
 
-import { useMemo, useEffect } from 'react'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMemo, useEffect } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
-import axiosInstance from 'src/lib/axios'
-import { referencesRolesService } from 'src/pages/core/references/roles/services'
-import { referencesRegionsService } from 'src/pages/core/references/regions/services'
-import { referencesCountriesService } from 'src/pages/core/references/countries/services'
-import { referencesDistrictsService } from 'src/pages/core/references/districts/services'
-import { referencesPermissionGroupsService } from 'src/pages/core/references/permission-groups/services'
+import axiosInstance from 'src/lib/axios';
+import { referencesRolesService } from 'src/pages/core/references/roles/services';
+import { referencesRegionsService } from 'src/pages/core/references/regions/services';
+import { referencesCountriesService } from 'src/pages/core/references/countries/services';
+import { referencesDistrictsService } from 'src/pages/core/references/districts/services';
+import { referencesPermissionGroupsService } from 'src/pages/core/references/permission-groups/services';
 
 type ListTypeMap = {
   countries: IReferencesCountriesListResponse;
@@ -67,7 +67,9 @@ export default function useList<T extends keyof ListTypeMap>({
           return response as unknown as ListTypeMap[T];
         }
         if (listType === 'resources') {
-          const response = await axiosInstance.get<IResourcesListResponse>('/api/references/resources');
+          const response = await axiosInstance.get<IResourcesListResponse>(
+            '/api/core/references/resources'
+          );
           return response.data as unknown as ListTypeMap[T];
         }
         if (listType === 'permissionGroups') {

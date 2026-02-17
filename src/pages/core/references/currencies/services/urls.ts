@@ -1,5 +1,5 @@
 export const referencesCurrenciesUrls = {
-  index: '/api/references/currencies',
-  countsByStatus: '/api/references/currencies/counts-by-status',
-  list: '/api/references/currencies/list',
+  index: '/api/core/references/currencies',
+  countsByStatus: '/api/core/references/currencies/counts-by-status',
+  list: '/api/core/references/currencies/list',
 };
