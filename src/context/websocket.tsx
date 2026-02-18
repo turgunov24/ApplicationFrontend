@@ -11,7 +11,6 @@ import {
 } from 'react';
 
 import { useAuthStore } from 'src/auth/store';
-import { authService } from 'src/auth/service';
 
 // ----------------------------------------------------------------------
 
@@ -38,7 +37,7 @@ type WebSocketProviderProps = {
 
 export function WebSocketProvider({ children }: WebSocketProviderProps) {
   const [isConnected, setIsConnected] = useState(false);
-  const { accessToken, setPermissions } = useAuthStore();
+  const { accessToken } = useAuthStore();
 
   // Use refs to persist across re-renders and avoid stale closures
   const socketRef = useRef<WebSocket | null>(null);
@@ -52,42 +51,27 @@ export function WebSocketProvider({ children }: WebSocketProviderProps) {
   }, [accessToken]);
 
   // Handle incoming WebSocket messages
-  const handleMessage = useCallback(
-    async (event: MessageEvent) => {
-      try {
-        const data = JSON.parse(event.data) as WebSocketMessage;
-        console.log('WebSocket message received:', data);
+  const handleMessage = useCallback(async (event: MessageEvent) => {
+    try {
+      const data = JSON.parse(event.data) as WebSocketMessage;
+      console.log('WebSocket message received:', data);
 
-        switch (data.type) {
-          case 'AUTH_SUCCESS':
-            console.log('WebSocket authentication successful');
-            break;
+      switch (data.type) {
+        case 'AUTH_SUCCESS':
+          console.log('WebSocket authentication successful');
+          break;
 
-          case 'AUTH_ERROR':
-            console.error('WebSocket authentication failed:', data.payload);
-            break;
+        case 'AUTH_ERROR':
+          console.error('WebSocket authentication failed:', data.payload);
+          break;
 
-          case 'PERMISSION_UPDATE':
-            console.log('Permission update notification received');
-            // Fetch updated permissions from server
-            try {
-              const response = await authService.getUserPermissions();
-              setPermissions(response.permissions);
-              console.log('Permissions updated:', response.permissions);
-            } catch (error) {
-              console.error('Failed to fetch updated permissions:', error);
-            }
-            break;
-
-          default:
-            console.log('Unknown message type:', data.type);
-        }
-      } catch {
-        console.log('Non-JSON WebSocket message:', event.data);
+        default:
+          console.log('Unknown message type:', data.type);
       }
-    },
-    [setPermissions]
-  );
+    } catch {
+      console.log('Non-JSON WebSocket message:', event.data);
+    }
+  }, []);
 
   const connect = useCallback(() => {
     // Mark that we should be connected

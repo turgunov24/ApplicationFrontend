@@ -35,7 +35,7 @@ export function JwtSignInView() {
   // const router = useRouter();
 
   const showPassword = useBoolean();
-  const { setUser, setAccessToken, setPermissions } = useAuthStore();
+  const { setUser, setAccessToken } = useAuthStore();
 
   const defaultValues: SignInSchemaType = {
     username: '',
@@ -59,9 +59,8 @@ export function JwtSignInView() {
         password: data.password,
       });
 
-      setUser(response.user);
+      setUser(response.principal);
       setAccessToken(response.accessToken);
-      setPermissions(response.permissions);
 
       // router.refresh();
     } catch (error) {

@@ -7,8 +7,7 @@ export interface ILoginPayload {
 
 export interface ILoginResponse {
   accessToken: string;
-  user: any;
-  permissions: Array<IPermission>;
+  principal: any;
 }
 
 export interface IGetUserPermissionsResponse {

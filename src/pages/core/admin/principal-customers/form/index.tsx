@@ -63,7 +63,6 @@ export default function FormPage() {
     }
   });
 
-  const { data: principalsList = [] } = useList({ listType: 'principals' });
   const { data: clientTypesList = [] } = useList({ listType: 'clientTypes' });
 
   return (
@@ -88,17 +87,6 @@ export default function FormPage() {
             }}
           >
             <Field.Text name="name" label="Name" />
-
-            <Field.AutocompleteMatchId
-              fullWidth
-              name="principalId"
-              label="Principal"
-              placeholder="Choose a principal"
-              options={principalsList.map((principal) => ({
-                id: principal.id,
-                label: principal.fullName,
-              }))}
-            />
 
             <Field.AutocompleteMatchId
               fullWidth

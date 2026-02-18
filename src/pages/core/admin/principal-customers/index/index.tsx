@@ -17,17 +17,14 @@ import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Link from '@mui/material/Link';
 import Table from '@mui/material/Table';
-import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Switch from '@mui/material/Switch';
 import Tooltip from '@mui/material/Tooltip';
 import TableRow from '@mui/material/TableRow';
-import Checkbox from '@mui/material/Checkbox';
 import Skeleton from '@mui/material/Skeleton';
 import TableHead from '@mui/material/TableHead';
 import TableCell from '@mui/material/TableCell';
 import TableBody from '@mui/material/TableBody';
-import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import TablePagination from '@mui/material/TablePagination';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -49,13 +46,10 @@ import { Scrollbar } from 'src/components/scrollbar';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
-import { RenderElementByPermission } from 'src/auth/guard';
-
 import Filters from './components/filters';
 import Statuses from './components/statuses';
 import FilterResults from './components/filterResults';
 import { Statuses as StatusesEnum } from '../services/types';
-import { principalCustomersPermissions } from '../helpers/permissions';
 import { principalCustomersService, PRINCIPAL_CUSTOMERS_BASE_QUERY_KEY } from '../services';
 
 // ----------------------------------------------------------------------
@@ -66,7 +60,6 @@ const metadata = { title: `Principal Customers - ${CONFIG.appName}` };
 const fallBackData: any[] = [];
 
 export default function Page() {
-  const [rowSelection, setRowSelection] = useState({});
   const [dense, setDense] = useState(false);
   const [sorting, setSorting] = useState<SortingState>([]);
   const router = useRouter();
@@ -128,26 +121,20 @@ export default function Page() {
         header: 'Actions',
         cell: (info) => (
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <RenderElementByPermission permissions={[principalCustomersPermissions.update]}>
-              <Tooltip title="Quick edit" placement="top" arrow>
-                <IconButton
-                  color="info"
-                  onClick={() => {
-                    router.push(
-                      paths.dashboard.principalCustomers.edit(info.getValue().toString())
-                    );
-                  }}
-                >
-                  <Iconify icon="solar:pen-bold" />
-                </IconButton>
-              </Tooltip>
-            </RenderElementByPermission>
-
-            <RenderElementByPermission permissions={[principalCustomersPermissions.delete]}>
-              <IconButton color="error" onClick={() => setIdForDelete(info.getValue())}>
-                <Iconify icon="solar:trash-bin-trash-bold" />
+            <Tooltip title="Quick edit" placement="top" arrow>
+              <IconButton
+                color="info"
+                onClick={() => {
+                  router.push(paths.dashboard.principalCustomers.edit(info.getValue().toString()));
+                }}
+              >
+                <Iconify icon="solar:pen-bold" />
               </IconButton>
-            </RenderElementByPermission>
+            </Tooltip>
+
+            <IconButton color="error" onClick={() => setIdForDelete(info.getValue())}>
+              <Iconify icon="solar:trash-bin-trash-bold" />
+            </IconButton>
           </Box>
         ),
       }),
@@ -257,15 +244,12 @@ export default function Page() {
     data: data.result,
     columns,
     manualPagination: true,
-    enableRowSelection: true,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     pageCount: data.pagination.totalPages,
-    onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     getPaginationRowModel: getPaginationRowModel(),
     state: {
-      rowSelection,
       sorting,
       pagination: {
         pageSize: pagination.dataPerPage,
@@ -282,7 +266,6 @@ export default function Page() {
     },
   });
 
-  const hasSelectedRows = useMemo(() => Object.keys(rowSelection).length > 0, [rowSelection]);
   const hasData = useMemo(() => data.result.length > 0, [data.result]);
 
   const renderConfirmDialog = () => (
@@ -317,16 +300,14 @@ export default function Page() {
             { name: 'Principal Customers' },
           ]}
           action={
-            <RenderElementByPermission permissions={[principalCustomersPermissions.create]}>
-              <Button
-                component={RouterLink}
-                href={paths.dashboard.principalCustomers.create}
-                variant="contained"
-                startIcon={<Iconify icon="mingcute:add-line" />}
-              >
-                Add principal customer
-              </Button>
-            </RenderElementByPermission>
+            <Button
+              component={RouterLink}
+              href={paths.dashboard.principalCustomers.create}
+              variant="contained"
+              startIcon={<Iconify icon="mingcute:add-line" />}
+            >
+              Add principal customer
+            </Button>
           }
           sx={{ mb: { xs: 3, md: 5 } }}
         />
@@ -341,114 +322,49 @@ export default function Page() {
                 size={dense ? 'small' : 'medium'}
                 sx={{
                   minWidth: 960,
-                  ...(hasSelectedRows && {
-                    thead: {
-                      th: {
-                        bgcolor: 'primary.lighter',
-                      },
-                    },
-                  }),
                 }}
               >
-                {hasSelectedRows ? (
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>
-                        <Checkbox
-                          indeterminate={
-                            !!table.getSelectedRowModel().rows.length &&
-                            table.getSelectedRowModel().rows.length < data.result.length
-                          }
-                          checked={
-                            !!data.result.length &&
-                            table.getSelectedRowModel().rows.length === data.result.length
-                          }
-                          onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                            table.getToggleAllRowsSelectedHandler()(event)
-                          }
-                          slotProps={{
-                            input: {
-                              id: 'deselect-all-checkbox',
-                              'aria-label': 'Deselect all checkbox',
-                            },
-                          }}
-                        />
-                      </TableCell>
-                      <TableCell colSpan={5}>
-                        <Stack direction="row" alignItems="center" justifyContent="space-between">
-                          <Typography
-                            variant="subtitle2"
-                            sx={{
-                              flexGrow: 1,
-                              color: 'primary.main',
-                            }}
-                          >
-                            {table.getIsAllRowsSelected()
-                              ? 'All'
-                              : `${table.getSelectedRowModel().rows.length} selected`}
-                          </Typography>
-                          <Tooltip title="Delete">
-                            <IconButton color="primary" onClick={() => {}}>
-                              <Iconify icon="solar:trash-bin-trash-bold" />
-                            </IconButton>
-                          </Tooltip>
-                        </Stack>
-                      </TableCell>
-                    </TableRow>
-                  </TableHead>
-                ) : (
-                  <TableHead>
-                    {table.getHeaderGroups().map((headerGroup) => (
-                      <TableRow key={headerGroup.id}>
-                        <TableCell sx={{ width: 50 }}>
-                          <Checkbox
-                            onChange={table.getToggleAllRowsSelectedHandler()}
-                            checked={table.getIsAllRowsSelected()}
-                            indeterminate={table.getIsSomeRowsSelected()}
-                          />
+                <TableHead>
+                  {table.getHeaderGroups().map((headerGroup) => (
+                    <TableRow key={headerGroup.id}>
+                      {headerGroup.headers.map((header) => (
+                        <TableCell key={header.id} colSpan={header.colSpan}>
+                          {header.column.getCanSort() ? (
+                            <Box
+                              onClick={header.column.getToggleSortingHandler()}
+                              sx={{
+                                color: header.column.getIsSorted()
+                                  ? 'text.primary'
+                                  : 'text.secondary',
+                                cursor: 'pointer',
+                                userSelect: 'none',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 0.5,
+                                '&:hover': {
+                                  opacity: 0.8,
+                                },
+                              }}
+                            >
+                              {flexRender(header.column.columnDef.header, header.getContext())}
+                              {{
+                                asc: <Iconify icon="eva:arrow-upward-fill" />,
+                                desc: <Iconify icon="eva:arrow-downward-fill" />,
+                              }[header.column.getIsSorted() as string] ?? ''}
+                            </Box>
+                          ) : (
+                            flexRender(header.column.columnDef.header, header.getContext())
+                          )}
                         </TableCell>
-                        {headerGroup.headers.map((header) => (
-                          <TableCell key={header.id} colSpan={header.colSpan}>
-                            {header.column.getCanSort() ? (
-                              <Box
-                                onClick={header.column.getToggleSortingHandler()}
-                                sx={{
-                                  color: header.column.getIsSorted()
-                                    ? 'text.primary'
-                                    : 'text.secondary',
-                                  cursor: 'pointer',
-                                  userSelect: 'none',
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  gap: 0.5,
-                                  '&:hover': {
-                                    opacity: 0.8,
-                                  },
-                                }}
-                              >
-                                {flexRender(header.column.columnDef.header, header.getContext())}
-                                {{
-                                  asc: <Iconify icon="eva:arrow-upward-fill" />,
-                                  desc: <Iconify icon="eva:arrow-downward-fill" />,
-                                }[header.column.getIsSorted() as string] ?? ''}
-                              </Box>
-                            ) : (
-                              flexRender(header.column.columnDef.header, header.getContext())
-                            )}
-                          </TableCell>
-                        ))}
-                      </TableRow>
-                    ))}
-                  </TableHead>
-                )}
+                      ))}
+                    </TableRow>
+                  ))}
+                </TableHead>
 
                 <TableBody>
                   {isLoading ? (
                     Array.from({ length: 5 }).map((_, index) => (
                       <TableRow key={index}>
-                        <TableCell>
-                          <Skeleton variant="rounded" animation="wave" height={20} />
-                        </TableCell>
                         {columns.map((column, columnIndex) => (
                           <TableCell key={columnIndex}>
                             <Skeleton variant="rounded" animation="wave" height={20} />
@@ -457,30 +373,13 @@ export default function Page() {
                       </TableRow>
                     ))
                   ) : hasData ? (
-                    table.getRowModel().rows.map((row, index) => (
-                      <TableRow
-                        key={row.id}
-                        sx={{
-                          '&:hover #actions': {
-                            opacity: 1,
-                          },
-                        }}
-                      >
-                        <>
-                          <TableCell sx={{ width: 50 }}>
-                            <Checkbox
-                              checked={row.getIsSelected()}
-                              onChange={row.getToggleSelectedHandler()}
-                              disabled={!row.getCanSelect()}
-                              indeterminate={row.getIsSomeSelected()}
-                            />
+                    table.getRowModel().rows.map((row) => (
+                      <TableRow key={row.id}>
+                        {row.getVisibleCells().map((cell) => (
+                          <TableCell key={cell.id}>
+                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
                           </TableCell>
-                          {row.getVisibleCells().map((cell) => (
-                            <TableCell key={cell.id}>
-                              {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                            </TableCell>
-                          ))}
-                        </>
+                        ))}
                       </TableRow>
                     ))
                   ) : (

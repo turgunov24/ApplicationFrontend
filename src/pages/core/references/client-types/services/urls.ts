@@ -1,5 +1,5 @@
 export const referencesClientTypesUrls = {
-  index: '/api/core/references/client-types',
-  countsByStatus: '/api/core/references/client-types/counts-by-status',
-  list: '/api/core/references/client-types/list',
+  index: '/api/principals/client-types',
+  countsByStatus: '/api/principals/client-types/counts-by-status',
+  list: '/api/principals/client-types/list',
 };

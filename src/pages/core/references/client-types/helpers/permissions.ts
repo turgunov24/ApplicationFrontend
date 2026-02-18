@@ -23,8 +23,4 @@ export const referencesClientTypesPermissions = {
     resource: referencesClientTypesUrls.countsByStatus,
     action: PermissionActions.READ,
   },
-  list: {
-    resource: referencesClientTypesUrls.list,
-    action: PermissionActions.READ,
-  },
 };

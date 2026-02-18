@@ -2,14 +2,8 @@ import type { SortingState } from '@tanstack/react-table';
 import type { IIndexResponse } from '../services/types';
 
 import { useMemo, useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import {
-  parseAsString,
-  useQueryStates,
-  parseAsInteger,
-  parseAsBoolean,
-  parseAsStringEnum,
-} from 'nuqs';
+import { useQuery } from '@tanstack/react-query';
+import { parseAsString, useQueryStates, parseAsInteger, parseAsStringEnum } from 'nuqs';
 import {
   flexRender,
   useReactTable,
@@ -22,18 +16,12 @@ import {
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Table from '@mui/material/Table';
-import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
 import Switch from '@mui/material/Switch';
-import Tooltip from '@mui/material/Tooltip';
 import TableRow from '@mui/material/TableRow';
-import Checkbox from '@mui/material/Checkbox';
 import Skeleton from '@mui/material/Skeleton';
 import TableHead from '@mui/material/TableHead';
 import TableCell from '@mui/material/TableCell';
 import TableBody from '@mui/material/TableBody';
-import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
 import TablePagination from '@mui/material/TablePagination';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
@@ -43,21 +31,15 @@ import { CONFIG } from 'src/global-config';
 import { DashboardContent } from 'src/layouts/dashboard';
 
 import { Label } from 'src/components/label';
-import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
 import { TableNoData } from 'src/components/table';
 import { Scrollbar } from 'src/components/scrollbar';
-import { ConfirmDialog } from 'src/components/custom-dialog';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
-import { RenderElementByPermission } from 'src/auth/guard';
-
-import FormComponent from '../form';
 import Filters from './components/filters';
 import Statuses from './components/statuses';
 import FilterResults from './components/filterResults';
 import { Statuses as StatusesEnum } from '../services/types';
-import { referencesClientTypesPermissions } from '../helpers/permissions';
 import { referencesClientTypesService, REFERENCES_CLIENT_TYPES_BASE_QUERY_KEY } from '../services';
 
 // ----------------------------------------------------------------------
@@ -68,14 +50,10 @@ const metadata = { title: `Client Types - ${CONFIG.appName}` };
 const fallBackData: any[] = [];
 
 export default function Page() {
-  const queryClient = useQueryClient();
-
-  const [idForDeleteUser, setIdForDeleteUser] = useState<IClientType['id'] | null>(null);
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [rowSelection, setRowSelection] = useState({});
   const [dense, setDense] = useState(false);
 
-  const [{ status, search, formOpen, ...pagination }, setQueryStates] = useQueryStates(
+  const [{ status, search, ...pagination }, setQueryStates] = useQueryStates(
     {
       status: parseAsStringEnum<StatusesEnum>(Object.values(StatusesEnum)).withDefault(
         StatusesEnum.all
@@ -84,9 +62,6 @@ export default function Page() {
 
       currentPage: parseAsInteger.withDefault(0),
       dataPerPage: parseAsInteger.withDefault(5),
-
-      formOpen: parseAsBoolean,
-      clientTypeId: parseAsInteger,
     },
     {
       history: 'push',
@@ -136,33 +111,8 @@ export default function Page() {
           </Label>
         ),
       }),
-      columnHelper.accessor('id', {
-        header: 'Actions',
-        cell: (info) => (
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <RenderElementByPermission permissions={[referencesClientTypesPermissions.update]}>
-              <Tooltip title="Quick edit" placement="top" arrow>
-                <IconButton
-                  color="info"
-                  onClick={() => {
-                    setQueryStates({ clientTypeId: info.getValue(), formOpen: true });
-                  }}
-                >
-                  <Iconify icon="solar:pen-bold" />
-                </IconButton>
-              </Tooltip>
-            </RenderElementByPermission>
-
-            <RenderElementByPermission permissions={[referencesClientTypesPermissions.delete]}>
-              <IconButton color="error" onClick={() => setIdForDeleteUser(info.getValue())}>
-                <Iconify icon="solar:trash-bin-trash-bold" />
-              </IconButton>
-            </RenderElementByPermission>
-          </Box>
-        ),
-      }),
     ],
-    [columnHelper, setQueryStates]
+    [columnHelper]
   );
 
   const {
@@ -237,40 +187,16 @@ export default function Page() {
     },
   });
 
-  const { mutate: deleteUser } = useMutation({
-    mutationKey: [REFERENCES_CLIENT_TYPES_BASE_QUERY_KEY, 'delete'],
-    mutationFn: async (id: IClientType['id']) => {
-      try {
-        const response = await referencesClientTypesService.form.delete(id);
-        return response;
-      } catch (error: unknown) {
-        console.log('error', error);
-        return false;
-      }
-    },
-    onSuccess: () => {
-      toast.success('Delete success!');
-      setIdForDeleteUser(null);
-      queryClient.invalidateQueries({ queryKey: [REFERENCES_CLIENT_TYPES_BASE_QUERY_KEY] });
-    },
-    onError: () => {
-      toast.error('Delete failed!');
-    },
-  });
-
   const table = useReactTable({
     data: data.result,
     columns,
     manualPagination: true,
-    enableRowSelection: true,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     pageCount: data.pagination.totalPages,
-    onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     getPaginationRowModel: getPaginationRowModel(),
     state: {
-      rowSelection,
       sorting,
       pagination: {
         pageSize: pagination.dataPerPage,
@@ -287,48 +213,15 @@ export default function Page() {
     },
   });
 
-  const hasSelectedRows = useMemo(() => Object.keys(rowSelection).length > 0, [rowSelection]);
   const hasData = useMemo(() => data.result.length > 0, [data.result]);
-
-  const renderConfirmDialog = () => (
-    <ConfirmDialog
-      open={!!idForDeleteUser}
-      onClose={() => setIdForDeleteUser(null)}
-      title="Delete"
-      content="Are you sure want to delete?"
-      action={
-        <Button
-          variant="contained"
-          color="error"
-          onClick={() => {
-            deleteUser(idForDeleteUser!);
-            setIdForDeleteUser(null);
-          }}
-        >
-          Delete
-        </Button>
-      }
-    />
-  );
 
   return (
     <>
       <title>{metadata.title}</title>
       <DashboardContent>
         <CustomBreadcrumbs
-          heading="List"
+          heading="Client Types"
           links={[{ name: 'Dashboard', href: paths.dashboard.root }, { name: 'Client Types' }]}
-          action={
-            <RenderElementByPermission permissions={[referencesClientTypesPermissions.create]}>
-              <Button
-                variant="contained"
-                startIcon={<Iconify icon="mingcute:add-line" />}
-                onClick={() => setQueryStates({ formOpen: true })}
-              >
-                Add Client Type
-              </Button>
-            </RenderElementByPermission>
-          }
           sx={{ mb: { xs: 3, md: 5 } }}
         />
         <Card>
@@ -342,119 +235,49 @@ export default function Page() {
                 size={dense ? 'small' : 'medium'}
                 sx={{
                   minWidth: 960,
-                  ...(hasSelectedRows && {
-                    thead: {
-                      th: {
-                        bgcolor: 'primary.lighter',
-                      },
-                    },
-                  }),
                 }}
               >
-                {hasSelectedRows ? (
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>
-                        <Checkbox
-                          indeterminate={
-                            !!table.getSelectedRowModel().rows.length &&
-                            table.getSelectedRowModel().rows.length < data.result.length
-                          }
-                          checked={
-                            !!data.result.length &&
-                            table.getSelectedRowModel().rows.length === data.result.length
-                          }
-                          onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                            table.getToggleAllRowsSelectedHandler()(event)
-                          }
-                          slotProps={{
-                            input: {
-                              id: 'deselect-all-checkbox',
-                              'aria-label': 'Deselect all checkbox',
-                            },
-                          }}
-                        />
-                      </TableCell>
-                      <TableCell colSpan={5}>
-                        <Stack direction="row" alignItems="center" justifyContent="space-between">
-                          <Typography
-                            variant="subtitle2"
-                            sx={{
-                              flexGrow: 1,
-                              color: 'primary.main',
-                            }}
-                          >
-                            {table.getIsAllRowsSelected()
-                              ? 'All'
-                              : `${table.getSelectedRowModel().rows.length} selected`}
-                          </Typography>
-                          <Tooltip title="Delete">
-                            <IconButton
-                              color="primary"
-                              onClick={() => {
-                                // setIdForDeleteUser(table.getSelectedRowModel().rows[0].original.id);
+                <TableHead>
+                  {table.getHeaderGroups().map((headerGroup) => (
+                    <TableRow key={headerGroup.id}>
+                      {headerGroup.headers.map((header) => (
+                        <TableCell key={header.id} colSpan={header.colSpan}>
+                          {header.column.getCanSort() ? (
+                            <Box
+                              onClick={header.column.getToggleSortingHandler()}
+                              sx={{
+                                color: header.column.getIsSorted()
+                                  ? 'text.primary'
+                                  : 'text.secondary',
+                                cursor: 'pointer',
+                                userSelect: 'none',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 0.5,
+                                '&:hover': {
+                                  opacity: 0.8,
+                                },
                               }}
                             >
-                              <Iconify icon="solar:trash-bin-trash-bold" />
-                            </IconButton>
-                          </Tooltip>
-                        </Stack>
-                      </TableCell>
-                    </TableRow>
-                  </TableHead>
-                ) : (
-                  <TableHead>
-                    {table.getHeaderGroups().map((headerGroup) => (
-                      <TableRow key={headerGroup.id}>
-                        <TableCell sx={{ width: 50 }}>
-                          <Checkbox
-                            onChange={table.getToggleAllRowsSelectedHandler()}
-                            checked={table.getIsAllRowsSelected()}
-                            indeterminate={table.getIsSomeRowsSelected()}
-                          />
+                              {flexRender(header.column.columnDef.header, header.getContext())}
+                              {{
+                                asc: <Iconify icon="eva:arrow-upward-fill" />,
+                                desc: <Iconify icon="eva:arrow-downward-fill" />,
+                              }[header.column.getIsSorted() as string] ?? ''}
+                            </Box>
+                          ) : (
+                            flexRender(header.column.columnDef.header, header.getContext())
+                          )}
                         </TableCell>
-                        {headerGroup.headers.map((header) => (
-                          <TableCell key={header.id} colSpan={header.colSpan}>
-                            {header.column.getCanSort() ? (
-                              <Box
-                                onClick={header.column.getToggleSortingHandler()}
-                                sx={{
-                                  color: header.column.getIsSorted()
-                                    ? 'text.primary'
-                                    : 'text.secondary',
-                                  cursor: 'pointer',
-                                  userSelect: 'none',
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  gap: 0.5,
-                                  '&:hover': {
-                                    opacity: 0.8,
-                                  },
-                                }}
-                              >
-                                {flexRender(header.column.columnDef.header, header.getContext())}
-                                {{
-                                  asc: <Iconify icon="eva:arrow-upward-fill" />,
-                                  desc: <Iconify icon="eva:arrow-downward-fill" />,
-                                }[header.column.getIsSorted() as string] ?? ''}
-                              </Box>
-                            ) : (
-                              flexRender(header.column.columnDef.header, header.getContext())
-                            )}
-                          </TableCell>
-                        ))}
-                      </TableRow>
-                    ))}
-                  </TableHead>
-                )}
+                      ))}
+                    </TableRow>
+                  ))}
+                </TableHead>
 
                 <TableBody>
                   {isLoading ? (
                     Array.from({ length: 5 }).map((_, index) => (
                       <TableRow key={index}>
-                        <TableCell>
-                          <Skeleton variant="rounded" animation="wave" height={20} />
-                        </TableCell>
                         {columns.map((column, columnIndex) => (
                           <TableCell key={columnIndex}>
                             <Skeleton variant="rounded" animation="wave" height={20} />
@@ -463,30 +286,13 @@ export default function Page() {
                       </TableRow>
                     ))
                   ) : hasData ? (
-                    table.getRowModel().rows.map((row, index) => (
-                      <TableRow
-                        key={row.id}
-                        sx={{
-                          '&:hover #actions': {
-                            opacity: 1,
-                          },
-                        }}
-                      >
-                        <>
-                          <TableCell sx={{ width: 50 }}>
-                            <Checkbox
-                              checked={row.getIsSelected()}
-                              onChange={row.getToggleSelectedHandler()}
-                              disabled={!row.getCanSelect()}
-                              indeterminate={row.getIsSomeSelected()}
-                            />
+                    table.getRowModel().rows.map((row) => (
+                      <TableRow key={row.id}>
+                        {row.getVisibleCells().map((cell) => (
+                          <TableCell key={cell.id}>
+                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
                           </TableCell>
-                          {row.getVisibleCells().map((cell) => (
-                            <TableCell key={cell.id}>
-                              {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                            </TableCell>
-                          ))}
-                        </>
+                        ))}
                       </TableRow>
                     ))
                   ) : (
@@ -529,8 +335,6 @@ export default function Page() {
           </Box>
         </Card>
       </DashboardContent>
-      {renderConfirmDialog()}
-      {formOpen && <FormComponent />}
     </>
   );
 }

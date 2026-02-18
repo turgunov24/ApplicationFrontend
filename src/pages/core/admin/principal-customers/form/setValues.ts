@@ -22,7 +22,6 @@ const SetValues = () => {
 
       if (response.status === HttpStatusCode.Ok) {
         form.setValue('name', response.data.name);
-        form.setValue('principalId', response.data.principalId);
         form.setValue('clientTypeId', response.data.clientTypeId);
       }
       return response;
