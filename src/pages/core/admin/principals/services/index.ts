@@ -1,6 +1,7 @@
 import type { IForm } from '../form/form';
 import type {
   IGetResponse,
+  IListResponse,
   IIndexResponse,
   ICreateResponse,
   IGetCountsByStatusResponse,
@@ -60,6 +61,10 @@ export const principalsService = {
     getAvatar: async (url: string) => {
       const response = await axiosInstance.get(url, { responseType: 'blob' });
       return response;
+    },
+    list: async () => {
+      const response = await axiosInstance.get<IListResponse>(principalsUrls.list);
+      return response.data;
     },
   },
 };

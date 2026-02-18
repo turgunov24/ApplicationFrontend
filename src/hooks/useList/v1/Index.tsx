@@ -1,7 +1,9 @@
 import type { QueryOptions } from '@tanstack/react-query';
+import type { IListResponse as IPrincipalsListResponse } from 'src/pages/core/admin/principals/services/types';
 import type { IListResponse as IReferencesRegionsListResponse } from 'src/pages/core/references/regions/services/types';
 import type { IListResponse as IReferencesCountriesListResponse } from 'src/pages/core/references/countries/services/types';
 import type { IListResponse as IReferencesDistrictsListResponse } from 'src/pages/core/references/districts/services/types';
+import type { IListResponse as IReferencesClientTypesListResponse } from 'src/pages/core/references/client-types/services/types';
 import type { IListResponse as IReferencesPermissionGroupsListResponse } from 'src/pages/core/references/permission-groups/services/types';
 import type {
   IResourcesListResponse,
@@ -12,10 +14,12 @@ import { useMemo, useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import axiosInstance from 'src/lib/axios';
+import { principalsService } from 'src/pages/core/admin/principals/services';
 import { referencesRolesService } from 'src/pages/core/references/roles/services';
 import { referencesRegionsService } from 'src/pages/core/references/regions/services';
 import { referencesCountriesService } from 'src/pages/core/references/countries/services';
 import { referencesDistrictsService } from 'src/pages/core/references/districts/services';
+import { referencesClientTypesService } from 'src/pages/core/references/client-types/services';
 import { referencesPermissionGroupsService } from 'src/pages/core/references/permission-groups/services';
 
 type ListTypeMap = {
@@ -25,6 +29,8 @@ type ListTypeMap = {
   roles: IReferencesRolesListResponse;
   resources: IResourcesListResponse;
   permissionGroups: IReferencesPermissionGroupsListResponse;
+  principals: IPrincipalsListResponse;
+  clientTypes: IReferencesClientTypesListResponse;
 };
 
 interface IUseListProps<T> extends QueryOptions {
@@ -74,6 +80,14 @@ export default function useList<T extends keyof ListTypeMap>({
         }
         if (listType === 'permissionGroups') {
           const response = await referencesPermissionGroupsService.helpers.list();
+          return response as unknown as ListTypeMap[T];
+        }
+        if (listType === 'principals') {
+          const response = await principalsService.helpers.list();
+          return response as unknown as ListTypeMap[T];
+        }
+        if (listType === 'clientTypes') {
+          const response = await referencesClientTypesService.helpers.list();
           return response as unknown as ListTypeMap[T];
         }
         return [];

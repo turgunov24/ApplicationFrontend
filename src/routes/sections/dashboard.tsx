@@ -13,6 +13,7 @@ import { referencesTariffsPermissions } from 'src/pages/core/references/tariffs/
 import { referencesDistrictsPermissions } from 'src/pages/core/references/districts/helpers/permissions';
 import { referencesCountriesPermissions } from 'src/pages/core/references/countries/helpers/permissions';
 import { referencesCurrenciesPermissions } from 'src/pages/core/references/currencies/helpers/permissions';
+import { principalCustomersPermissions } from 'src/pages/core/admin/principal-customers/helpers/permissions';
 import { referencesPermissionsPermissions } from 'src/pages/core/references/permissions/helpers/permissions';
 import { referencesClientTypesPermissions } from 'src/pages/core/references/client-types/helpers/permissions';
 import { referencesPermissionGroupsPermissions } from 'src/pages/core/references/permission-groups/helpers/permissions';
@@ -99,6 +100,11 @@ const UsersFormPage = lazy(() => import('src/pages/core/admin/users/form'));
 
 const PrincipalsPage = lazy(() => import('src/pages/core/admin/principals/index'));
 const PrincipalsFormPage = lazy(() => import('src/pages/core/admin/principals/form'));
+
+const PrincipalCustomersPage = lazy(() => import('src/pages/core/admin/principal-customers/index'));
+const PrincipalCustomersFormPage = lazy(
+  () => import('src/pages/core/admin/principal-customers/form')
+);
 
 const ReferencesCountriesPage = lazy(() => import('src/pages/core/references/countries/index'));
 const ReferencesRegionsPage = lazy(() => import('src/pages/core/references/regions/index'));
@@ -209,6 +215,35 @@ export const dashboardRoutes: RouteObject[] = [
             element: (
               <RoleBasedGuard allowedPermissions={[principalsPermissions.update]}>
                 <PrincipalsFormPage />
+              </RoleBasedGuard>
+            ),
+          },
+        ],
+      },
+      {
+        path: 'principal-customers',
+        children: [
+          {
+            index: true,
+            element: (
+              <RoleBasedGuard allowedPermissions={[principalCustomersPermissions.index]}>
+                <PrincipalCustomersPage />
+              </RoleBasedGuard>
+            ),
+          },
+          {
+            path: 'create',
+            element: (
+              <RoleBasedGuard allowedPermissions={[principalCustomersPermissions.create]}>
+                <PrincipalCustomersFormPage />
+              </RoleBasedGuard>
+            ),
+          },
+          {
+            path: 'edit/:id',
+            element: (
+              <RoleBasedGuard allowedPermissions={[principalCustomersPermissions.update]}>
+                <PrincipalCustomersFormPage />
               </RoleBasedGuard>
             ),
           },

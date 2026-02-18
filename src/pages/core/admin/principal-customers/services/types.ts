@@ -11,14 +11,9 @@ export type IGetCountsByStatusResponse = Record<Statuses, number>;
 export interface IIndexResponse {
   result: Array<{
     id: number;
-    fullName: string;
-    username: string;
-    email: string;
-    phone: string;
-    countryId: number;
-    regionId: number;
-    districtId: number;
-    avatarPath: string;
+    name: string;
+    principalId: number;
+    clientTypeId: number;
     createdAt: Date;
     status: 'active' | 'pending' | 'banned' | 'rejected';
   }>;
@@ -34,26 +29,23 @@ export interface IIndexResponse {
 
 export interface IGetResponse {
   id: number;
-  fullName: string;
-  username: string;
-  email: string;
-  phone: string;
-  countryId: number;
-  regionId: number;
-  districtId: number;
-  avatarPath: string;
+  name: string;
+  principalId: number;
+  clientTypeId: number;
   createdAt: Date;
 }
 
 export interface ICreateResponse {
   id: number;
-  fullName: string;
-  username: string;
-  email: string;
-  phone: string;
+  name: string;
+  principalId: number;
+  clientTypeId: number;
   createdAt: Date;
   updatedAt: Date;
   status: string;
 }
 
-export type IListResponse = Array<{ id: number; fullName: string }>;
+export type IListResponse = Array<{
+  id: number;
+  name: string;
+}>;

@@ -128,6 +128,11 @@ export const paths = {
       create: `${ROOTS.DASHBOARD}/principals/create`,
       edit: (id: string) => `${ROOTS.DASHBOARD}/principals/edit/${id}`,
     },
+    principalCustomers: {
+      root: `${ROOTS.DASHBOARD}/principal-customers`,
+      create: `${ROOTS.DASHBOARD}/principal-customers/create`,
+      edit: (id: string) => `${ROOTS.DASHBOARD}/principal-customers/edit/${id}`,
+    },
     references: {
       root: `${ROOTS.DASHBOARD}/references`,
       countries: {

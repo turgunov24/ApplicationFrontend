@@ -11,6 +11,7 @@ import { referencesRegionsPermissions } from 'src/pages/core/references/regions/
 import { referencesCountriesPermissions } from 'src/pages/core/references/countries/helpers/permissions';
 import { referencesDistrictsPermissions } from 'src/pages/core/references/districts/helpers/permissions';
 import { referencesCurrenciesPermissions } from 'src/pages/core/references/currencies/helpers/permissions';
+import { principalCustomersPermissions } from 'src/pages/core/admin/principal-customers/helpers/permissions';
 import { referencesPermissionsPermissions } from 'src/pages/core/references/permissions/helpers/permissions';
 import { referencesClientTypesPermissions } from 'src/pages/core/references/client-types/helpers/permissions';
 import { referencesPermissionGroupsPermissions } from 'src/pages/core/references/permission-groups/helpers/permissions';
@@ -104,6 +105,12 @@ export const navData: NavSectionProps['data'] = [
         path: paths.dashboard.principals.root,
         icon: ICONS.user,
         allowedPermissions: [principalsPermissions.index],
+      },
+      {
+        title: 'Principal Customers',
+        path: paths.dashboard.principalCustomers.root,
+        icon: ICONS.user,
+        allowedPermissions: [principalCustomersPermissions.index],
       },
       {
         title: 'References',
