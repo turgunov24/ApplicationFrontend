@@ -165,6 +165,15 @@ export const paths = {
       tariffs: {
         root: `${ROOTS.DASHBOARD}/references/tariffs`,
       },
+      counterparties: {
+        root: `${ROOTS.DASHBOARD}/references/counterparties`,
+      },
+      legalForms: {
+        root: `${ROOTS.DASHBOARD}/references/legal-forms`,
+      },
+      services: {
+        root: `${ROOTS.DASHBOARD}/references/services`,
+      },
     },
     product: {
       root: `${ROOTS.DASHBOARD}/product`,

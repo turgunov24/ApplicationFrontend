@@ -10,12 +10,15 @@ import { principalsPermissions } from 'src/pages/core/admin/principals/helpers/p
 import { referencesRolesPermissions } from 'src/pages/core/references/roles/helpers/permissions';
 import { referencesRegionsPermissions } from 'src/pages/core/references/regions/helpers/permissions';
 import { referencesTariffsPermissions } from 'src/pages/core/references/tariffs/helpers/permissions';
+import { referencesServicesPermissions } from 'src/pages/core/references/services/helpers/permissions';
 import { referencesDistrictsPermissions } from 'src/pages/core/references/districts/helpers/permissions';
 import { referencesCountriesPermissions } from 'src/pages/core/references/countries/helpers/permissions';
 import { referencesCurrenciesPermissions } from 'src/pages/core/references/currencies/helpers/permissions';
+import { referencesLegalFormsPermissions } from 'src/pages/core/references/legal-forms/helpers/permissions';
 import { principalCustomersPermissions } from 'src/pages/core/admin/principal-customers/helpers/permissions';
 import { referencesPermissionsPermissions } from 'src/pages/core/references/permissions/helpers/permissions';
 import { referencesClientTypesPermissions } from 'src/pages/core/references/client-types/helpers/permissions';
+import { referencesCounterpartiesPermissions } from 'src/pages/core/references/counterparties/helpers/permissions';
 import { referencesPermissionGroupsPermissions } from 'src/pages/core/references/permission-groups/helpers/permissions';
 import { assignPermissionsToRolesPermissions } from 'src/pages/core/references/assign-permissions-to-roles/helpers/permissions';
 
@@ -122,6 +125,15 @@ const ReferencesClientTypesPage = lazy(
   () => import('src/pages/core/references/client-types/index')
 );
 const ReferencesTariffsPage = lazy(() => import('src/pages/core/references/tariffs/index'));
+const ReferencesCounterpartiesPage = lazy(
+  () => import('src/pages/core/references/counterparties/index')
+);
+const ReferencesLegalFormsPage = lazy(
+  () => import('src/pages/core/references/legal-forms/index')
+);
+const ReferencesServicesPage = lazy(
+  () => import('src/pages/core/references/services/index')
+);
 
 // ----------------------------------------------------------------------
 
@@ -330,6 +342,30 @@ export const dashboardRoutes: RouteObject[] = [
             element: (
               <RoleBasedGuard allowedPermissions={[referencesTariffsPermissions.index]}>
                 <ReferencesTariffsPage />
+              </RoleBasedGuard>
+            ),
+          },
+          {
+            path: 'counterparties',
+            element: (
+              <RoleBasedGuard allowedPermissions={[referencesCounterpartiesPermissions.index]}>
+                <ReferencesCounterpartiesPage />
+              </RoleBasedGuard>
+            ),
+          },
+          {
+            path: 'legal-forms',
+            element: (
+              <RoleBasedGuard allowedPermissions={[referencesLegalFormsPermissions.index]}>
+                <ReferencesLegalFormsPage />
+              </RoleBasedGuard>
+            ),
+          },
+          {
+            path: 'services',
+            element: (
+              <RoleBasedGuard allowedPermissions={[referencesServicesPermissions.index]}>
+                <ReferencesServicesPage />
               </RoleBasedGuard>
             ),
           },

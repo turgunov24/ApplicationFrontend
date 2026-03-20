@@ -8,12 +8,15 @@ import { principalsPermissions } from 'src/pages/core/admin/principals/helpers/p
 import { referencesRolesPermissions } from 'src/pages/core/references/roles/helpers/permissions';
 import { referencesTariffsPermissions } from 'src/pages/core/references/tariffs/helpers/permissions';
 import { referencesRegionsPermissions } from 'src/pages/core/references/regions/helpers/permissions';
+import { referencesServicesPermissions } from 'src/pages/core/references/services/helpers/permissions';
 import { referencesCountriesPermissions } from 'src/pages/core/references/countries/helpers/permissions';
 import { referencesDistrictsPermissions } from 'src/pages/core/references/districts/helpers/permissions';
 import { referencesCurrenciesPermissions } from 'src/pages/core/references/currencies/helpers/permissions';
+import { referencesLegalFormsPermissions } from 'src/pages/core/references/legal-forms/helpers/permissions';
 import { principalCustomersPermissions } from 'src/pages/core/admin/principal-customers/helpers/permissions';
 import { referencesPermissionsPermissions } from 'src/pages/core/references/permissions/helpers/permissions';
 import { referencesClientTypesPermissions } from 'src/pages/core/references/client-types/helpers/permissions';
+import { referencesCounterpartiesPermissions } from 'src/pages/core/references/counterparties/helpers/permissions';
 import { referencesPermissionGroupsPermissions } from 'src/pages/core/references/permission-groups/helpers/permissions';
 import { assignPermissionsToRolesPermissions } from 'src/pages/core/references/assign-permissions-to-roles/helpers/permissions';
 
@@ -166,6 +169,21 @@ export const navData: NavSectionProps['data'] = [
             title: 'Tariffs',
             path: paths.dashboard.references.tariffs.root,
             allowedPermissions: [referencesTariffsPermissions.index],
+          },
+          {
+            title: 'Counterparties',
+            path: paths.dashboard.references.counterparties.root,
+            allowedPermissions: [referencesCounterpartiesPermissions.index],
+          },
+          {
+            title: 'Legal Forms',
+            path: paths.dashboard.references.legalForms.root,
+            allowedPermissions: [referencesLegalFormsPermissions.index],
+          },
+          {
+            title: 'Services',
+            path: paths.dashboard.references.services.root,
+            allowedPermissions: [referencesServicesPermissions.index],
           },
         ],
       },
