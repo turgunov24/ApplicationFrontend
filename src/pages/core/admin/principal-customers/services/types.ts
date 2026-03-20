@@ -17,6 +17,8 @@ export interface IIndexResponse {
     counterpartyId: number;
     legalFormId: number;
     inn: number;
+    espPath: string | null;
+    espExpireDate: string | null;
     createdAt: Date;
     status: 'active' | 'pending' | 'banned' | 'rejected';
   }>;
@@ -38,6 +40,8 @@ export interface IGetResponse {
   counterpartyId: number;
   legalFormId: number;
   inn: number;
+  espPath: string | null;
+  espExpireDate: string | null;
   createdAt: Date;
 }
 

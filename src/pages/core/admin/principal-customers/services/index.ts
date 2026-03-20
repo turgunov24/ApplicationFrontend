@@ -62,5 +62,20 @@ export const principalCustomersService = {
       const response = await axiosInstance.get<IListResponse>(principalCustomersUrls.list);
       return response.data;
     },
+    uploadEspKey: async (id: IIndexResponse['result'][number]['id'], file: File) => {
+      const formData = new FormData();
+      formData.append('file', file);
+      const response = await axiosInstance.put(principalCustomersUrls.uploadEspKey, formData, {
+        params: { id },
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return response;
+    },
+    getEspKey: async (url: string) => {
+      const response = await axiosInstance.get(url, { responseType: 'blob' });
+      return response;
+    },
   },
 };

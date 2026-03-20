@@ -27,6 +27,19 @@ const SetValues = () => {
         form.setValue('counterpartyId', response.data.counterpartyId);
         form.setValue('legalFormId', response.data.legalFormId);
         form.setValue('inn', response.data.inn);
+        if (response.data.espExpireDate) {
+          form.setValue('espExpireDate', new Date(response.data.espExpireDate));
+        }
+        if (response.data.espPath) {
+          const url = new URL(response.data.espPath, import.meta.env.VITE_SERVER_URL);
+          const espKeyResponse = await principalCustomersService.helpers.getEspKey(url.toString());
+          if (espKeyResponse.status === HttpStatusCode.Ok) {
+            const blob = espKeyResponse.data;
+            const filename = response.data.espPath.split('/').pop() || 'esp-key';
+            const file = new File([blob], filename, { type: blob.type || 'application/octet-stream' });
+            form.setValue('espFile', file);
+          }
+        }
       }
       return response;
     },

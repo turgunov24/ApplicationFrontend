@@ -1,5 +1,7 @@
 import type { IForm } from './form';
 
+import { HttpStatusCode } from 'axios';
+import { omit } from 'es-toolkit/compat';
 import { useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -40,18 +42,39 @@ export default function FormPage() {
     mutationKey: [PRINCIPAL_CUSTOMERS_BASE_QUERY_KEY, 'save'],
     mutationFn: async (formData: IForm) => {
       if (id) {
-        const response = await principalCustomersService.form.update(Number(id), formData);
-        return response;
+        const response = await principalCustomersService.form.update(
+          Number(id),
+          omit(formData, ['espFile'])
+        );
+
+        if (response.status === HttpStatusCode.Ok) {
+          const espKeyResponse = await principalCustomersService.helpers.uploadEspKey(
+            Number(id),
+            formData.espFile as File
+          );
+          if (espKeyResponse.status === HttpStatusCode.Created) {
+            return response;
+          }
+        }
+      } else {
+        const response = await principalCustomersService.form.create(
+          omit(formData, ['espFile'])
+        );
+        if (response.status === HttpStatusCode.Created) {
+          const espKeyResponse = await principalCustomersService.helpers.uploadEspKey(
+            response.data.id,
+            formData.espFile as File
+          );
+          if (espKeyResponse.status === HttpStatusCode.Created) {
+            return response;
+          }
+        }
       }
-      const response = await principalCustomersService.form.create(formData);
-      return response;
+      return false;
     },
     onSuccess: () => {
       toast.success(id ? 'Update success!' : 'Create success!');
       router.push(paths.dashboard.principalCustomers.root);
-    },
-    onError: () => {
-      toast.error(id ? 'Update failed!' : 'Create failed!');
     },
   });
 
@@ -141,6 +164,10 @@ export default function FormPage() {
               type="number"
               slotProps={{ inputLabel: { shrink: true } }}
             />
+
+            <Field.DatePicker name="espExpireDate" label="ESP Expire Date" />
+
+            <Field.Upload name="espFile" />
           </Box>
 
           <Stack sx={{ mt: 3, alignItems: 'flex-end' }}>
