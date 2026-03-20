@@ -65,6 +65,8 @@ export default function FormPage() {
 
   const { data: principalsList = [] } = useList({ listType: 'principals' });
   const { data: clientTypesList = [] } = useList({ listType: 'clientTypes' });
+  const { data: counterpartiesList = [] } = useList({ listType: 'counterparties' });
+  const { data: legalFormsList = [] } = useList({ listType: 'legalForms' });
 
   return (
     <DashboardContent>
@@ -109,6 +111,35 @@ export default function FormPage() {
                 id: clientType.id,
                 label: clientType.nameUz,
               }))}
+            />
+
+            <Field.AutocompleteMatchId
+              fullWidth
+              name="counterpartyId"
+              label="Counterparty"
+              placeholder="Choose a counterparty"
+              options={counterpartiesList.map((counterparty) => ({
+                id: counterparty.id,
+                label: counterparty.name,
+              }))}
+            />
+
+            <Field.AutocompleteMatchId
+              fullWidth
+              name="legalFormId"
+              label="Legal Form"
+              placeholder="Choose a legal form"
+              options={legalFormsList.map((legalForm) => ({
+                id: legalForm.id,
+                label: legalForm.name,
+              }))}
+            />
+
+            <Field.Text
+              name="inn"
+              label="INN"
+              type="number"
+              slotProps={{ inputLabel: { shrink: true } }}
             />
           </Box>
 

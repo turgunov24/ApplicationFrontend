@@ -14,6 +14,9 @@ export interface IIndexResponse {
     name: string;
     principalId: number;
     clientTypeId: number;
+    counterpartyId: number;
+    legalFormId: number;
+    inn: number;
     createdAt: Date;
     status: 'active' | 'pending' | 'banned' | 'rejected';
   }>;
@@ -32,6 +35,9 @@ export interface IGetResponse {
   name: string;
   principalId: number;
   clientTypeId: number;
+  counterpartyId: number;
+  legalFormId: number;
+  inn: number;
   createdAt: Date;
 }
 
@@ -40,6 +46,9 @@ export interface ICreateResponse {
   name: string;
   principalId: number;
   clientTypeId: number;
+  counterpartyId: number;
+  legalFormId: number;
+  inn: number;
   createdAt: Date;
   updatedAt: Date;
   status: string;

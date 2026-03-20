@@ -24,6 +24,9 @@ const SetValues = () => {
         form.setValue('name', response.data.name);
         form.setValue('principalId', response.data.principalId);
         form.setValue('clientTypeId', response.data.clientTypeId);
+        form.setValue('counterpartyId', response.data.counterpartyId);
+        form.setValue('legalFormId', response.data.legalFormId);
+        form.setValue('inn', response.data.inn);
       }
       return response;
     },
