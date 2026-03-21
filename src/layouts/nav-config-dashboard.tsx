@@ -19,6 +19,8 @@ import { referencesClientTypesPermissions } from 'src/pages/core/references/clie
 import { referencesCounterpartiesPermissions } from 'src/pages/core/references/counterparties/helpers/permissions';
 import { referencesPermissionGroupsPermissions } from 'src/pages/core/references/permission-groups/helpers/permissions';
 import { assignPermissionsToRolesPermissions } from 'src/pages/core/references/assign-permissions-to-roles/helpers/permissions';
+import { referencesPrincipalCustomerCredentialsPermissions } from 'src/pages/core/references/principal-customer-credentials/helpers/permissions';
+import { attachTariffToPrincipalCustomersPermissions } from 'src/pages/core/references/attach-tariff-to-principal-customers/helpers/permissions';
 
 import { SvgColor } from 'src/components/svg-color';
 
@@ -184,6 +186,16 @@ export const navData: NavSectionProps['data'] = [
             title: 'Services',
             path: paths.dashboard.references.services.root,
             allowedPermissions: [referencesServicesPermissions.index],
+          },
+          {
+            title: 'Principal Customer Credentials',
+            path: paths.dashboard.references.principalCustomerCredentials.root,
+            allowedPermissions: [referencesPrincipalCustomerCredentialsPermissions.index],
+          },
+          {
+            title: 'Attach Tariff to Principal Customers',
+            path: paths.dashboard.references.attachTariffToPrincipalCustomers.root,
+            allowedPermissions: [attachTariffToPrincipalCustomersPermissions.index],
           },
         ],
       },

@@ -174,6 +174,12 @@ export const paths = {
       services: {
         root: `${ROOTS.DASHBOARD}/references/services`,
       },
+      principalCustomerCredentials: {
+        root: `${ROOTS.DASHBOARD}/references/principal-customer-credentials`,
+      },
+      attachTariffToPrincipalCustomers: {
+        root: `${ROOTS.DASHBOARD}/references/attach-tariff-to-principal-customers`,
+      },
     },
     product: {
       root: `${ROOTS.DASHBOARD}/product`,

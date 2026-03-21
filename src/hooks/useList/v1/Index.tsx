@@ -1,9 +1,11 @@
 import type { QueryOptions } from '@tanstack/react-query';
 import type { IListResponse as IPrincipalsListResponse } from 'src/pages/core/admin/principals/services/types';
 import type { IListResponse as IReferencesRegionsListResponse } from 'src/pages/core/references/regions/services/types';
+import type { IListResponse as IReferencesServicesListResponse } from 'src/pages/core/references/services/services/types';
 import type { IListResponse as IReferencesCountriesListResponse } from 'src/pages/core/references/countries/services/types';
 import type { IListResponse as IReferencesDistrictsListResponse } from 'src/pages/core/references/districts/services/types';
 import type { IListResponse as IReferencesLegalFormsListResponse } from 'src/pages/core/references/legal-forms/services/types';
+import type { IListResponse as IPrincipalCustomersListResponse } from 'src/pages/core/admin/principal-customers/services/types';
 import type { IListResponse as IReferencesClientTypesListResponse } from 'src/pages/core/references/client-types/services/types';
 import type { IListResponse as IReferencesCounterpartiesListResponse } from 'src/pages/core/references/counterparties/services/types';
 import type { IListResponse as IReferencesPermissionGroupsListResponse } from 'src/pages/core/references/permission-groups/services/types';
@@ -19,9 +21,11 @@ import axiosInstance from 'src/lib/axios';
 import { principalsService } from 'src/pages/core/admin/principals/services';
 import { referencesRolesService } from 'src/pages/core/references/roles/services';
 import { referencesRegionsService } from 'src/pages/core/references/regions/services';
+import { referencesServicesService } from 'src/pages/core/references/services/services';
 import { referencesCountriesService } from 'src/pages/core/references/countries/services';
 import { referencesDistrictsService } from 'src/pages/core/references/districts/services';
 import { referencesLegalFormsService } from 'src/pages/core/references/legal-forms/services';
+import { principalCustomersService } from 'src/pages/core/admin/principal-customers/services';
 import { referencesClientTypesService } from 'src/pages/core/references/client-types/services';
 import { referencesCounterpartiesService } from 'src/pages/core/references/counterparties/services';
 import { referencesPermissionGroupsService } from 'src/pages/core/references/permission-groups/services';
@@ -37,6 +41,8 @@ type ListTypeMap = {
   clientTypes: IReferencesClientTypesListResponse;
   counterparties: IReferencesCounterpartiesListResponse;
   legalForms: IReferencesLegalFormsListResponse;
+  services: IReferencesServicesListResponse;
+  principalCustomers: IPrincipalCustomersListResponse;
 };
 
 interface IUseListProps<T> extends QueryOptions {
@@ -102,6 +108,14 @@ export default function useList<T extends keyof ListTypeMap>({
         }
         if (listType === 'legalForms') {
           const response = await referencesLegalFormsService.helpers.list();
+          return response as unknown as ListTypeMap[T];
+        }
+        if (listType === 'services') {
+          const response = await referencesServicesService.helpers.list();
+          return response as unknown as ListTypeMap[T];
+        }
+        if (listType === 'principalCustomers') {
+          const response = await principalCustomersService.helpers.list();
           return response as unknown as ListTypeMap[T];
         }
         return [];

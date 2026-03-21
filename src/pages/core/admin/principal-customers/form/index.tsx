@@ -57,9 +57,7 @@ export default function FormPage() {
           }
         }
       } else {
-        const response = await principalCustomersService.form.create(
-          omit(formData, ['espFile'])
-        );
+        const response = await principalCustomersService.form.create(omit(formData, ['espFile']));
         if (response.status === HttpStatusCode.Created) {
           const espKeyResponse = await principalCustomersService.helpers.uploadEspKey(
             response.data.id,

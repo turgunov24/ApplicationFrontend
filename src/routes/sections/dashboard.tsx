@@ -21,6 +21,8 @@ import { referencesClientTypesPermissions } from 'src/pages/core/references/clie
 import { referencesCounterpartiesPermissions } from 'src/pages/core/references/counterparties/helpers/permissions';
 import { referencesPermissionGroupsPermissions } from 'src/pages/core/references/permission-groups/helpers/permissions';
 import { assignPermissionsToRolesPermissions } from 'src/pages/core/references/assign-permissions-to-roles/helpers/permissions';
+import { referencesPrincipalCustomerCredentialsPermissions } from 'src/pages/core/references/principal-customer-credentials/helpers/permissions';
+import { attachTariffToPrincipalCustomersPermissions } from 'src/pages/core/references/attach-tariff-to-principal-customers/helpers/permissions';
 
 import { LoadingScreen } from 'src/components/loading-screen';
 
@@ -133,6 +135,12 @@ const ReferencesLegalFormsPage = lazy(
 );
 const ReferencesServicesPage = lazy(
   () => import('src/pages/core/references/services/index')
+);
+const ReferencesPrincipalCustomerCredentialsPage = lazy(
+  () => import('src/pages/core/references/principal-customer-credentials/index')
+);
+const ReferencesAttachTariffToPrincipalCustomersPage = lazy(
+  () => import('src/pages/core/references/attach-tariff-to-principal-customers/index')
 );
 
 // ----------------------------------------------------------------------
@@ -366,6 +374,22 @@ export const dashboardRoutes: RouteObject[] = [
             element: (
               <RoleBasedGuard allowedPermissions={[referencesServicesPermissions.index]}>
                 <ReferencesServicesPage />
+              </RoleBasedGuard>
+            ),
+          },
+          {
+            path: 'principal-customer-credentials',
+            element: (
+              <RoleBasedGuard allowedPermissions={[referencesPrincipalCustomerCredentialsPermissions.index]}>
+                <ReferencesPrincipalCustomerCredentialsPage />
+              </RoleBasedGuard>
+            ),
+          },
+          {
+            path: 'attach-tariff-to-principal-customers',
+            element: (
+              <RoleBasedGuard allowedPermissions={[attachTariffToPrincipalCustomersPermissions.index]}>
+                <ReferencesAttachTariffToPrincipalCustomersPage />
               </RoleBasedGuard>
             ),
           },
