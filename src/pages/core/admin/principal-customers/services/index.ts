@@ -77,5 +77,11 @@ export const principalCustomersService = {
       const response = await axiosInstance.get(url, { responseType: 'blob' });
       return response;
     },
+    deleteEspKey: async (id: IIndexResponse['result'][number]['id']) => {
+      const response = await axiosInstance.delete(principalCustomersUrls.deleteEspKey, {
+        params: { id },
+      });
+      return response;
+    },
   },
 };

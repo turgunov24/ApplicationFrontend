@@ -1,3 +1,4 @@
+import type { RefObject } from 'react';
 import type { IForm } from './form';
 
 import { useEffect } from 'react';
@@ -9,7 +10,7 @@ import { useParams } from 'src/routes/hooks';
 
 import { principalCustomersService, PRINCIPAL_CUSTOMERS_BASE_QUERY_KEY } from '../services';
 
-const SetValues = () => {
+const SetValues = ({ hasServerEspPath }: { hasServerEspPath: RefObject<boolean> }) => {
   const { id } = useParams();
   const form = useFormContext<IForm>();
   const queryClient = useQueryClient();
@@ -38,6 +39,7 @@ const SetValues = () => {
             const filename = response.data.espPath.split('/').pop() || 'esp-key';
             const file = new File([blob], filename, { type: blob.type || 'application/octet-stream' });
             form.setValue('espFile', file);
+            hasServerEspPath.current = true;
           }
         }
       }

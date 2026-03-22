@@ -1,10 +1,11 @@
 import type { IForm } from './form';
 
+import { useRef } from 'react';
 import { HttpStatusCode } from 'axios';
 import { omit } from 'es-toolkit/compat';
 import { useForm } from 'react-hook-form';
-import { useMutation } from '@tanstack/react-query';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -29,6 +30,8 @@ import { principalCustomersService, PRINCIPAL_CUSTOMERS_BASE_QUERY_KEY } from '.
 export default function FormPage() {
   const router = useRouter();
   const { id } = useParams();
+  const queryClient = useQueryClient();
+  const hasServerEspPath = useRef(false);
 
   const methods = useForm({
     mode: 'onSubmit',
@@ -36,7 +39,7 @@ export default function FormPage() {
     defaultValues,
   });
 
-  const { handleSubmit } = methods;
+  const { handleSubmit, setValue } = methods;
 
   const { mutate, isPending } = useMutation({
     mutationKey: [PRINCIPAL_CUSTOMERS_BASE_QUERY_KEY, 'save'],
@@ -73,6 +76,20 @@ export default function FormPage() {
     onSuccess: () => {
       toast.success(id ? 'Update success!' : 'Create success!');
       router.push(paths.dashboard.principalCustomers.root);
+    },
+  });
+
+  const { mutate: deleteEspKey } = useMutation({
+    mutationKey: [PRINCIPAL_CUSTOMERS_BASE_QUERY_KEY, 'deleteEspKey'],
+    mutationFn: async () => {
+      const response = await principalCustomersService.helpers.deleteEspKey(Number(id));
+      return response;
+    },
+    onSuccess: () => {
+      toast.success('ESP Key deleted successfully!');
+      setValue('espFile', null);
+      hasServerEspPath.current = false;
+      queryClient.invalidateQueries({ queryKey: [PRINCIPAL_CUSTOMERS_BASE_QUERY_KEY] });
     },
   });
 
@@ -165,7 +182,20 @@ export default function FormPage() {
 
             <Field.DatePicker name="espExpireDate" label="ESP Expire Date" />
 
-            <Field.Upload name="espFile" />
+            <Field.Upload
+              name="espFile"
+              onDelete={() => {
+                if (!id) {
+                  setValue('espFile', null);
+                  return;
+                }
+                if (hasServerEspPath.current) {
+                  deleteEspKey();
+                } else {
+                  setValue('espFile', null);
+                }
+              }}
+            />
           </Box>
 
           <Stack sx={{ mt: 3, alignItems: 'flex-end' }}>
@@ -174,7 +204,7 @@ export default function FormPage() {
             </Button>
           </Stack>
         </Card>
-        <SetValues />
+        <SetValues hasServerEspPath={hasServerEspPath} />
       </Form>
     </DashboardContent>
   );
