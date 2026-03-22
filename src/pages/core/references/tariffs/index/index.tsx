@@ -2,12 +2,11 @@ import type { SortingState } from '@tanstack/react-table';
 import type { IIndexResponse } from '../services/types';
 
 import { useMemo, useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import {
   parseAsString,
   useQueryStates,
   parseAsInteger,
-  parseAsBoolean,
   parseAsStringEnum,
 } from 'nuqs';
 import {
@@ -23,7 +22,6 @@ import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Table from '@mui/material/Table';
 import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
 import Switch from '@mui/material/Switch';
 import Tooltip from '@mui/material/Tooltip';
 import TableRow from '@mui/material/TableRow';
@@ -43,22 +41,19 @@ import { CONFIG } from 'src/global-config';
 import { DashboardContent } from 'src/layouts/dashboard';
 
 import { Label } from 'src/components/label';
-import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
 import { TableNoData } from 'src/components/table';
 import { Scrollbar } from 'src/components/scrollbar';
-import { ConfirmDialog } from 'src/components/custom-dialog';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
-import { RenderElementByPermission } from 'src/auth/guard';
-
-import FormComponent from '../form';
 import Filters from './components/filters';
 import Statuses from './components/statuses';
 import FilterResults from './components/filterResults';
 import { Statuses as StatusesEnum } from '../services/types';
-import { referencesTariffsPermissions } from '../helpers/permissions';
-import { referencesTariffsService, REFERENCES_TARIFFS_BASE_QUERY_KEY } from '../services';
+import {
+  referencesTariffsService,
+  REFERENCES_TARIFFS_BASE_QUERY_KEY,
+} from '../services';
 
 // ----------------------------------------------------------------------
 
@@ -68,14 +63,11 @@ const metadata = { title: `Tariffs - ${CONFIG.appName}` };
 const fallBackData: any[] = [];
 
 export default function Page() {
-  const queryClient = useQueryClient();
-
-  const [idForDeleteUser, setIdForDeleteUser] = useState<ITariff['id'] | null>(null);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState({});
   const [dense, setDense] = useState(false);
 
-  const [{ status, search, formOpen, ...pagination }, setQueryStates] = useQueryStates(
+  const [{ status, search, ...pagination }, setQueryStates] = useQueryStates(
     {
       status: parseAsStringEnum<StatusesEnum>(Object.values(StatusesEnum)).withDefault(
         StatusesEnum.all
@@ -84,9 +76,6 @@ export default function Page() {
 
       currentPage: parseAsInteger.withDefault(0),
       dataPerPage: parseAsInteger.withDefault(5),
-
-      formOpen: parseAsBoolean,
-      tariffId: parseAsInteger,
     },
     {
       history: 'push',
@@ -98,23 +87,22 @@ export default function Page() {
   const columns = useMemo(
     () => [
       columnHelper.accessor('nameUz', {
-        header: 'Name Uz',
+        header: 'Name (UZ)',
         sortingFn: 'alphanumeric',
         cell: (info) => info.getValue(),
       }),
       columnHelper.accessor('nameRu', {
-        header: 'Name Ru',
+        header: 'Name (RU)',
         sortingFn: 'alphanumeric',
         cell: (info) => info.getValue(),
       }),
       columnHelper.accessor('monthlyPrice', {
         header: 'Monthly Price',
-        sortingFn: 'basic',
-        cell: (info) => info.getValue().toLocaleString(),
+        sortingFn: 'alphanumeric',
+        cell: (info) => info.getValue(),
       }),
       columnHelper.accessor('currencyName', {
         header: 'Currency',
-        sortingFn: 'alphanumeric',
         cell: (info) => info.getValue(),
       }),
       columnHelper.accessor('createdAt', {
@@ -146,33 +134,8 @@ export default function Page() {
           </Label>
         ),
       }),
-      columnHelper.accessor('id', {
-        header: 'Actions',
-        cell: (info) => (
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <RenderElementByPermission permissions={[referencesTariffsPermissions.update]}>
-              <Tooltip title="Quick edit" placement="top" arrow>
-                <IconButton
-                  color="info"
-                  onClick={() => {
-                    setQueryStates({ tariffId: info.getValue(), formOpen: true });
-                  }}
-                >
-                  <Iconify icon="solar:pen-bold" />
-                </IconButton>
-              </Tooltip>
-            </RenderElementByPermission>
-
-            <RenderElementByPermission permissions={[referencesTariffsPermissions.delete]}>
-              <IconButton color="error" onClick={() => setIdForDeleteUser(info.getValue())}>
-                <Iconify icon="solar:trash-bin-trash-bold" />
-              </IconButton>
-            </RenderElementByPermission>
-          </Box>
-        ),
-      }),
     ],
-    [columnHelper, setQueryStates]
+    [columnHelper]
   );
 
   const {
@@ -247,27 +210,6 @@ export default function Page() {
     },
   });
 
-  const { mutate: deleteUser } = useMutation({
-    mutationKey: [REFERENCES_TARIFFS_BASE_QUERY_KEY, 'delete'],
-    mutationFn: async (id: ITariff['id']) => {
-      try {
-        const response = await referencesTariffsService.form.delete(id);
-        return response;
-      } catch (error: unknown) {
-        console.log('error', error);
-        return false;
-      }
-    },
-    onSuccess: () => {
-      toast.success('Delete success!');
-      setIdForDeleteUser(null);
-      queryClient.invalidateQueries({ queryKey: [REFERENCES_TARIFFS_BASE_QUERY_KEY] });
-    },
-    onError: () => {
-      toast.error('Delete failed!');
-    },
-  });
-
   const table = useReactTable({
     data: data.result,
     columns,
@@ -300,27 +242,6 @@ export default function Page() {
   const hasSelectedRows = useMemo(() => Object.keys(rowSelection).length > 0, [rowSelection]);
   const hasData = useMemo(() => data.result.length > 0, [data.result]);
 
-  const renderConfirmDialog = () => (
-    <ConfirmDialog
-      open={!!idForDeleteUser}
-      onClose={() => setIdForDeleteUser(null)}
-      title="Delete"
-      content="Are you sure want to delete?"
-      action={
-        <Button
-          variant="contained"
-          color="error"
-          onClick={() => {
-            deleteUser(idForDeleteUser!);
-            setIdForDeleteUser(null);
-          }}
-        >
-          Delete
-        </Button>
-      }
-    />
-  );
-
   return (
     <>
       <title>{metadata.title}</title>
@@ -328,17 +249,6 @@ export default function Page() {
         <CustomBreadcrumbs
           heading="List"
           links={[{ name: 'Dashboard', href: paths.dashboard.root }, { name: 'Tariffs' }]}
-          action={
-            <RenderElementByPermission permissions={[referencesTariffsPermissions.create]}>
-              <Button
-                variant="contained"
-                startIcon={<Iconify icon="mingcute:add-line" />}
-                onClick={() => setQueryStates({ formOpen: true })}
-              >
-                Add Tariff
-              </Button>
-            </RenderElementByPermission>
-          }
           sx={{ mb: { xs: 3, md: 5 } }}
         />
         <Card>
@@ -353,11 +263,7 @@ export default function Page() {
                 sx={{
                   minWidth: 960,
                   ...(hasSelectedRows && {
-                    thead: {
-                      th: {
-                        bgcolor: 'primary.lighter',
-                      },
-                    },
+                    thead: { th: { bgcolor: 'primary.lighter' } },
                   }),
                 }}
               >
@@ -385,26 +291,15 @@ export default function Page() {
                           }}
                         />
                       </TableCell>
-                      <TableCell colSpan={7}>
+                      <TableCell colSpan={6}>
                         <Stack direction="row" alignItems="center" justifyContent="space-between">
-                          <Typography
-                            variant="subtitle2"
-                            sx={{
-                              flexGrow: 1,
-                              color: 'primary.main',
-                            }}
-                          >
+                          <Typography variant="subtitle2" sx={{ flexGrow: 1, color: 'primary.main' }}>
                             {table.getIsAllRowsSelected()
                               ? 'All'
                               : `${table.getSelectedRowModel().rows.length} selected`}
                           </Typography>
                           <Tooltip title="Delete">
-                            <IconButton
-                              color="primary"
-                              onClick={() => {
-                                // setIdForDeleteUser(table.getSelectedRowModel().rows[0].original.id);
-                              }}
-                            >
+                            <IconButton color="primary" onClick={() => {}}>
                               <Iconify icon="solar:trash-bin-trash-bold" />
                             </IconButton>
                           </Tooltip>
@@ -429,17 +324,13 @@ export default function Page() {
                               <Box
                                 onClick={header.column.getToggleSortingHandler()}
                                 sx={{
-                                  color: header.column.getIsSorted()
-                                    ? 'text.primary'
-                                    : 'text.secondary',
+                                  color: header.column.getIsSorted() ? 'text.primary' : 'text.secondary',
                                   cursor: 'pointer',
                                   userSelect: 'none',
                                   display: 'flex',
                                   alignItems: 'center',
                                   gap: 0.5,
-                                  '&:hover': {
-                                    opacity: 0.8,
-                                  },
+                                  '&:hover': { opacity: 0.8 },
                                 }}
                               >
                                 {flexRender(header.column.columnDef.header, header.getContext())}
@@ -474,14 +365,7 @@ export default function Page() {
                     ))
                   ) : hasData ? (
                     table.getRowModel().rows.map((row) => (
-                      <TableRow
-                        key={row.id}
-                        sx={{
-                          '&:hover #actions': {
-                            opacity: 1,
-                          },
-                        }}
-                      >
+                      <TableRow key={row.id} sx={{ '&:hover #actions': { opacity: 1 } }}>
                         <>
                           <TableCell sx={{ width: 50 }}>
                             <Checkbox
@@ -519,7 +403,6 @@ export default function Page() {
                 setQueryStates({ dataPerPage: Number(event.target.value) });
               }}
             />
-
             <FormControlLabel
               label="Dense"
               control={
@@ -529,18 +412,11 @@ export default function Page() {
                   slotProps={{ input: { id: 'dense-switch' } }}
                 />
               }
-              sx={{
-                pl: 2,
-                py: 1.5,
-                top: 0,
-                position: { sm: 'absolute' },
-              }}
+              sx={{ pl: 2, py: 1.5, top: 0, position: { sm: 'absolute' } }}
             />
           </Box>
         </Card>
       </DashboardContent>
-      {renderConfirmDialog()}
-      {formOpen && <FormComponent />}
     </>
   );
 }

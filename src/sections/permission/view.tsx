@@ -10,7 +10,6 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
 import { paths } from 'src/routes/paths'
 
 import { DashboardContent } from 'src/layouts/dashboard'
-import { usersPermissions } from 'src/pages/core/admin/users/helpers/permissions'
 
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs'
 
@@ -51,7 +50,7 @@ export function PermissionDeniedView() {
         </ToggleButtonGroup>
       </Box>
 
-      <RoleBasedGuard hasContent allowedPermissions={[usersPermissions.index]} sx={{ py: 10 }}>
+      <RoleBasedGuard hasContent sx={{ py: 10 }}>
         <Box sx={{ gap: 3, display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)' }}>
           {Array.from({ length: 8 }, (_, index) => (
             <Card key={index}>

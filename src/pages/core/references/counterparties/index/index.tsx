@@ -51,15 +51,15 @@ import Statuses from './components/statuses';
 import FilterResults from './components/filterResults';
 import { Statuses as StatusesEnum } from '../services/types';
 import {
-  referencesCurrenciesService,
-  REFERENCES_CURRENCIES_BASE_QUERY_KEY,
+  referencesCounterpartiesService,
+  REFERENCES_COUNTERPARTIES_BASE_QUERY_KEY,
 } from '../services';
 
 // ----------------------------------------------------------------------
 
-type ICurrency = IIndexResponse['result'][number];
+type ICounterparty = IIndexResponse['result'][number];
 
-const metadata = { title: `Currencies - ${CONFIG.appName}` };
+const metadata = { title: `Counterparties - ${CONFIG.appName}` };
 const fallBackData: any[] = [];
 
 export default function Page() {
@@ -82,17 +82,17 @@ export default function Page() {
     }
   );
 
-  const columnHelper = createColumnHelper<ICurrency>();
+  const columnHelper = createColumnHelper<ICounterparty>();
 
   const columns = useMemo(
     () => [
-      columnHelper.accessor('nameUz', {
-        header: 'Name (UZ)',
+      columnHelper.accessor('name', {
+        header: 'Name',
         sortingFn: 'alphanumeric',
         cell: (info) => info.getValue(),
       }),
-      columnHelper.accessor('nameRu', {
-        header: 'Name (RU)',
+      columnHelper.accessor('phone', {
+        header: 'Phone',
         sortingFn: 'alphanumeric',
         cell: (info) => info.getValue(),
       }),
@@ -137,10 +137,10 @@ export default function Page() {
       [StatusesEnum.deleted]: 0,
     },
   } = useQuery({
-    queryKey: [REFERENCES_CURRENCIES_BASE_QUERY_KEY, 'getCountsByStatus'],
+    queryKey: [REFERENCES_COUNTERPARTIES_BASE_QUERY_KEY, 'getCountsByStatus'],
     queryFn: async () => {
       try {
-        const response = await referencesCurrenciesService.helpers.getCountsByStatus();
+        const response = await referencesCounterpartiesService.helpers.getCountsByStatus();
         return response;
       } catch (error: unknown) {
         console.log('error', error);
@@ -168,7 +168,7 @@ export default function Page() {
     },
   } = useQuery({
     queryKey: [
-      REFERENCES_CURRENCIES_BASE_QUERY_KEY,
+      REFERENCES_COUNTERPARTIES_BASE_QUERY_KEY,
       'index',
       pagination.currentPage,
       pagination.dataPerPage,
@@ -178,7 +178,7 @@ export default function Page() {
     enabled: isFetched,
     queryFn: async () => {
       try {
-        const response = await referencesCurrenciesService.index({
+        const response = await referencesCounterpartiesService.index({
           status,
           search,
           currentPage: pagination.currentPage,
@@ -239,7 +239,7 @@ export default function Page() {
       <DashboardContent>
         <CustomBreadcrumbs
           heading="List"
-          links={[{ name: 'Dashboard', href: paths.dashboard.root }, { name: 'Currencies' }]}
+          links={[{ name: 'Dashboard', href: paths.dashboard.root }, { name: 'Counterparties' }]}
           sx={{ mb: { xs: 3, md: 5 } }}
         />
         <Card>
@@ -254,7 +254,11 @@ export default function Page() {
                 sx={{
                   minWidth: 960,
                   ...(hasSelectedRows && {
-                    thead: { th: { bgcolor: 'primary.lighter' } },
+                    thead: {
+                      th: {
+                        bgcolor: 'primary.lighter',
+                      },
+                    },
                   }),
                 }}
               >
@@ -284,13 +288,24 @@ export default function Page() {
                       </TableCell>
                       <TableCell colSpan={4}>
                         <Stack direction="row" alignItems="center" justifyContent="space-between">
-                          <Typography variant="subtitle2" sx={{ flexGrow: 1, color: 'primary.main' }}>
+                          <Typography
+                            variant="subtitle2"
+                            sx={{
+                              flexGrow: 1,
+                              color: 'primary.main',
+                            }}
+                          >
                             {table.getIsAllRowsSelected()
                               ? 'All'
                               : `${table.getSelectedRowModel().rows.length} selected`}
                           </Typography>
                           <Tooltip title="Delete">
-                            <IconButton color="primary" onClick={() => {}}>
+                            <IconButton
+                              color="primary"
+                              onClick={() => {
+                                // setIdForDeleteUser(table.getSelectedRowModel().rows[0].original.id);
+                              }}
+                            >
                               <Iconify icon="solar:trash-bin-trash-bold" />
                             </IconButton>
                           </Tooltip>
@@ -315,13 +330,17 @@ export default function Page() {
                               <Box
                                 onClick={header.column.getToggleSortingHandler()}
                                 sx={{
-                                  color: header.column.getIsSorted() ? 'text.primary' : 'text.secondary',
+                                  color: header.column.getIsSorted()
+                                    ? 'text.primary'
+                                    : 'text.secondary',
                                   cursor: 'pointer',
                                   userSelect: 'none',
                                   display: 'flex',
                                   alignItems: 'center',
                                   gap: 0.5,
-                                  '&:hover': { opacity: 0.8 },
+                                  '&:hover': {
+                                    opacity: 0.8,
+                                  },
                                 }}
                               >
                                 {flexRender(header.column.columnDef.header, header.getContext())}
@@ -355,8 +374,15 @@ export default function Page() {
                       </TableRow>
                     ))
                   ) : hasData ? (
-                    table.getRowModel().rows.map((row) => (
-                      <TableRow key={row.id} sx={{ '&:hover #actions': { opacity: 1 } }}>
+                    table.getRowModel().rows.map((row, index) => (
+                      <TableRow
+                        key={row.id}
+                        sx={{
+                          '&:hover #actions': {
+                            opacity: 1,
+                          },
+                        }}
+                      >
                         <>
                           <TableCell sx={{ width: 50 }}>
                             <Checkbox
@@ -394,6 +420,7 @@ export default function Page() {
                 setQueryStates({ dataPerPage: Number(event.target.value) });
               }}
             />
+
             <FormControlLabel
               label="Dense"
               control={
@@ -403,7 +430,12 @@ export default function Page() {
                   slotProps={{ input: { id: 'dense-switch' } }}
                 />
               }
-              sx={{ pl: 2, py: 1.5, top: 0, position: { sm: 'absolute' } }}
+              sx={{
+                pl: 2,
+                py: 1.5,
+                top: 0,
+                position: { sm: 'absolute' },
+              }}
             />
           </Box>
         </Card>

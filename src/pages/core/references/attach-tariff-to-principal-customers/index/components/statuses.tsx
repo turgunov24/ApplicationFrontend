@@ -47,7 +47,12 @@ const Statuses: FC<IProps> = ({ countsByStatus }) => {
           icon={
             <Label
               variant={s === status ? 'filled' : 'soft'}
-              color={(s === 'active' && 'success') || (s === 'deleted' && 'error') || 'default'}
+              color={
+                (s === 'active' && 'success') ||
+                (s === 'deleted' && 'error') ||
+                (s === 'finished' && 'warning') ||
+                'default'
+              }
             >
               {countsByStatus[s]}
             </Label>

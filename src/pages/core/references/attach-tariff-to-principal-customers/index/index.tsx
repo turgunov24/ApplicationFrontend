@@ -51,15 +51,15 @@ import Statuses from './components/statuses';
 import FilterResults from './components/filterResults';
 import { Statuses as StatusesEnum } from '../services/types';
 import {
-  referencesCurrenciesService,
-  REFERENCES_CURRENCIES_BASE_QUERY_KEY,
+  attachTariffToPrincipalCustomersService,
+  ATTACH_TARIFF_TO_PRINCIPAL_CUSTOMERS_BASE_QUERY_KEY,
 } from '../services';
 
 // ----------------------------------------------------------------------
 
-type ICurrency = IIndexResponse['result'][number];
+type IAttachTariff = IIndexResponse['result'][number];
 
-const metadata = { title: `Currencies - ${CONFIG.appName}` };
+const metadata = { title: `Attach Tariff To Principal Customers - ${CONFIG.appName}` };
 const fallBackData: any[] = [];
 
 export default function Page() {
@@ -82,22 +82,34 @@ export default function Page() {
     }
   );
 
-  const columnHelper = createColumnHelper<ICurrency>();
+  const columnHelper = createColumnHelper<IAttachTariff>();
 
   const columns = useMemo(
     () => [
-      columnHelper.accessor('nameUz', {
-        header: 'Name (UZ)',
-        sortingFn: 'alphanumeric',
-        cell: (info) => info.getValue(),
+      columnHelper.accessor('principalCustomer', {
+        header: 'Principal Customer',
+        cell: (info) => info.getValue()?.name ?? '-',
       }),
-      columnHelper.accessor('nameRu', {
-        header: 'Name (RU)',
-        sortingFn: 'alphanumeric',
-        cell: (info) => info.getValue(),
+      columnHelper.accessor('principalCustomer', {
+        id: 'counterparty',
+        header: 'Counterparty',
+        cell: (info) => info.getValue()?.counterparty?.name ?? '-',
       }),
-      columnHelper.accessor('createdAt', {
-        header: 'Created At',
+      columnHelper.accessor('tariff', {
+        header: 'Tariff',
+        cell: (info) => info.getValue()?.nameUz ?? '-',
+      }),
+      columnHelper.accessor('tariff', {
+        id: 'price',
+        header: 'Price',
+        cell: (info) => {
+          const tariff = info.getValue();
+          if (!tariff) return '-';
+          return `${tariff.monthlyPrice} ${tariff.currency?.name ?? ''}`;
+        },
+      }),
+      columnHelper.accessor('startDate', {
+        header: 'Start Date',
         sortingFn: 'datetime',
         cell: (info) => {
           const date = new Date(info.getValue());
@@ -105,8 +117,20 @@ export default function Page() {
             year: 'numeric',
             month: 'long',
             day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
+          });
+        },
+      }),
+      columnHelper.accessor('endDate', {
+        header: 'End Date',
+        sortingFn: 'datetime',
+        cell: (info) => {
+          const value = info.getValue();
+          if (!value) return '-';
+          const date = new Date(value);
+          return date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
           });
         },
       }),
@@ -118,6 +142,7 @@ export default function Page() {
             color={
               (info.getValue() === 'active' && 'success') ||
               (info.getValue() === 'deleted' && 'error') ||
+              (info.getValue() === 'finished' && 'warning') ||
               'default'
             }
           >
@@ -135,12 +160,13 @@ export default function Page() {
       [StatusesEnum.all]: 0,
       [StatusesEnum.active]: 0,
       [StatusesEnum.deleted]: 0,
+      [StatusesEnum.finished]: 0,
     },
   } = useQuery({
-    queryKey: [REFERENCES_CURRENCIES_BASE_QUERY_KEY, 'getCountsByStatus'],
+    queryKey: [ATTACH_TARIFF_TO_PRINCIPAL_CUSTOMERS_BASE_QUERY_KEY, 'getCountsByStatus'],
     queryFn: async () => {
       try {
-        const response = await referencesCurrenciesService.helpers.getCountsByStatus();
+        const response = await attachTariffToPrincipalCustomersService.helpers.getCountsByStatus();
         return response;
       } catch (error: unknown) {
         console.log('error', error);
@@ -148,6 +174,7 @@ export default function Page() {
           [StatusesEnum.all]: 0,
           [StatusesEnum.active]: 0,
           [StatusesEnum.deleted]: 0,
+          [StatusesEnum.finished]: 0,
         };
       }
     },
@@ -168,7 +195,7 @@ export default function Page() {
     },
   } = useQuery({
     queryKey: [
-      REFERENCES_CURRENCIES_BASE_QUERY_KEY,
+      ATTACH_TARIFF_TO_PRINCIPAL_CUSTOMERS_BASE_QUERY_KEY,
       'index',
       pagination.currentPage,
       pagination.dataPerPage,
@@ -178,7 +205,7 @@ export default function Page() {
     enabled: isFetched,
     queryFn: async () => {
       try {
-        const response = await referencesCurrenciesService.index({
+        const response = await attachTariffToPrincipalCustomersService.index({
           status,
           search,
           currentPage: pagination.currentPage,
@@ -239,7 +266,7 @@ export default function Page() {
       <DashboardContent>
         <CustomBreadcrumbs
           heading="List"
-          links={[{ name: 'Dashboard', href: paths.dashboard.root }, { name: 'Currencies' }]}
+          links={[{ name: 'Dashboard', href: paths.dashboard.root }, { name: 'Attach Tariff To Principal Customers' }]}
           sx={{ mb: { xs: 3, md: 5 } }}
         />
         <Card>
@@ -282,7 +309,7 @@ export default function Page() {
                           }}
                         />
                       </TableCell>
-                      <TableCell colSpan={4}>
+                      <TableCell colSpan={8}>
                         <Stack direction="row" alignItems="center" justifyContent="space-between">
                           <Typography variant="subtitle2" sx={{ flexGrow: 1, color: 'primary.main' }}>
                             {table.getIsAllRowsSelected()

@@ -118,54 +118,6 @@ export const paths = {
       edit: (id: string) => `${ROOTS.DASHBOARD}/user/${id}/edit`,
       demo: { edit: `${ROOTS.DASHBOARD}/user/${MOCK_ID}/edit` },
     },
-    users: {
-      root: `${ROOTS.DASHBOARD}/users`,
-      create: `${ROOTS.DASHBOARD}/users/create`,
-      edit: (id: string) => `${ROOTS.DASHBOARD}/users/edit/${id}`,
-    },
-    principals: {
-      root: `${ROOTS.DASHBOARD}/principals`,
-      create: `${ROOTS.DASHBOARD}/principals/create`,
-      edit: (id: string) => `${ROOTS.DASHBOARD}/principals/edit/${id}`,
-    },
-    principalCustomers: {
-      root: `${ROOTS.DASHBOARD}/principal-customers`,
-      create: `${ROOTS.DASHBOARD}/principal-customers/create`,
-      edit: (id: string) => `${ROOTS.DASHBOARD}/principal-customers/edit/${id}`,
-    },
-    references: {
-      root: `${ROOTS.DASHBOARD}/references`,
-      countries: {
-        root: `${ROOTS.DASHBOARD}/references/countries`,
-      },
-      regions: {
-        root: `${ROOTS.DASHBOARD}/references/regions`,
-      },
-      districts: {
-        root: `${ROOTS.DASHBOARD}/references/districts`,
-      },
-      permissionGroups: {
-        root: `${ROOTS.DASHBOARD}/references/permission-groups`,
-      },
-      permissions: {
-        root: `${ROOTS.DASHBOARD}/references/permissions`,
-      },
-      roles: {
-        root: `${ROOTS.DASHBOARD}/references/roles`,
-      },
-      assignPermissionsToRoles: {
-        root: `${ROOTS.DASHBOARD}/references/assign-permissions-to-roles`,
-      },
-      currencies: {
-        root: `${ROOTS.DASHBOARD}/references/currencies`,
-      },
-      clientTypes: {
-        root: `${ROOTS.DASHBOARD}/references/client-types`,
-      },
-      tariffs: {
-        root: `${ROOTS.DASHBOARD}/references/tariffs`,
-      },
-    },
     product: {
       root: `${ROOTS.DASHBOARD}/product`,
       new: `${ROOTS.DASHBOARD}/product/new`,
@@ -209,6 +161,33 @@ export const paths = {
       demo: {
         details: `${ROOTS.DASHBOARD}/job/${MOCK_ID}`,
         edit: `${ROOTS.DASHBOARD}/job/${MOCK_ID}/edit`,
+      },
+    },
+    references: {
+      root: `${ROOTS.DASHBOARD}/references`,
+      services: {
+        root: `${ROOTS.DASHBOARD}/references/services`,
+      },
+      counterparties: {
+        root: `${ROOTS.DASHBOARD}/references/counterparties`,
+      },
+      principalCustomerCredentials: {
+        root: `${ROOTS.DASHBOARD}/references/principal-customer-credentials`,
+      },
+      legalForms: {
+        root: `${ROOTS.DASHBOARD}/references/legal-forms`,
+      },
+      clientTypes: {
+        root: `${ROOTS.DASHBOARD}/references/client-types`,
+      },
+      attachTariffToPrincipalCustomers: {
+        root: `${ROOTS.DASHBOARD}/references/attach-tariff-to-principal-customers`,
+      },
+      tariffs: {
+        root: `${ROOTS.DASHBOARD}/references/tariffs`,
+      },
+      currencies: {
+        root: `${ROOTS.DASHBOARD}/references/currencies`,
       },
     },
     tour: {

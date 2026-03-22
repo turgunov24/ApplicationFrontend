@@ -2,13 +2,13 @@ import type { IListResponse, IIndexResponse, IGetCountsByStatusResponse } from '
 
 import axiosInstance from 'src/lib/axios';
 
-import { referencesTariffsUrls } from './urls';
+import { referencesLegalFormsUrls } from './urls';
 
-export const REFERENCES_TARIFFS_BASE_QUERY_KEY = 'references-tariffs';
+export const REFERENCES_LEGAL_FORMS_BASE_QUERY_KEY = 'references-legal-forms';
 
-export const referencesTariffsService = {
+export const referencesLegalFormsService = {
   index: async (params: any) => {
-    const response = await axiosInstance.get<IIndexResponse>(referencesTariffsUrls.index, {
+    const response = await axiosInstance.get<IIndexResponse>(referencesLegalFormsUrls.index, {
       params,
     });
     return response.data;
@@ -16,12 +16,12 @@ export const referencesTariffsService = {
   helpers: {
     getCountsByStatus: async () => {
       const response = await axiosInstance.get<IGetCountsByStatusResponse>(
-        referencesTariffsUrls.countsByStatus
+        referencesLegalFormsUrls.countsByStatus
       );
       return response.data;
     },
     list: async () => {
-      const response = await axiosInstance.get<IListResponse>(referencesTariffsUrls.list);
+      const response = await axiosInstance.get<IListResponse>(referencesLegalFormsUrls.list);
       return response.data;
     },
   },
