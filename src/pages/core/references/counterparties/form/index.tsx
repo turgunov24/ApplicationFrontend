@@ -13,6 +13,8 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 
+import useList from 'src/hooks/useList/v1/Index';
+
 import { toast } from 'src/components/snackbar';
 import { Form, Field } from 'src/components/hook-form';
 
@@ -39,6 +41,8 @@ export default function FormComponent() {
     resolver: zodResolver(IFormSchema),
     defaultValues,
   });
+
+  const { data: principals = [] } = useList({ listType: 'principals' });
 
   const { mutateAsync } = useMutation({
     mutationKey: [REFERENCES_COUNTERPARTIES_BASE_QUERY_KEY, 'save'],
@@ -78,6 +82,19 @@ export default function FormComponent() {
             }}
           >
             <Grid container gap={2}>
+              <Grid size={{ xs: 12 }}>
+                  <Field.AutocompleteMatchId
+              fullWidth
+              name="principalId"
+              label="Principal"
+              placeholder="Choose a principal"
+              options={principals.map((principal) => ({
+                id: principal.id,
+                label: principal.fullName,
+              }))}
+            />
+
+              </Grid>
               <Grid size={{ xs: 12 }}>
                 <Field.Text name="name" label="Name" />
               </Grid>

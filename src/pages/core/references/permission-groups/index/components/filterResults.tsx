@@ -1,5 +1,5 @@
 import { useMemo, type FC } from 'react';
-import { parseAsString, parseAsArrayOf, useQueryStates, parseAsStringEnum } from 'nuqs';
+import { parseAsString, useQueryStates, parseAsStringEnum } from 'nuqs';
 
 import Chip from '@mui/material/Chip';
 

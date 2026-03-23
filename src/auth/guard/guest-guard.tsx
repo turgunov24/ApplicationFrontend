@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-import { useSearchParams, useRouter } from 'src/routes/hooks';
+import { useSearchParams } from 'src/routes/hooks';
 
 import { CONFIG } from 'src/global-config';
 

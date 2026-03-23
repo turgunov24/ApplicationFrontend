@@ -22,6 +22,7 @@ const SetValues = () => {
       if (response) {
         form.setValue('name', response.name);
         form.setValue('phone', response.phone);
+        form.setValue('principalId', response.principalId);
       }
       return response;
     },

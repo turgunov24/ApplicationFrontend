@@ -2,13 +2,10 @@ import { usePopover } from 'minimal-shared/hooks';
 import { parseAsString, useQueryStates } from 'nuqs';
 
 import Box from '@mui/material/Box';
-import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import MenuList from '@mui/material/MenuList';
 import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
-import InputLabel from '@mui/material/InputLabel';
-import FormControl from '@mui/material/FormControl';
 import InputAdornment from '@mui/material/InputAdornment';
 
 import { Iconify } from 'src/components/iconify';

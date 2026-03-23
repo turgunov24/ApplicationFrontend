@@ -1,5 +1,5 @@
 import type { IForm } from '../form/form';
-import type { IIndexResponse, IGetCountsByStatusResponse, IListResponse } from './types';
+import type { IListResponse, IIndexResponse, IGetCountsByStatusResponse } from './types';
 
 import axiosInstance from 'src/lib/axios';
 

@@ -2,7 +2,7 @@ import type { IForm } from './form';
 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { parseAsInteger, useQueryStates, parseAsBoolean } from 'nuqs';
 
 import Grid from '@mui/material/Grid';

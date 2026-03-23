@@ -1,7 +1,7 @@
 import type { AuthState } from '../../types';
 
+import { useMemo, useCallback } from 'react';
 import { useSetState } from 'minimal-shared/hooks';
-import { useMemo, useEffect, useCallback } from 'react';
 
 import axios, { endpoints } from 'src/lib/axios';
 
