@@ -39,6 +39,12 @@ const ReferencesTariffsPage = lazy(
 const ReferencesCurrenciesPage = lazy(
   () => import('src/pages/core/references/currencies/index')
 );
+const PrincipalCustomersIndexPage = lazy(
+  () => import('src/pages/core/admin/principal-customers/index')
+);
+const PrincipalCustomersFormPage = lazy(
+  () => import('src/pages/core/admin/principal-customers/form')
+);
 
 // ----------------------------------------------------------------------
 
@@ -98,6 +104,14 @@ export const dashboardRoutes: RouteObject[] = [
             path: 'currencies',
             element: <ReferencesCurrenciesPage />,
           },
+        ],
+      },
+      {
+        path: 'principal-customers',
+        children: [
+          { index: true, element: <PrincipalCustomersIndexPage /> },
+          { path: 'create', element: <PrincipalCustomersFormPage /> },
+          { path: ':id/edit', element: <PrincipalCustomersFormPage /> },
         ],
       },
     ],

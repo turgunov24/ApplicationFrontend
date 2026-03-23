@@ -1,6 +1,7 @@
 import type { IPermission } from '../permissions/types';
 
 interface IUser {
+  id: number;
   fullName: string;
   email: string;
   username: string;

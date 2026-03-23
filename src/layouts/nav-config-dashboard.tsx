@@ -61,6 +61,11 @@ export const navData: NavSectionProps['data'] = [
           },
         ],
       },
+      {
+        title: 'Principal Customers',
+        path: paths.dashboard.principalCustomers.root,
+        icon: ICONS.user,
+      },
     ],
   },
 ];

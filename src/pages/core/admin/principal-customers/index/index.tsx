@@ -2,14 +2,8 @@ import type { SortingState } from '@tanstack/react-table';
 import type { IIndexResponse } from '../services/types';
 
 import { useMemo, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import {
-  parseAsString,
-  useQueryStates,
-  parseAsInteger,
-  parseAsBoolean,
-  parseAsStringEnum,
-} from 'nuqs';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { parseAsString, useQueryStates, parseAsInteger, parseAsStringEnum } from 'nuqs';
 import {
   flexRender,
   useReactTable,
@@ -21,6 +15,7 @@ import {
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
+import Link from '@mui/material/Link';
 import Table from '@mui/material/Table';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
@@ -38,39 +33,43 @@ import TablePagination from '@mui/material/TablePagination';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
 import { paths } from 'src/routes/paths';
+import { useRouter } from 'src/routes/hooks';
+import { RouterLink } from 'src/routes/components';
+
+import { fDateTime } from 'src/utils/format-time';
 
 import { CONFIG } from 'src/global-config';
 import { DashboardContent } from 'src/layouts/dashboard';
 
 import { Label } from 'src/components/label';
+import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
 import { TableNoData } from 'src/components/table';
 import { Scrollbar } from 'src/components/scrollbar';
+import { ConfirmDialog } from 'src/components/custom-dialog';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
-import FormComponent from '../form';
 import Filters from './components/filters';
 import Statuses from './components/statuses';
 import FilterResults from './components/filterResults';
 import { Statuses as StatusesEnum } from '../services/types';
-import {
-  referencesCounterpartiesService,
-  REFERENCES_COUNTERPARTIES_BASE_QUERY_KEY,
-} from '../services';
+import { principalCustomersService, PRINCIPAL_CUSTOMERS_BASE_QUERY_KEY } from '../services';
 
 // ----------------------------------------------------------------------
 
-type ICounterparty = IIndexResponse['result'][number];
+type IPrincipalCustomer = IIndexResponse['result'][number];
 
-const metadata = { title: `Counterparties - ${CONFIG.appName}` };
+const metadata = { title: `Principal Customers - ${CONFIG.appName}` };
 const fallBackData: any[] = [];
 
 export default function Page() {
-  const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState({});
   const [dense, setDense] = useState(false);
-
-  const [{ status, search, formOpen, ...pagination }, setQueryStates] = useQueryStates(
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const router = useRouter();
+  const [idForDelete, setIdForDelete] = useState<IPrincipalCustomer['id'] | null>(null);
+  const queryClient = useQueryClient();
+  const [{ status, search, ...pagination }, setQueryStates] = useQueryStates(
     {
       status: parseAsStringEnum<StatusesEnum>(Object.values(StatusesEnum)).withDefault(
         StatusesEnum.all
@@ -79,42 +78,32 @@ export default function Page() {
 
       currentPage: parseAsInteger.withDefault(0),
       dataPerPage: parseAsInteger.withDefault(5),
-
-      formOpen: parseAsBoolean,
-      counterpartyId: parseAsInteger,
     },
     {
       history: 'push',
     }
   );
 
-  const columnHelper = createColumnHelper<ICounterparty>();
-
+  const columnHelper = createColumnHelper<IPrincipalCustomer>();
   const columns = useMemo(
     () => [
       columnHelper.accessor('name', {
         header: 'Name',
-        sortingFn: 'alphanumeric',
-        cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor('phone', {
-        header: 'Phone',
-        sortingFn: 'alphanumeric',
-        cell: (info) => info.getValue(),
+        cell: ({ row }) => (
+          <Link
+            component={RouterLink}
+            href={paths.dashboard.principalCustomers.edit(row.original.id.toString())}
+            color="inherit"
+            sx={{ cursor: 'pointer' }}
+          >
+            {row.original.name}
+          </Link>
+        ),
       }),
       columnHelper.accessor('createdAt', {
         header: 'Created At',
         sortingFn: 'datetime',
-        cell: (info) => {
-          const date = new Date(info.getValue());
-          return date.toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-          });
-        },
+        cell: (info) => fDateTime(info.getValue()),
       }),
       columnHelper.accessor('status', {
         header: 'Status',
@@ -123,7 +112,8 @@ export default function Page() {
             variant="soft"
             color={
               (info.getValue() === 'active' && 'success') ||
-              (info.getValue() === 'deleted' && 'error') ||
+              (info.getValue() === 'pending' && 'warning') ||
+              (info.getValue() === 'banned' && 'error') ||
               'default'
             }
           >
@@ -139,17 +129,23 @@ export default function Page() {
               <IconButton
                 color="info"
                 onClick={() => {
-                  setQueryStates({ counterpartyId: info.getValue(), formOpen: true });
+                  router.push(
+                    paths.dashboard.principalCustomers.edit(info.getValue().toString())
+                  );
                 }}
               >
                 <Iconify icon="solar:pen-bold" />
               </IconButton>
             </Tooltip>
+
+            <IconButton color="error" onClick={() => setIdForDelete(info.getValue())}>
+              <Iconify icon="solar:trash-bin-trash-bold" />
+            </IconButton>
           </Box>
         ),
       }),
     ],
-    [columnHelper, setQueryStates]
+    [columnHelper, router]
   );
 
   const {
@@ -157,20 +153,24 @@ export default function Page() {
     data: countsByStatus = {
       [StatusesEnum.all]: 0,
       [StatusesEnum.active]: 0,
-      [StatusesEnum.deleted]: 0,
+      [StatusesEnum.pending]: 0,
+      [StatusesEnum.banned]: 0,
+      [StatusesEnum.rejected]: 0,
     },
   } = useQuery({
-    queryKey: [REFERENCES_COUNTERPARTIES_BASE_QUERY_KEY, 'getCountsByStatus'],
+    queryKey: [PRINCIPAL_CUSTOMERS_BASE_QUERY_KEY, 'getCountsByStatus'],
     queryFn: async () => {
       try {
-        const response = await referencesCounterpartiesService.helpers.getCountsByStatus();
+        const response = await principalCustomersService.helpers.getCountsByStatus();
         return response;
       } catch (error: unknown) {
         console.log('error', error);
         return {
           [StatusesEnum.all]: 0,
           [StatusesEnum.active]: 0,
-          [StatusesEnum.deleted]: 0,
+          [StatusesEnum.pending]: 0,
+          [StatusesEnum.banned]: 0,
+          [StatusesEnum.rejected]: 0,
         };
       }
     },
@@ -191,7 +191,7 @@ export default function Page() {
     },
   } = useQuery({
     queryKey: [
-      REFERENCES_COUNTERPARTIES_BASE_QUERY_KEY,
+      PRINCIPAL_CUSTOMERS_BASE_QUERY_KEY,
       'index',
       pagination.currentPage,
       pagination.dataPerPage,
@@ -201,7 +201,7 @@ export default function Page() {
     enabled: isFetched,
     queryFn: async () => {
       try {
-        const response = await referencesCounterpartiesService.index({
+        const response = await principalCustomersService.index({
           status,
           search,
           currentPage: pagination.currentPage,
@@ -209,6 +209,7 @@ export default function Page() {
         });
         return response;
       } catch (error: unknown) {
+        console.log('error', error);
         return {
           result: fallBackData,
           pagination: {
@@ -221,6 +222,27 @@ export default function Page() {
           },
         };
       }
+    },
+  });
+
+  const { mutate: deleteItem } = useMutation({
+    mutationKey: [PRINCIPAL_CUSTOMERS_BASE_QUERY_KEY, 'delete'],
+    mutationFn: async (id: IPrincipalCustomer['id']) => {
+      try {
+        const response = await principalCustomersService.form.delete(id);
+        return response;
+      } catch (error: unknown) {
+        console.log('error', error);
+        return false;
+      }
+    },
+    onSuccess: () => {
+      toast.success('Delete success!');
+      setIdForDelete(null);
+      queryClient.invalidateQueries({ queryKey: [PRINCIPAL_CUSTOMERS_BASE_QUERY_KEY] });
+    },
+    onError: () => {
+      toast.error('Delete failed!');
     },
   });
 
@@ -256,20 +278,45 @@ export default function Page() {
   const hasSelectedRows = useMemo(() => Object.keys(rowSelection).length > 0, [rowSelection]);
   const hasData = useMemo(() => data.result.length > 0, [data.result]);
 
+  const renderConfirmDialog = () => (
+    <ConfirmDialog
+      open={!!idForDelete}
+      onClose={() => setIdForDelete(null)}
+      title="Delete"
+      content="Are you sure want to delete?"
+      action={
+        <Button
+          variant="contained"
+          color="error"
+          onClick={() => {
+            deleteItem(idForDelete!);
+            setIdForDelete(null);
+          }}
+        >
+          Delete
+        </Button>
+      }
+    />
+  );
+
   return (
     <>
       <title>{metadata.title}</title>
       <DashboardContent>
         <CustomBreadcrumbs
           heading="List"
-          links={[{ name: 'Dashboard', href: paths.dashboard.root }, { name: 'Counterparties' }]}
+          links={[
+            { name: 'Dashboard', href: paths.dashboard.root },
+            { name: 'Principal Customers' },
+          ]}
           action={
             <Button
+              component={RouterLink}
+              href={paths.dashboard.principalCustomers.create}
               variant="contained"
               startIcon={<Iconify icon="mingcute:add-line" />}
-              onClick={() => setQueryStates({ formOpen: true })}
             >
-              Add Counterparty
+              Add principal customer
             </Button>
           }
           sx={{ mb: { xs: 3, md: 5 } }}
@@ -332,12 +379,7 @@ export default function Page() {
                               : `${table.getSelectedRowModel().rows.length} selected`}
                           </Typography>
                           <Tooltip title="Delete">
-                            <IconButton
-                              color="primary"
-                              onClick={() => {
-                                // setIdForDeleteUser(table.getSelectedRowModel().rows[0].original.id);
-                              }}
-                            >
+                            <IconButton color="primary" onClick={() => {}}>
                               <Iconify icon="solar:trash-bin-trash-bold" />
                             </IconButton>
                           </Tooltip>
@@ -472,7 +514,7 @@ export default function Page() {
           </Box>
         </Card>
       </DashboardContent>
-      {formOpen && <FormComponent />}
+      {renderConfirmDialog()}
     </>
   );
 }

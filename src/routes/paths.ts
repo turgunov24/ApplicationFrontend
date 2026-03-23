@@ -190,6 +190,11 @@ export const paths = {
         root: `${ROOTS.DASHBOARD}/references/currencies`,
       },
     },
+    principalCustomers: {
+      root: `${ROOTS.DASHBOARD}/principal-customers`,
+      create: `${ROOTS.DASHBOARD}/principal-customers/create`,
+      edit: (id: string) => `${ROOTS.DASHBOARD}/principal-customers/${id}/edit`,
+    },
     tour: {
       root: `${ROOTS.DASHBOARD}/tour`,
       new: `${ROOTS.DASHBOARD}/tour/new`,

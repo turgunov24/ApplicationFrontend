@@ -1,3 +1,4 @@
+import type { IForm } from '../form/form';
 import type { IListResponse, IIndexResponse, IGetCountsByStatusResponse } from './types';
 
 import axiosInstance from 'src/lib/axios';
@@ -12,6 +13,24 @@ export const referencesCounterpartiesService = {
       params,
     });
     return response.data;
+  },
+  form: {
+    get: async (id: IIndexResponse['result'][number]['id']) => {
+      const response = await axiosInstance.get<IForm>(referencesCounterpartiesUrls.index, {
+        params: { id },
+      });
+      return response.data;
+    },
+    create: async (data: IForm) => {
+      const response = await axiosInstance.post(referencesCounterpartiesUrls.index, data);
+      return response.data;
+    },
+    update: async (id: IIndexResponse['result'][number]['id'], data: IForm) => {
+      const response = await axiosInstance.put(referencesCounterpartiesUrls.index, data, {
+        params: { id },
+      });
+      return response.data;
+    },
   },
   helpers: {
     getCountsByStatus: async () => {
