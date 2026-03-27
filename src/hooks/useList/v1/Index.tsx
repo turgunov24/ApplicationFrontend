@@ -1,4 +1,5 @@
 import type { QueryOptions } from '@tanstack/react-query';
+import type { IListResponse as IUsersListResponse } from 'src/pages/core/admin/users/services/types';
 import type { IListResponse as IPrincipalsListResponse } from 'src/pages/core/admin/principals/services/types';
 import type { IListResponse as IReferencesRegionsListResponse } from 'src/pages/core/references/regions/services/types';
 import type { IListResponse as IReferencesServicesListResponse } from 'src/pages/core/references/services/services/types';
@@ -18,6 +19,7 @@ import { useMemo, useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import axiosInstance from 'src/lib/axios';
+import { usersService } from 'src/pages/core/admin/users/services';
 import { principalsService } from 'src/pages/core/admin/principals/services';
 import { referencesRolesService } from 'src/pages/core/references/roles/services';
 import { referencesRegionsService } from 'src/pages/core/references/regions/services';
@@ -43,6 +45,7 @@ type ListTypeMap = {
   legalForms: IReferencesLegalFormsListResponse;
   services: IReferencesServicesListResponse;
   principalCustomers: IPrincipalCustomersListResponse;
+  users: IUsersListResponse;
 };
 
 interface IUseListProps<T> extends QueryOptions {
@@ -116,6 +119,10 @@ export default function useList<T extends keyof ListTypeMap>({
         }
         if (listType === 'principalCustomers') {
           const response = await principalCustomersService.helpers.list();
+          return response as unknown as ListTypeMap[T];
+        }
+        if (listType === 'users') {
+          const response = await usersService.helpers.list();
           return response as unknown as ListTypeMap[T];
         }
         return [];

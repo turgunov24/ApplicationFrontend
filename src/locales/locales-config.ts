@@ -1,7 +1,7 @@
 import type { InitOptions } from 'i18next';
 import type { Theme, Components } from '@mui/material/styles';
 
-import resourcesToBackend from 'i18next-resources-to-backend';
+import HttpBackend from 'i18next-http-backend';
 
 // MUI Core Locales
 import {
@@ -25,6 +25,10 @@ import {
   zhCN as zhCNDataGrid,
   arSD as arSDDataGrid,
 } from '@mui/x-data-grid/locales';
+
+import { CONFIG } from 'src/global-config';
+
+import { useAuthStore } from 'src/auth/store';
 
 // ----------------------------------------------------------------------
 
@@ -114,9 +118,7 @@ export const allLangs: LangOption[] = [
 
 // ----------------------------------------------------------------------
 
-export const i18nResourceLoader = resourcesToBackend(
-  (lang: LangCode, namespace: string) => import(`./langs/${lang}/${namespace}.json`)
-);
+export const i18nResourceLoader = new HttpBackend();
 
 export function i18nOptions(lang = fallbackLng, namespace = defaultNS): InitOptions {
   return {
@@ -128,6 +130,13 @@ export function i18nOptions(lang = fallbackLng, namespace = defaultNS): InitOpti
     fallbackNS: defaultNS,
     defaultNS,
     ns: namespace,
+    backend: {
+      loadPath: `${CONFIG.serverUrl}/api/core/references/translations/bundle/{{lng}}/{{ns}}`,
+      customHeaders: () => {
+        const token = useAuthStore.getState().accessToken;
+        return token ? { Authorization: `Bearer ${token}` } : {};
+      },
+    },
   };
 }
 

@@ -16,8 +16,10 @@ import { referencesLegalFormsPermissions } from 'src/pages/core/references/legal
 import { principalCustomersPermissions } from 'src/pages/core/admin/principal-customers/helpers/permissions';
 import { referencesPermissionsPermissions } from 'src/pages/core/references/permissions/helpers/permissions';
 import { referencesClientTypesPermissions } from 'src/pages/core/references/client-types/helpers/permissions';
+import { referencesTranslationsPermissions } from 'src/pages/core/references/translations/helpers/permissions';
 import { referencesCounterpartiesPermissions } from 'src/pages/core/references/counterparties/helpers/permissions';
 import { referencesPermissionGroupsPermissions } from 'src/pages/core/references/permission-groups/helpers/permissions';
+import { referencesUserTranslationsPermissions } from 'src/pages/core/references/user-translations/helpers/permissions';
 import { assignPermissionsToRolesPermissions } from 'src/pages/core/references/assign-permissions-to-roles/helpers/permissions';
 import { referencesPrincipalCustomerCredentialsPermissions } from 'src/pages/core/references/principal-customer-credentials/helpers/permissions';
 import { attachTariffToPrincipalCustomersPermissions } from 'src/pages/core/references/attach-tariff-to-principal-customers/helpers/permissions';
@@ -196,6 +198,16 @@ export const navData: NavSectionProps['data'] = [
             title: 'Attach Tariff to Principal Customers',
             path: paths.dashboard.references.attachTariffToPrincipalCustomers.root,
             allowedPermissions: [attachTariffToPrincipalCustomersPermissions.index],
+          },
+          {
+            title: 'Translations',
+            path: paths.dashboard.references.translations.root,
+            allowedPermissions: [referencesTranslationsPermissions.index],
+          },
+          {
+            title: 'User Translations',
+            path: paths.dashboard.references.userTranslations.root,
+            allowedPermissions: [referencesUserTranslationsPermissions.index],
           },
         ],
       },

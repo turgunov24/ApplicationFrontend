@@ -57,3 +57,5 @@ export interface ICreateResponse {
   updatedAt: Date;
   status: string;
 }
+
+export type IListResponse = Array<{ id: number; fullName: string }>;
