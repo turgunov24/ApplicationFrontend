@@ -186,6 +186,9 @@ export const paths = {
       userTranslations: {
         root: `${ROOTS.DASHBOARD}/references/user-translations`,
       },
+      tasks: {
+        root: `${ROOTS.DASHBOARD}/references/tasks`,
+      },
     },
     product: {
       root: `${ROOTS.DASHBOARD}/product`,

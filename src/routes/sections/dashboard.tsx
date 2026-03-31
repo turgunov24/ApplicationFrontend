@@ -8,6 +8,7 @@ import { DashboardLayout } from 'src/layouts/dashboard';
 import { usersPermissions } from 'src/pages/core/admin/users/helpers/permissions';
 import { principalsPermissions } from 'src/pages/core/admin/principals/helpers/permissions';
 import { referencesRolesPermissions } from 'src/pages/core/references/roles/helpers/permissions';
+import { referencesTasksPermissions } from 'src/pages/core/references/tasks/helpers/permissions';
 import { referencesRegionsPermissions } from 'src/pages/core/references/regions/helpers/permissions';
 import { referencesTariffsPermissions } from 'src/pages/core/references/tariffs/helpers/permissions';
 import { referencesServicesPermissions } from 'src/pages/core/references/services/helpers/permissions';
@@ -150,6 +151,7 @@ const ReferencesTranslationsPage = lazy(
 const ReferencesUserTranslationsPage = lazy(
   () => import('src/pages/core/references/user-translations/index')
 );
+const ReferencesTasksPage = lazy(() => import('src/pages/core/references/tasks/index'));
 
 // ----------------------------------------------------------------------
 
@@ -414,6 +416,14 @@ export const dashboardRoutes: RouteObject[] = [
             element: (
               <RoleBasedGuard allowedPermissions={[referencesUserTranslationsPermissions.index]}>
                 <ReferencesUserTranslationsPage />
+              </RoleBasedGuard>
+            ),
+          },
+          {
+            path: 'tasks',
+            element: (
+              <RoleBasedGuard allowedPermissions={[referencesTasksPermissions.index]}>
+                <ReferencesTasksPage />
               </RoleBasedGuard>
             ),
           },

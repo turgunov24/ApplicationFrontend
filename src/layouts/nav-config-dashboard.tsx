@@ -6,6 +6,7 @@ import { CONFIG } from 'src/global-config';
 import { usersPermissions } from 'src/pages/core/admin/users/helpers/permissions';
 import { principalsPermissions } from 'src/pages/core/admin/principals/helpers/permissions';
 import { referencesRolesPermissions } from 'src/pages/core/references/roles/helpers/permissions';
+import { referencesTasksPermissions } from 'src/pages/core/references/tasks/helpers/permissions';
 import { referencesTariffsPermissions } from 'src/pages/core/references/tariffs/helpers/permissions';
 import { referencesRegionsPermissions } from 'src/pages/core/references/regions/helpers/permissions';
 import { referencesServicesPermissions } from 'src/pages/core/references/services/helpers/permissions';
@@ -208,6 +209,11 @@ export const navData: NavSectionProps['data'] = [
             title: 'User Translations',
             path: paths.dashboard.references.userTranslations.root,
             allowedPermissions: [referencesUserTranslationsPermissions.index],
+          },
+          {
+            title: 'Tasks',
+            path: paths.dashboard.references.tasks.root,
+            allowedPermissions: [referencesTasksPermissions.index],
           },
         ],
       },
