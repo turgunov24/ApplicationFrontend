@@ -18,6 +18,7 @@ import { principalCustomersPermissions } from 'src/pages/core/admin/principal-cu
 import { referencesPermissionsPermissions } from 'src/pages/core/references/permissions/helpers/permissions';
 import { referencesClientTypesPermissions } from 'src/pages/core/references/client-types/helpers/permissions';
 import { referencesTranslationsPermissions } from 'src/pages/core/references/translations/helpers/permissions';
+import { referencesTaskTemplatesPermissions } from 'src/pages/core/references/task-templates/helpers/permissions';
 import { referencesCounterpartiesPermissions } from 'src/pages/core/references/counterparties/helpers/permissions';
 import { referencesPermissionGroupsPermissions } from 'src/pages/core/references/permission-groups/helpers/permissions';
 import { referencesUserTranslationsPermissions } from 'src/pages/core/references/user-translations/helpers/permissions';
@@ -214,6 +215,11 @@ export const navData: NavSectionProps['data'] = [
             title: 'Tasks',
             path: paths.dashboard.references.tasks.root,
             allowedPermissions: [referencesTasksPermissions.index],
+          },
+          {
+            title: 'Task Templates',
+            path: paths.dashboard.references.taskTemplates.root,
+            allowedPermissions: [referencesTaskTemplatesPermissions.index],
           },
         ],
       },

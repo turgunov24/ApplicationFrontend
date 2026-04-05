@@ -189,6 +189,9 @@ export const paths = {
       tasks: {
         root: `${ROOTS.DASHBOARD}/references/tasks`,
       },
+      taskTemplates: {
+        root: `${ROOTS.DASHBOARD}/references/task-templates`,
+      },
     },
     product: {
       root: `${ROOTS.DASHBOARD}/product`,

@@ -20,6 +20,7 @@ import { principalCustomersPermissions } from 'src/pages/core/admin/principal-cu
 import { referencesPermissionsPermissions } from 'src/pages/core/references/permissions/helpers/permissions';
 import { referencesClientTypesPermissions } from 'src/pages/core/references/client-types/helpers/permissions';
 import { referencesTranslationsPermissions } from 'src/pages/core/references/translations/helpers/permissions';
+import { referencesTaskTemplatesPermissions } from 'src/pages/core/references/task-templates/helpers/permissions';
 import { referencesCounterpartiesPermissions } from 'src/pages/core/references/counterparties/helpers/permissions';
 import { referencesPermissionGroupsPermissions } from 'src/pages/core/references/permission-groups/helpers/permissions';
 import { referencesUserTranslationsPermissions } from 'src/pages/core/references/user-translations/helpers/permissions';
@@ -152,6 +153,7 @@ const ReferencesUserTranslationsPage = lazy(
   () => import('src/pages/core/references/user-translations/index')
 );
 const ReferencesTasksPage = lazy(() => import('src/pages/core/references/tasks/index'));
+const ReferencesTaskTemplatesPage = lazy(() => import('src/pages/core/references/task-templates/index'));
 
 // ----------------------------------------------------------------------
 
@@ -424,6 +426,14 @@ export const dashboardRoutes: RouteObject[] = [
             element: (
               <RoleBasedGuard allowedPermissions={[referencesTasksPermissions.index]}>
                 <ReferencesTasksPage />
+              </RoleBasedGuard>
+            ),
+          },
+          {
+            path: 'task-templates',
+            element: (
+              <RoleBasedGuard allowedPermissions={[referencesTaskTemplatesPermissions.index]}>
+                <ReferencesTaskTemplatesPage />
               </RoleBasedGuard>
             ),
           },
