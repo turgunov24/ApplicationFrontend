@@ -12,19 +12,21 @@ import { referencesTasksPermissions } from 'src/pages/core/references/tasks/help
 import { referencesRegionsPermissions } from 'src/pages/core/references/regions/helpers/permissions';
 import { referencesTariffsPermissions } from 'src/pages/core/references/tariffs/helpers/permissions';
 import { referencesServicesPermissions } from 'src/pages/core/references/services/helpers/permissions';
-import { referencesDistrictsPermissions } from 'src/pages/core/references/districts/helpers/permissions';
 import { referencesCountriesPermissions } from 'src/pages/core/references/countries/helpers/permissions';
+import { referencesDistrictsPermissions } from 'src/pages/core/references/districts/helpers/permissions';
 import { referencesCurrenciesPermissions } from 'src/pages/core/references/currencies/helpers/permissions';
 import { referencesLegalFormsPermissions } from 'src/pages/core/references/legal-forms/helpers/permissions';
-import { principalCustomersPermissions } from 'src/pages/core/admin/principal-customers/helpers/permissions';
 import { referencesPermissionsPermissions } from 'src/pages/core/references/permissions/helpers/permissions';
+import { principalCustomersPermissions } from 'src/pages/core/admin/principal-customers/helpers/permissions';
 import { referencesClientTypesPermissions } from 'src/pages/core/references/client-types/helpers/permissions';
 import { referencesTranslationsPermissions } from 'src/pages/core/references/translations/helpers/permissions';
 import { referencesTaskTemplatesPermissions } from 'src/pages/core/references/task-templates/helpers/permissions';
 import { referencesCounterpartiesPermissions } from 'src/pages/core/references/counterparties/helpers/permissions';
+import { referencesTaskRecurrencePermissions } from 'src/pages/core/references/task-recurrence/helpers/permissions';
 import { referencesPermissionGroupsPermissions } from 'src/pages/core/references/permission-groups/helpers/permissions';
 import { referencesUserTranslationsPermissions } from 'src/pages/core/references/user-translations/helpers/permissions';
 import { assignPermissionsToRolesPermissions } from 'src/pages/core/references/assign-permissions-to-roles/helpers/permissions';
+import { referencesTaskTemplateCategoriesPermissions } from 'src/pages/core/references/task-template-categories/helpers/permissions';
 import { referencesPrincipalCustomerCredentialsPermissions } from 'src/pages/core/references/principal-customer-credentials/helpers/permissions';
 import { attachTariffToPrincipalCustomersPermissions } from 'src/pages/core/references/attach-tariff-to-principal-customers/helpers/permissions';
 
@@ -154,6 +156,8 @@ const ReferencesUserTranslationsPage = lazy(
 );
 const ReferencesTasksPage = lazy(() => import('src/pages/core/references/tasks/index'));
 const ReferencesTaskTemplatesPage = lazy(() => import('src/pages/core/references/task-templates/index'));
+const ReferencesTaskTemplateCategoriesPage = lazy(() => import('src/pages/core/references/task-template-categories/index'));
+const ReferencesTaskRecurrencePage = lazy(() => import('src/pages/core/references/task-recurrence/index'));
 
 // ----------------------------------------------------------------------
 
@@ -434,6 +438,22 @@ export const dashboardRoutes: RouteObject[] = [
             element: (
               <RoleBasedGuard allowedPermissions={[referencesTaskTemplatesPermissions.index]}>
                 <ReferencesTaskTemplatesPage />
+              </RoleBasedGuard>
+            ),
+          },
+          {
+            path: 'task-template-categories',
+            element: (
+              <RoleBasedGuard allowedPermissions={[referencesTaskTemplateCategoriesPermissions.index]}>
+                <ReferencesTaskTemplateCategoriesPage />
+              </RoleBasedGuard>
+            ),
+          },
+          {
+            path: 'task-recurrence',
+            element: (
+              <RoleBasedGuard allowedPermissions={[referencesTaskRecurrencePermissions.index]}>
+                <ReferencesTaskRecurrencePage />
               </RoleBasedGuard>
             ),
           },

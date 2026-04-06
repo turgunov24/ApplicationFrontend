@@ -22,7 +22,8 @@ const SetValues = () => {
       if (response) {
         form.setValue('translationKey', response.translationKey);
         form.setValue('description', response.description ?? '');
-        form.setValue('recurrence', response.recurrence);
+        form.setValue('recurrenceId', response.recurrenceId);
+        form.setValue('taskTemplateCategoryId', response.taskTemplateCategoryId);
         form.setValue('date', response.date ? new Date(response.date) : null);
         form.setValue('dayOfMonth', response.dayOfMonth ?? null);
         form.setValue('monthOfQuarter', response.monthOfQuarter ?? null);

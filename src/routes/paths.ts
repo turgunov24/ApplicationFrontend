@@ -192,6 +192,12 @@ export const paths = {
       taskTemplates: {
         root: `${ROOTS.DASHBOARD}/references/task-templates`,
       },
+      taskTemplateCategories: {
+        root: `${ROOTS.DASHBOARD}/references/task-template-categories`,
+      },
+      taskRecurrence: {
+        root: `${ROOTS.DASHBOARD}/references/task-recurrence`,
+      },
     },
     product: {
       root: `${ROOTS.DASHBOARD}/product`,

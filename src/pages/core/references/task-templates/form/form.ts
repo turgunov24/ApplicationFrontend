@@ -5,7 +5,8 @@ export type IForm = z.infer<typeof IFormSchema>;
 export const IFormSchema = z.object({
   translationKey: z.string().min(1, { message: 'Translation Key is required!' }),
   description: z.string().optional(),
-  recurrence: z.enum(['once', 'monthly', 'fiscalQuarter', 'yearly'], { error: 'Recurrence is required!' }),
+  recurrenceId: z.number({ message: 'Recurrence is required!' }),
+  taskTemplateCategoryId: z.number({ message: 'Task Template Category is required!' }),
   date: z.coerce.date().nullable(),
   dayOfMonth: z.number().nullable(),
   monthOfQuarter: z.number().nullable(),
@@ -15,7 +16,10 @@ export const IFormSchema = z.object({
 export const defaultValues: IForm = {
   translationKey: '',
   description: '',
-  recurrence: 'once',
+    // @ts-expect-error number emasligi uchun error beryapti
+  recurrenceId: null,
+    // @ts-expect-error number emasligi uchun error beryapti
+  taskTemplateCategoryId: null,
   date: null,
   dayOfMonth: null,
   monthOfQuarter: null,

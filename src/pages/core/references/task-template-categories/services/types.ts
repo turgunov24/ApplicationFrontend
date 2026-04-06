@@ -1,7 +1,6 @@
 export enum Statuses {
   all = 'all',
   active = 'active',
-  inactive = 'inactive',
   deleted = 'deleted',
 }
 
@@ -11,17 +10,8 @@ export interface IIndexResponse {
   result: Array<{
     id: number;
     translationKey: string;
-    description: string | null;
     createdAt: Date;
-    updatedAt: Date;
-    status: 'active' | 'inactive' | 'deleted';
-    recurrenceId: number;
-    taskTemplateCategoryId: number;
-    date: Date | null;
-    dayOfMonth: number | null;
-    monthOfQuarter: number | null;
-    monthOfYear: number | null;
-    createdBy: number;
+    status: 'active' | 'deleted';
   }>;
   pagination: {
     currentPage: number;
@@ -33,7 +23,4 @@ export interface IIndexResponse {
   };
 }
 
-export type IListResponse = Array<{
-  id: number;
-  translationKey: string;
-}>;
+export type IListResponse = Array<{ id: number; translationKey: string }>;

@@ -20,9 +20,11 @@ import { referencesClientTypesPermissions } from 'src/pages/core/references/clie
 import { referencesTranslationsPermissions } from 'src/pages/core/references/translations/helpers/permissions';
 import { referencesTaskTemplatesPermissions } from 'src/pages/core/references/task-templates/helpers/permissions';
 import { referencesCounterpartiesPermissions } from 'src/pages/core/references/counterparties/helpers/permissions';
+import { referencesTaskRecurrencePermissions } from 'src/pages/core/references/task-recurrence/helpers/permissions';
 import { referencesPermissionGroupsPermissions } from 'src/pages/core/references/permission-groups/helpers/permissions';
 import { referencesUserTranslationsPermissions } from 'src/pages/core/references/user-translations/helpers/permissions';
 import { assignPermissionsToRolesPermissions } from 'src/pages/core/references/assign-permissions-to-roles/helpers/permissions';
+import { referencesTaskTemplateCategoriesPermissions } from 'src/pages/core/references/task-template-categories/helpers/permissions';
 import { referencesPrincipalCustomerCredentialsPermissions } from 'src/pages/core/references/principal-customer-credentials/helpers/permissions';
 import { attachTariffToPrincipalCustomersPermissions } from 'src/pages/core/references/attach-tariff-to-principal-customers/helpers/permissions';
 
@@ -220,6 +222,16 @@ export const navData: NavSectionProps['data'] = [
             title: 'Task Templates',
             path: paths.dashboard.references.taskTemplates.root,
             allowedPermissions: [referencesTaskTemplatesPermissions.index],
+          },
+          {
+            title: 'Task Template Categories',
+            path: paths.dashboard.references.taskTemplateCategories.root,
+            allowedPermissions: [referencesTaskTemplateCategoriesPermissions.index],
+          },
+          {
+            title: 'Task Recurrence',
+            path: paths.dashboard.references.taskRecurrence.root,
+            allowedPermissions: [referencesTaskRecurrencePermissions.index],
           },
         ],
       },

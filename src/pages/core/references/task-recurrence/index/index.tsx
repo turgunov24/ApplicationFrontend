@@ -57,20 +57,20 @@ import Filters from './components/filters';
 import Statuses from './components/statuses';
 import FilterResults from './components/filterResults';
 import { Statuses as StatusesEnum } from '../services/types';
-import { referencesTaskTemplatesPermissions } from '../helpers/permissions';
-import { referencesTaskTemplatesService, REFERENCES_TASK_TEMPLATES_BASE_QUERY_KEY } from '../services';
+import { referencesTaskRecurrencePermissions } from '../helpers/permissions';
+import { referencesTaskRecurrenceService, REFERENCES_TASK_RECURRENCE_BASE_QUERY_KEY } from '../services';
 
 // ----------------------------------------------------------------------
 
-type ITaskTemplate = IIndexResponse['result'][number];
+type ITaskRecurrence = IIndexResponse['result'][number];
 
-const metadata = { title: `Task Templates - ${CONFIG.appName}` };
+const metadata = { title: `Task Recurrence - ${CONFIG.appName}` };
 const fallBackData: any[] = [];
 
 export default function Page() {
   const queryClient = useQueryClient();
 
-  const [idForDeleteUser, setIdForDeleteUser] = useState<ITaskTemplate['id'] | null>(null);
+  const [idForDeleteUser, setIdForDeleteUser] = useState<ITaskRecurrence['id'] | null>(null);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState({});
   const [dense, setDense] = useState(false);
@@ -86,14 +86,14 @@ export default function Page() {
       dataPerPage: parseAsInteger.withDefault(5),
 
       formOpen: parseAsBoolean,
-      taskTemplateId: parseAsInteger,
+      taskRecurrenceId: parseAsInteger,
     },
     {
       history: 'push',
     }
   );
 
-  const columnHelper = createColumnHelper<ITaskTemplate>();
+  const columnHelper = createColumnHelper<ITaskRecurrence>();
 
   const columns = useMemo(
     () => [
@@ -102,20 +102,15 @@ export default function Page() {
         sortingFn: 'alphanumeric',
         cell: (info) => info.getValue(),
       }),
+      columnHelper.accessor('token', {
+        header: 'Token',
+        sortingFn: 'alphanumeric',
+        cell: (info) => info.getValue(),
+      }),
       columnHelper.accessor('description', {
         header: 'Description',
         sortingFn: 'alphanumeric',
         cell: (info) => info.getValue() ?? '-',
-      }),
-      columnHelper.accessor('recurrenceId', {
-        header: 'Recurrence ID',
-        sortingFn: 'alphanumeric',
-        cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor('taskTemplateCategoryId', {
-        header: 'Category ID',
-        sortingFn: 'alphanumeric',
-        cell: (info) => info.getValue(),
       }),
       columnHelper.accessor('createdAt', {
         header: 'Created At',
@@ -138,7 +133,6 @@ export default function Page() {
             variant="soft"
             color={
               (info.getValue() === 'active' && 'success') ||
-              (info.getValue() === 'inactive' && 'warning') ||
               (info.getValue() === 'deleted' && 'error') ||
               'default'
             }
@@ -151,12 +145,12 @@ export default function Page() {
         header: 'Actions',
         cell: (info) => (
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <RenderElementByPermission permissions={[referencesTaskTemplatesPermissions.update]}>
+            <RenderElementByPermission permissions={[referencesTaskRecurrencePermissions.update]}>
               <Tooltip title="Quick edit" placement="top" arrow>
                 <IconButton
                   color="info"
                   onClick={() => {
-                    setQueryStates({ taskTemplateId: info.getValue(), formOpen: true });
+                    setQueryStates({ taskRecurrenceId: info.getValue(), formOpen: true });
                   }}
                 >
                   <Iconify icon="solar:pen-bold" />
@@ -164,7 +158,7 @@ export default function Page() {
               </Tooltip>
             </RenderElementByPermission>
 
-            <RenderElementByPermission permissions={[referencesTaskTemplatesPermissions.delete]}>
+            <RenderElementByPermission permissions={[referencesTaskRecurrencePermissions.delete]}>
               <IconButton color="error" onClick={() => setIdForDeleteUser(info.getValue())}>
                 <Iconify icon="solar:trash-bin-trash-bold" />
               </IconButton>
@@ -181,21 +175,19 @@ export default function Page() {
     data: countsByStatus = {
       [StatusesEnum.all]: 0,
       [StatusesEnum.active]: 0,
-      [StatusesEnum.inactive]: 0,
       [StatusesEnum.deleted]: 0,
     },
   } = useQuery({
-    queryKey: [REFERENCES_TASK_TEMPLATES_BASE_QUERY_KEY, 'getCountsByStatus'],
+    queryKey: [REFERENCES_TASK_RECURRENCE_BASE_QUERY_KEY, 'getCountsByStatus'],
     queryFn: async () => {
       try {
-        const response = await referencesTaskTemplatesService.helpers.getCountsByStatus();
+        const response = await referencesTaskRecurrenceService.helpers.getCountsByStatus();
         return response;
       } catch (error: unknown) {
         console.log('error', error);
         return {
           [StatusesEnum.all]: 0,
           [StatusesEnum.active]: 0,
-          [StatusesEnum.inactive]: 0,
           [StatusesEnum.deleted]: 0,
         };
       }
@@ -217,7 +209,7 @@ export default function Page() {
     },
   } = useQuery({
     queryKey: [
-      REFERENCES_TASK_TEMPLATES_BASE_QUERY_KEY,
+      REFERENCES_TASK_RECURRENCE_BASE_QUERY_KEY,
       'index',
       pagination.currentPage,
       pagination.dataPerPage,
@@ -227,14 +219,14 @@ export default function Page() {
     enabled: isFetched,
     queryFn: async () => {
       try {
-        const response = await referencesTaskTemplatesService.index({
+        const response = await referencesTaskRecurrenceService.index({
           status,
           search,
           currentPage: pagination.currentPage,
           dataPerPage: pagination.dataPerPage,
         });
         return response;
-      } catch (_error: unknown) {
+      } catch (error: unknown) {
         return {
           result: fallBackData,
           pagination: {
@@ -251,10 +243,10 @@ export default function Page() {
   });
 
   const { mutate: deleteUser } = useMutation({
-    mutationKey: [REFERENCES_TASK_TEMPLATES_BASE_QUERY_KEY, 'delete'],
-    mutationFn: async (id: ITaskTemplate['id']) => {
+    mutationKey: [REFERENCES_TASK_RECURRENCE_BASE_QUERY_KEY, 'delete'],
+    mutationFn: async (id: ITaskRecurrence['id']) => {
       try {
-        const response = await referencesTaskTemplatesService.form.delete(id);
+        const response = await referencesTaskRecurrenceService.form.delete(id);
         return response;
       } catch (error: unknown) {
         console.log('error', error);
@@ -264,7 +256,7 @@ export default function Page() {
     onSuccess: () => {
       toast.success('Delete success!');
       setIdForDeleteUser(null);
-      queryClient.invalidateQueries({ queryKey: [REFERENCES_TASK_TEMPLATES_BASE_QUERY_KEY] });
+      queryClient.invalidateQueries({ queryKey: [REFERENCES_TASK_RECURRENCE_BASE_QUERY_KEY] });
     },
     onError: () => {
       toast.error('Delete failed!');
@@ -330,15 +322,15 @@ export default function Page() {
       <DashboardContent>
         <CustomBreadcrumbs
           heading="List"
-          links={[{ name: 'Dashboard', href: paths.dashboard.root }, { name: 'Task Templates' }]}
+          links={[{ name: 'Dashboard', href: paths.dashboard.root }, { name: 'Task Recurrence' }]}
           action={
-            <RenderElementByPermission permissions={[referencesTaskTemplatesPermissions.create]}>
+            <RenderElementByPermission permissions={[referencesTaskRecurrencePermissions.create]}>
               <Button
                 variant="contained"
                 startIcon={<Iconify icon="mingcute:add-line" />}
                 onClick={() => setQueryStates({ formOpen: true })}
               >
-                Add Task Template
+                Add Task Recurrence
               </Button>
             </RenderElementByPermission>
           }
