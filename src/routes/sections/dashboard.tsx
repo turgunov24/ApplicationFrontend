@@ -25,6 +25,7 @@ import { referencesCounterpartiesPermissions } from 'src/pages/core/references/c
 import { referencesTaskRecurrencePermissions } from 'src/pages/core/references/task-recurrence/helpers/permissions';
 import { referencesPermissionGroupsPermissions } from 'src/pages/core/references/permission-groups/helpers/permissions';
 import { referencesUserTranslationsPermissions } from 'src/pages/core/references/user-translations/helpers/permissions';
+import { attachTemplateToTaskPermissions } from 'src/pages/core/references/attach-template-to-task/helpers/permissions';
 import { assignPermissionsToRolesPermissions } from 'src/pages/core/references/assign-permissions-to-roles/helpers/permissions';
 import { referencesTaskTemplateCategoriesPermissions } from 'src/pages/core/references/task-template-categories/helpers/permissions';
 import { referencesPrincipalCustomerCredentialsPermissions } from 'src/pages/core/references/principal-customer-credentials/helpers/permissions';
@@ -147,6 +148,9 @@ const ReferencesPrincipalCustomerCredentialsPage = lazy(
 );
 const ReferencesAttachTariffToPrincipalCustomersPage = lazy(
   () => import('src/pages/core/references/attach-tariff-to-principal-customers/index')
+);
+const ReferencesAttachTemplateToTaskPage = lazy(
+  () => import('src/pages/core/references/attach-template-to-task/index')
 );
 const ReferencesTranslationsPage = lazy(
   () => import('src/pages/core/references/translations/index')
@@ -406,6 +410,14 @@ export const dashboardRoutes: RouteObject[] = [
             element: (
               <RoleBasedGuard allowedPermissions={[attachTariffToPrincipalCustomersPermissions.index]}>
                 <ReferencesAttachTariffToPrincipalCustomersPage />
+              </RoleBasedGuard>
+            ),
+          },
+          {
+            path: 'attach-template-to-task',
+            element: (
+              <RoleBasedGuard allowedPermissions={[attachTemplateToTaskPermissions.index]}>
+                <ReferencesAttachTemplateToTaskPage />
               </RoleBasedGuard>
             ),
           },

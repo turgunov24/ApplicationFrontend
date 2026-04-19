@@ -23,6 +23,7 @@ import { referencesCounterpartiesPermissions } from 'src/pages/core/references/c
 import { referencesTaskRecurrencePermissions } from 'src/pages/core/references/task-recurrence/helpers/permissions';
 import { referencesPermissionGroupsPermissions } from 'src/pages/core/references/permission-groups/helpers/permissions';
 import { referencesUserTranslationsPermissions } from 'src/pages/core/references/user-translations/helpers/permissions';
+import { attachTemplateToTaskPermissions } from 'src/pages/core/references/attach-template-to-task/helpers/permissions';
 import { assignPermissionsToRolesPermissions } from 'src/pages/core/references/assign-permissions-to-roles/helpers/permissions';
 import { referencesTaskTemplateCategoriesPermissions } from 'src/pages/core/references/task-template-categories/helpers/permissions';
 import { referencesPrincipalCustomerCredentialsPermissions } from 'src/pages/core/references/principal-customer-credentials/helpers/permissions';
@@ -232,6 +233,11 @@ export const navData: NavSectionProps['data'] = [
             title: 'Task Recurrence',
             path: paths.dashboard.references.taskRecurrence.root,
             allowedPermissions: [referencesTaskRecurrencePermissions.index],
+          },
+          {
+            title: 'Attach Template to Task',
+            path: paths.dashboard.references.attachTemplateToTask.root,
+            allowedPermissions: [attachTemplateToTaskPermissions.index],
           },
         ],
       },

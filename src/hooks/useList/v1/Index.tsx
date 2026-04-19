@@ -8,6 +8,7 @@ import type { IListResponse as IReferencesDistrictsListResponse } from 'src/page
 import type { IListResponse as IReferencesLegalFormsListResponse } from 'src/pages/core/references/legal-forms/services/types';
 import type { IListResponse as IPrincipalCustomersListResponse } from 'src/pages/core/admin/principal-customers/services/types';
 import type { IListResponse as IReferencesClientTypesListResponse } from 'src/pages/core/references/client-types/services/types';
+import type { IListResponse as IReferencesTaskTemplatesListResponse } from 'src/pages/core/references/task-templates/services/types';
 import type { IListResponse as IReferencesCounterpartiesListResponse } from 'src/pages/core/references/counterparties/services/types';
 import type { IListResponse as IReferencesPermissionGroupsListResponse } from 'src/pages/core/references/permission-groups/services/types';
 import type {
@@ -29,6 +30,7 @@ import { referencesDistrictsService } from 'src/pages/core/references/districts/
 import { referencesLegalFormsService } from 'src/pages/core/references/legal-forms/services';
 import { principalCustomersService } from 'src/pages/core/admin/principal-customers/services';
 import { referencesClientTypesService } from 'src/pages/core/references/client-types/services';
+import { referencesTaskTemplatesService } from 'src/pages/core/references/task-templates/services';
 import { referencesCounterpartiesService } from 'src/pages/core/references/counterparties/services';
 import { referencesPermissionGroupsService } from 'src/pages/core/references/permission-groups/services';
 
@@ -46,6 +48,7 @@ type ListTypeMap = {
   services: IReferencesServicesListResponse;
   principalCustomers: IPrincipalCustomersListResponse;
   users: IUsersListResponse;
+  taskTemplates: IReferencesTaskTemplatesListResponse;
 };
 
 interface IUseListProps<T> extends QueryOptions {
@@ -123,6 +126,10 @@ export default function useList<T extends keyof ListTypeMap>({
         }
         if (listType === 'users') {
           const response = await usersService.helpers.list();
+          return response as unknown as ListTypeMap[T];
+        }
+        if (listType === 'taskTemplates') {
+          const response = await referencesTaskTemplatesService.helpers.list();
           return response as unknown as ListTypeMap[T];
         }
         return [];

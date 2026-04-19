@@ -180,6 +180,9 @@ export const paths = {
       attachTariffToPrincipalCustomers: {
         root: `${ROOTS.DASHBOARD}/references/attach-tariff-to-principal-customers`,
       },
+      attachTemplateToTask: {
+        root: `${ROOTS.DASHBOARD}/references/attach-template-to-task`,
+      },
       translations: {
         root: `${ROOTS.DASHBOARD}/references/translations`,
       },
