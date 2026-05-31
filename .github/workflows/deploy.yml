@@ -18,13 +18,18 @@ jobs:
         with:
           node-version: 20
 
+      - name: Create .env file
+        run: |
+          echo "VITE_SERVER_URL=${{ secrets.VITE_SERVER_URL }}" >> .env
+          echo "VITE_WS_URL=${{ secrets.VITE_WS_URL }}" >> .env
+
       - name: Install dependencies
         run: npm install
 
       - name: Build
         run: npm run build
 
-      - name: Deploy to VPS
+      - name: Clear old files
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.VPS_HOST }}
