@@ -32,7 +32,7 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           port: ${{ secrets.VPS_PORT }}
           script: |
-            sudo rm -rf /var/www/tadone/admin/*
+            rm -rf /var/www/tadone/admin/*
 
       - name: Copy files to VPS
         uses: appleboy/scp-action@v0.1.7
