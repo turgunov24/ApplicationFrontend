@@ -121,22 +121,63 @@ export const paths = {
     administration: {
       root: `${ROOTS.DASHBOARD}/administration`,
       users: {
-        root: `${ROOTS.DASHBOARD}/users`,
-        create: `${ROOTS.DASHBOARD}/users/create`,
-        edit: (id: string) => `${ROOTS.DASHBOARD}/users/edit/${id}`,
+        root: `${ROOTS.DASHBOARD}/administration/users`,
+        create: `${ROOTS.DASHBOARD}/administration/users/create`,
+        edit: (id: string) => `${ROOTS.DASHBOARD}/administration/users/edit/${id}`,
       },
       principals: {
-        root: `${ROOTS.DASHBOARD}/principals`,
-        create: `${ROOTS.DASHBOARD}/principals/create`,
-        edit: (id: string) => `${ROOTS.DASHBOARD}/principals/edit/${id}`,
+        root: `${ROOTS.DASHBOARD}/administration/principals`,
+        create: `${ROOTS.DASHBOARD}/administration/principals/create`,
+        edit: (id: string) => `${ROOTS.DASHBOARD}/administration/principals/edit/${id}`,
       },
       principalCustomers: {
-        root: `${ROOTS.DASHBOARD}/principal-customers`,
-        create: `${ROOTS.DASHBOARD}/principal-customers/create`,
-        edit: (id: string) => `${ROOTS.DASHBOARD}/principal-customers/edit/${id}`,
+        root: `${ROOTS.DASHBOARD}/administration/principal-customers`,
+        create: `${ROOTS.DASHBOARD}/administration/principal-customers/create`,
+        edit: (id: string) => `${ROOTS.DASHBOARD}/administration/principal-customers/edit/${id}`,
       },
     },
-
+    tasksManagement: {
+      root: `${ROOTS.DASHBOARD}/tasks-management`,
+      tasks: {
+        root: `${ROOTS.DASHBOARD}/tasks-management/tasks`,
+      },
+      taskTemplates: {
+        root: `${ROOTS.DASHBOARD}/tasks-management/task-templates`,
+      },
+      taskTemplateCategories: {
+        root: `${ROOTS.DASHBOARD}/tasks-management/task-template-categories`,
+      },
+      taskRecurrence: {
+        root: `${ROOTS.DASHBOARD}/tasks-management/task-recurrence`,
+      },
+      attachTemplateToTask: {
+        root: `${ROOTS.DASHBOARD}/tasks-management/attach-template-to-task`,
+      },
+    },
+    security: {
+      root: `${ROOTS.DASHBOARD}/security`,
+      permissionGroups: {
+        root: `${ROOTS.DASHBOARD}/security/permission-groups`,
+      },
+      permissions: {
+        root: `${ROOTS.DASHBOARD}/security/permissions`,
+      },
+      roles: {
+        root: `${ROOTS.DASHBOARD}/security/roles`,
+      },
+      assignPermissionsToRoles: {
+        root: `${ROOTS.DASHBOARD}/security/assign-permissions-to-roles`,
+      },
+    },
+    settings: {
+      root: `${ROOTS.DASHBOARD}/settings`,
+      translations: {
+        root: `${ROOTS.DASHBOARD}/settings/translations`,
+      },
+      userTranslations: {
+        root: `${ROOTS.DASHBOARD}/settings/user-translations`,
+      },
+    },
     references: {
       root: `${ROOTS.DASHBOARD}/references`,
       countries: {
@@ -148,18 +189,7 @@ export const paths = {
       districts: {
         root: `${ROOTS.DASHBOARD}/references/districts`,
       },
-      permissionGroups: {
-        root: `${ROOTS.DASHBOARD}/references/permission-groups`,
-      },
-      permissions: {
-        root: `${ROOTS.DASHBOARD}/references/permissions`,
-      },
-      roles: {
-        root: `${ROOTS.DASHBOARD}/references/roles`,
-      },
-      assignPermissionsToRoles: {
-        root: `${ROOTS.DASHBOARD}/references/assign-permissions-to-roles`,
-      },
+
       currencies: {
         root: `${ROOTS.DASHBOARD}/references/currencies`,
       },
@@ -183,27 +213,6 @@ export const paths = {
       },
       attachTariffToPrincipalCustomers: {
         root: `${ROOTS.DASHBOARD}/references/attach-tariff-to-principal-customers`,
-      },
-      attachTemplateToTask: {
-        root: `${ROOTS.DASHBOARD}/references/attach-template-to-task`,
-      },
-      translations: {
-        root: `${ROOTS.DASHBOARD}/references/translations`,
-      },
-      userTranslations: {
-        root: `${ROOTS.DASHBOARD}/references/user-translations`,
-      },
-      tasks: {
-        root: `${ROOTS.DASHBOARD}/references/tasks`,
-      },
-      taskTemplates: {
-        root: `${ROOTS.DASHBOARD}/references/task-templates`,
-      },
-      taskTemplateCategories: {
-        root: `${ROOTS.DASHBOARD}/references/task-template-categories`,
-      },
-      taskRecurrence: {
-        root: `${ROOTS.DASHBOARD}/references/task-recurrence`,
       },
     },
     product: {
