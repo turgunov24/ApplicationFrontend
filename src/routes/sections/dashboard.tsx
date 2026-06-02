@@ -36,6 +36,7 @@ import { LoadingScreen } from 'src/components/loading-screen';
 import { AuthGuard, RoleBasedGuard } from 'src/auth/guard';
 
 import { usePathname } from '../hooks';
+import { paths } from '../paths'
 
 // ----------------------------------------------------------------------
 
@@ -188,7 +189,7 @@ const dashboardLayout = () => (
 
 export const dashboardRoutes: RouteObject[] = [
   {
-    path: 'dashboard',
+    path: paths.dashboard.root,
     element: CONFIG.auth.skip ? dashboardLayout() : <AuthGuard>{dashboardLayout()}</AuthGuard>,
     children: [
       { index: true, element: <IndexPage /> },
@@ -199,7 +200,7 @@ export const dashboardRoutes: RouteObject[] = [
       // { path: 'file', element: <OverviewFilePage /> },
       // { path: 'course', element: <OverviewCoursePage /> },
       {
-        path: 'users',
+        path: paths.dashboard.administration.users.root,
         children: [
           {
             index: true,

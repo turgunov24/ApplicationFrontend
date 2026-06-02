@@ -1,15 +1,15 @@
-import type { SortingState } from '@tanstack/react-table'
-import type { IIndexResponse } from '../services/types'
+import type { SortingState } from '@tanstack/react-table';
+import type { IIndexResponse } from '../services/types';
 
-import { useMemo, useState } from 'react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMemo, useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   parseAsString,
   parseAsArrayOf,
   useQueryStates,
   parseAsInteger,
   parseAsStringEnum,
-} from 'nuqs'
+} from 'nuqs';
 import {
   flexRender,
   useReactTable,
@@ -17,53 +17,53 @@ import {
   getSortedRowModel,
   createColumnHelper,
   getPaginationRowModel,
-} from '@tanstack/react-table'
+} from '@tanstack/react-table';
 
-import Box from '@mui/material/Box'
-import Card from '@mui/material/Card'
-import Link from '@mui/material/Link'
-import Table from '@mui/material/Table'
-import Stack from '@mui/material/Stack'
-import Button from '@mui/material/Button'
-import Switch from '@mui/material/Switch'
-import Avatar from '@mui/material/Avatar'
-import Tooltip from '@mui/material/Tooltip'
-import TableRow from '@mui/material/TableRow'
-import Checkbox from '@mui/material/Checkbox'
-import Skeleton from '@mui/material/Skeleton'
-import TableHead from '@mui/material/TableHead'
-import TableCell from '@mui/material/TableCell'
-import TableBody from '@mui/material/TableBody'
-import Typography from '@mui/material/Typography'
-import IconButton from '@mui/material/IconButton'
-import TablePagination from '@mui/material/TablePagination'
-import FormControlLabel from '@mui/material/FormControlLabel'
+import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
+import Link from '@mui/material/Link';
+import Table from '@mui/material/Table';
+import Stack from '@mui/material/Stack';
+import Button from '@mui/material/Button';
+import Switch from '@mui/material/Switch';
+import Avatar from '@mui/material/Avatar';
+import Tooltip from '@mui/material/Tooltip';
+import TableRow from '@mui/material/TableRow';
+import Checkbox from '@mui/material/Checkbox';
+import Skeleton from '@mui/material/Skeleton';
+import TableHead from '@mui/material/TableHead';
+import TableCell from '@mui/material/TableCell';
+import TableBody from '@mui/material/TableBody';
+import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
+import TablePagination from '@mui/material/TablePagination';
+import FormControlLabel from '@mui/material/FormControlLabel';
 
-import { paths } from 'src/routes/paths'
-import { useRouter } from 'src/routes/hooks'
-import { RouterLink } from 'src/routes/components'
+import { paths } from 'src/routes/paths';
+import { useRouter } from 'src/routes/hooks';
+import { RouterLink } from 'src/routes/components';
 
-import { fDateTime } from 'src/utils/format-time'
+import { fDateTime } from 'src/utils/format-time';
 
-import { CONFIG } from 'src/global-config'
-import { DashboardContent } from 'src/layouts/dashboard'
+import { CONFIG } from 'src/global-config';
+import { DashboardContent } from 'src/layouts/dashboard';
 
-import { Label } from 'src/components/label'
-import { toast } from 'src/components/snackbar'
-import { Iconify } from 'src/components/iconify'
-import { TableNoData } from 'src/components/table'
-import { Scrollbar } from 'src/components/scrollbar'
-import { ConfirmDialog } from 'src/components/custom-dialog'
-import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs'
+import { Label } from 'src/components/label';
+import { toast } from 'src/components/snackbar';
+import { Iconify } from 'src/components/iconify';
+import { TableNoData } from 'src/components/table';
+import { Scrollbar } from 'src/components/scrollbar';
+import { ConfirmDialog } from 'src/components/custom-dialog';
+import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
-import { RenderElementByPermission } from 'src/auth/guard'
+import { RenderElementByPermission } from 'src/auth/guard';
 
-import Filters from './components/filters'
-import Statuses from './components/statuses'
-import FilterResults from './components/filterResults'
-import { usersPermissions } from '../helpers/permissions'
-import { Statuses as StatusesEnum } from '../services/types'
-import { usersService, USERS_BASE_QUERY_KEY } from '../services'
+import Filters from './components/filters';
+import Statuses from './components/statuses';
+import FilterResults from './components/filterResults';
+import { usersPermissions } from '../helpers/permissions';
+import { Statuses as StatusesEnum } from '../services/types';
+import { usersService, USERS_BASE_QUERY_KEY } from '../services';
 
 // ----------------------------------------------------------------------
 
@@ -111,7 +111,7 @@ export default function Page() {
               <Stack sx={{ typography: 'body2', flex: '1 1 auto', alignItems: 'flex-start' }}>
                 <Link
                   component={RouterLink}
-                  href={paths.dashboard.users.edit(row.original.id.toString())}
+                  href={paths.dashboard.administration.users.edit(row.original.id.toString())}
                   color="inherit"
                   sx={{ cursor: 'pointer' }}
                 >
@@ -160,7 +160,7 @@ export default function Page() {
                 <IconButton
                   color="info"
                   onClick={() => {
-                    router.push(paths.dashboard.users.edit(info.getValue().toString()));
+                    router.push(paths.dashboard.administration.users.edit(info.getValue().toString()));
                   }}
                 >
                   <Iconify icon="solar:pen-bold" />
@@ -344,7 +344,7 @@ export default function Page() {
             <RenderElementByPermission permissions={[usersPermissions.create]}>
               <Button
                 component={RouterLink}
-                href={paths.dashboard.users.create}
+                href={paths.dashboard.administration.users.create}
                 variant="contained"
                 startIcon={<Iconify icon="mingcute:add-line" />}
               >

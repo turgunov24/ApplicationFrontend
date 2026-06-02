@@ -85,7 +85,7 @@ export default function FormPage() {
     },
     onSuccess: () => {
       toast.success(id ? 'Update success!' : 'Create success!');
-      router.push(paths.dashboard.users.root);
+      router.push(paths.dashboard.administration.users.root);
     },
   });
 

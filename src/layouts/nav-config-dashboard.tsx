@@ -104,26 +104,45 @@ export const navData: NavSectionProps['data'] = [
    * Management
    */
   {
-    subheader: 'Management',
+    subheader: 'Boshqaruv',
     items: [
       {
-        title: 'Users',
-        path: paths.dashboard.users.root,
-        icon: ICONS.user,
-        allowedPermissions: [usersPermissions.index],
+        title: 'Boshqaruv Paneli',
+        path: paths.dashboard.root,
+        icon: ICONS.dashboard,
       },
       {
-        title: 'Principals',
-        path: paths.dashboard.principals.root,
-        icon: ICONS.user,
-        allowedPermissions: [principalsPermissions.index],
+        title: 'Administratsiya',
+        path: paths.dashboard.administration.root,
+        icon: ICONS.dashboard,
+        allowedPermissions: [
+          usersPermissions.index,
+          principalsPermissions.index,
+          principalCustomersPermissions.index,
+        ],
+        // deepMatch: true,
+        children: [
+          {
+            title: 'Users',
+            path: paths.dashboard.administration.users.root,
+            icon: ICONS.user,
+            allowedPermissions: [usersPermissions.index],
+          },
+          {
+            title: 'Principals',
+            path: paths.dashboard.administration.principals.root,
+            icon: ICONS.user,
+            allowedPermissions: [principalsPermissions.index],
+          },
+          {
+            title: 'Principal Customers',
+            path: paths.dashboard.administration.principalCustomers.root,
+            icon: ICONS.user,
+            allowedPermissions: [principalCustomersPermissions.index],
+          },
+        ],
       },
-      {
-        title: 'Principal Customers',
-        path: paths.dashboard.principalCustomers.root,
-        icon: ICONS.user,
-        allowedPermissions: [principalCustomersPermissions.index],
-      },
+
       {
         title: 'References',
         path: paths.dashboard.references.root,

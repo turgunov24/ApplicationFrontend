@@ -86,7 +86,7 @@ export default function FormPage() {
     },
     onSuccess: () => {
       toast.success(id ? 'Update success!' : 'Create success!');
-      router.push(paths.dashboard.principals.root);
+      router.push(paths.dashboard.administration.principals.root);
     },
   });
 
@@ -165,7 +165,7 @@ export default function FormPage() {
         heading={id ? 'Update principal' : 'Create a new principal'}
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'Principals', href: paths.dashboard.principals.root },
+          { name: 'Principals', href: paths.dashboard.administration.principals.root },
           { name: id ? 'Update' : 'Create' },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}

@@ -75,7 +75,7 @@ export default function FormPage() {
     },
     onSuccess: () => {
       toast.success(id ? 'Update success!' : 'Create success!');
-      router.push(paths.dashboard.principalCustomers.root);
+      router.push(paths.dashboard.administration.principalCustomers.root);
     },
   });
 
@@ -112,7 +112,7 @@ export default function FormPage() {
         heading={id ? 'Update principal customer' : 'Create a new principal customer'}
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'Principal Customers', href: paths.dashboard.principalCustomers.root },
+          { name: 'Principal Customers', href: paths.dashboard.administration.principalCustomers.root },
           { name: id ? 'Update' : 'Create' },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}

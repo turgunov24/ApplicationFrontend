@@ -118,21 +118,25 @@ export const paths = {
       edit: (id: string) => `${ROOTS.DASHBOARD}/user/${id}/edit`,
       demo: { edit: `${ROOTS.DASHBOARD}/user/${MOCK_ID}/edit` },
     },
-    users: {
-      root: `${ROOTS.DASHBOARD}/users`,
-      create: `${ROOTS.DASHBOARD}/users/create`,
-      edit: (id: string) => `${ROOTS.DASHBOARD}/users/edit/${id}`,
+    administration: {
+      root: `${ROOTS.DASHBOARD}/administration`,
+      users: {
+        root: `${ROOTS.DASHBOARD}/users`,
+        create: `${ROOTS.DASHBOARD}/users/create`,
+        edit: (id: string) => `${ROOTS.DASHBOARD}/users/edit/${id}`,
+      },
+      principals: {
+        root: `${ROOTS.DASHBOARD}/principals`,
+        create: `${ROOTS.DASHBOARD}/principals/create`,
+        edit: (id: string) => `${ROOTS.DASHBOARD}/principals/edit/${id}`,
+      },
+      principalCustomers: {
+        root: `${ROOTS.DASHBOARD}/principal-customers`,
+        create: `${ROOTS.DASHBOARD}/principal-customers/create`,
+        edit: (id: string) => `${ROOTS.DASHBOARD}/principal-customers/edit/${id}`,
+      },
     },
-    principals: {
-      root: `${ROOTS.DASHBOARD}/principals`,
-      create: `${ROOTS.DASHBOARD}/principals/create`,
-      edit: (id: string) => `${ROOTS.DASHBOARD}/principals/edit/${id}`,
-    },
-    principalCustomers: {
-      root: `${ROOTS.DASHBOARD}/principal-customers`,
-      create: `${ROOTS.DASHBOARD}/principal-customers/create`,
-      edit: (id: string) => `${ROOTS.DASHBOARD}/principal-customers/edit/${id}`,
-    },
+
     references: {
       root: `${ROOTS.DASHBOARD}/references`,
       countries: {

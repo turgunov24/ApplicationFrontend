@@ -103,7 +103,7 @@ export default function Page() {
               <Stack sx={{ typography: 'body2', flex: '1 1 auto', alignItems: 'flex-start' }}>
                 <Link
                   component={RouterLink}
-                  href={paths.dashboard.principals.edit(row.original.id.toString())}
+                  href={paths.dashboard.administration.principals.edit(row.original.id.toString())}
                   color="inherit"
                   sx={{ cursor: 'pointer' }}
                 >
@@ -152,7 +152,7 @@ export default function Page() {
                 <IconButton
                   color="info"
                   onClick={() => {
-                    router.push(paths.dashboard.principals.edit(info.getValue().toString()));
+                    router.push(paths.dashboard.administration.principals.edit(info.getValue().toString()));
                   }}
                 >
                   <Iconify icon="solar:pen-bold" />
@@ -334,7 +334,7 @@ export default function Page() {
             <RenderElementByPermission permissions={[principalsPermissions.create]}>
               <Button
                 component={RouterLink}
-                href={paths.dashboard.principals.create}
+                href={paths.dashboard.administration.principals.create}
                 variant="contained"
                 startIcon={<Iconify icon="mingcute:add-line" />}
               >
