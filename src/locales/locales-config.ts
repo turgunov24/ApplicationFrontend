@@ -9,6 +9,7 @@ import {
   // viVN as viVNCore,
   // zhCN as zhCNCore,
   arSA as arSACore,
+  ruRU as ruRUCore,
 } from '@mui/material/locale';
 // MUI Date Pickers Locales
 import {
@@ -16,6 +17,7 @@ import {
   // frFR as frFRDate,
   // viVN as viVNDate,
   // zhCN as zhCNDate,
+  ruRU as ruRUDate,
 } from '@mui/x-date-pickers/locales';
 // MUI Data Grid Locales
 import {
@@ -23,6 +25,7 @@ import {
   // frFR as frFRDataGrid,
   // viVN as viVNDataGrid,
   // zhCN as zhCNDataGrid,
+  ruRU as ruRUDataGrid,
   arSD as arSDDataGrid,
 } from '@mui/x-data-grid/locales';
 
@@ -33,11 +36,12 @@ import { useAuthStore } from 'src/auth/store';
 // ----------------------------------------------------------------------
 
 // Supported languages
-export const supportedLngs = ['en', 'ar'] as const;
+// export const supportedLngs = ['en', 'ar', 'uz', 'uz-Cyrl'] as const;
+export const supportedLngs = ['en', 'ar', 'uz', 'ru'] as const;
 export type LangCode = (typeof supportedLngs)[number];
 
 // Fallback and default namespace
-export const fallbackLng: LangCode = 'en';
+export const fallbackLng: LangCode = 'uz';
 export const defaultNS = 'common';
 
 // Storage config
@@ -65,6 +69,19 @@ export type LangOption = {
 
 export const allLangs: LangOption[] = [
   {
+    value: 'uz',
+    label: "O'zbek",
+    countryCode: 'UZ',
+    adapterLocale: 'uz', // dayjs/locale/uz — mavjud ✅
+    numberFormat: { code: 'uz-UZ', currency: 'UZS' },
+    systemValue: {
+      components: {
+        ...enUSDate.components, // MUI-da uz yo'q → en fallback
+        ...enUSDataGrid.components,
+      },
+    },
+  },
+  {
     value: 'en',
     label: 'English',
     countryCode: 'GB',
@@ -72,6 +89,20 @@ export const allLangs: LangOption[] = [
     numberFormat: { code: 'en-US', currency: 'USD' },
     systemValue: {
       components: { ...enUSDate.components, ...enUSDataGrid.components },
+    },
+  },
+  {
+    value: 'ru',
+    label: 'Русский',
+    countryCode: 'RU',
+    adapterLocale: 'ru',
+    numberFormat: { code: 'ru-RU', currency: 'RUB' },
+    systemValue: {
+      components: {
+        ...ruRUCore.components,
+        ...ruRUDate.components,
+        ...ruRUDataGrid.components,
+      },
     },
   },
   {
