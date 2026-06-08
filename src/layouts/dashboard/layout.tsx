@@ -2,6 +2,7 @@ import type { Breakpoint } from '@mui/material/styles';
 import type { NavItemProps, NavSectionProps } from 'src/components/nav-section';
 import type { MainSectionProps, HeaderSectionProps, LayoutSectionProps } from '../core';
 
+import { useMemo } from 'react';
 import { merge } from 'es-toolkit';
 import { isEqual } from 'es-toolkit/compat';
 import { useBoolean } from 'minimal-shared/hooks';
@@ -11,7 +12,7 @@ import Alert from '@mui/material/Alert';
 import { useTheme } from '@mui/material/styles';
 import { iconButtonClasses } from '@mui/material/IconButton';
 
-import { allLangs } from 'src/locales';
+import { allLangs, useTranslate } from 'src/locales';
 import { _contacts, _notifications } from 'src/_mock';
 
 import { Logo } from 'src/components/logo';
@@ -63,12 +64,16 @@ export function DashboardLayout({
 
   const settings = useSettingsContext();
   const { permissions } = useAuthStore();
+  const { t, i18n } = useTranslate('navbar');
 
   const navVars = dashboardNavColorVars(theme, settings.state.navColor, settings.state.navLayout);
 
   const { value: open, onFalse: onClose, onTrue: onOpen } = useBoolean();
 
-  const navData = slotProps?.nav?.data ?? dashboardNavData;
+  const navData = useMemo(
+    () => slotProps?.nav?.data ?? dashboardNavData(t),
+    [slotProps?.nav?.data, t]
+  );
 
   const isNavMini = settings.state.navLayout === 'mini';
   const isNavHorizontal = settings.state.navLayout === 'horizontal';
@@ -114,6 +119,7 @@ export function DashboardLayout({
       ),
       bottomArea: isNavHorizontal ? (
         <NavHorizontal
+          key={i18n.language}
           data={navData}
           layoutQuery={layoutQuery}
           cssVars={navVars.section}
@@ -128,6 +134,7 @@ export function DashboardLayout({
             sx={{ mr: 1, ml: -1, [theme.breakpoints.up(layoutQuery)]: { display: 'none' } }}
           />
           <NavMobile
+            key={i18n.language}
             data={navData}
             open={open}
             onClose={onClose}
@@ -194,6 +201,7 @@ export function DashboardLayout({
 
   const renderSidebar = () => (
     <NavVertical
+      key={i18n.language}
       data={navData}
       isNavMini={isNavMini}
       layoutQuery={layoutQuery}

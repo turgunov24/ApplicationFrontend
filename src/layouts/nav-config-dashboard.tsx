@@ -1,3 +1,4 @@
+import type { TFunction } from 'i18next';
 import type { NavSectionProps } from 'src/components/nav-section';
 
 import { paths } from 'src/routes/paths';
@@ -84,206 +85,208 @@ const ICONS = {
  * - `disabled`: An optional boolean to disable the item.
  * - `deepMatch`: An optional boolean to indicate if the item should match subpaths.
  */
-export const navData: NavSectionProps['data'] = [
-  /**
-   * Overview
-   */
-  // {
-  //   subheader: 'Overview',
-  //   items: [
-  //     { title: 'App', path: paths.dashboard.root, icon: ICONS.dashboard },
-  //     { title: 'Ecommerce', path: paths.dashboard.general.ecommerce, icon: ICONS.ecommerce },
-  //     { title: 'Analytics', path: paths.dashboard.general.analytics, icon: ICONS.analytics },
-  //     { title: 'Banking', path: paths.dashboard.general.banking, icon: ICONS.banking },
-  //     { title: 'Booking', path: paths.dashboard.general.booking, icon: ICONS.booking },
-  //     { title: 'File', path: paths.dashboard.general.file, icon: ICONS.file },
-  //     { title: 'Course', path: paths.dashboard.general.course, icon: ICONS.course },
-  //   ],
-  // },
-  /**
-   * Management
-   */
-  {
-    subheader: 'Boshqaruv',
-    items: [
-      {
-        title: 'Boshqaruv Paneli',
-        path: paths.dashboard.root,
-        icon: ICONS.dashboard,
-      },
-      // Administration
-      {
-        title: 'Administratsiya',
-        path: paths.dashboard.administration.root,
-        icon: ICONS.dashboard,
-        allowedPermissions: [
-          usersPermissions.index,
-          principalsPermissions.index,
-          principalCustomersPermissions.index,
-        ],
-        children: [
-          {
-            title: 'Foydalanuvchilar',
-            path: paths.dashboard.administration.users.root,
-            icon: ICONS.user,
-            allowedPermissions: [usersPermissions.index],
-          },
-          {
-            title: 'Prinsipallar',
-            path: paths.dashboard.administration.principals.root,
-            icon: ICONS.user,
-            allowedPermissions: [principalsPermissions.index],
-          },
-          {
-            title: 'Prinsipal mijozlari',
-            path: paths.dashboard.administration.principalCustomers.root,
-            icon: ICONS.user,
-            allowedPermissions: [principalCustomersPermissions.index],
-          },
-        ],
-      },
-      // Security
-      {
-        title: 'Xavfsizlik',
-        path: paths.dashboard.security.root,
-        icon: ICONS.user,
-        children: [
-          {
-            title: 'Ruxsat guruhlari',
-            path: paths.dashboard.security.permissionGroups.root,
-            allowedPermissions: [referencesPermissionGroupsPermissions.index],
-          },
-          {
-            title: 'Ruxsatlar',
-            path: paths.dashboard.security.permissions.root,
-            allowedPermissions: [referencesPermissionsPermissions.index],
-          },
-          {
-            title: 'Rollar',
-            path: paths.dashboard.security.roles.root,
-            allowedPermissions: [referencesRolesPermissions.index],
-          },
-          {
-            title: 'Rollarga ruxsatlarni biriktirish',
-            path: paths.dashboard.security.assignPermissionsToRoles.root,
-            allowedPermissions: [assignPermissionsToRolesPermissions.index],
-          },
-        ],
-      },
-      // Tasks management
-      {
-        title: 'Vazifalar boshqaruvi',
-        path: paths.dashboard.tasksManagement.root,
-        icon: ICONS.user,
-        children: [
-          {
-            title: 'Vazifalar',
-            path: paths.dashboard.tasksManagement.tasks.root,
-            allowedPermissions: [referencesTasksPermissions.index],
-          },
-          {
-            title: 'Vazifa shablonlari',
-            path: paths.dashboard.tasksManagement.taskTemplates.root,
-            allowedPermissions: [referencesTaskTemplatesPermissions.index],
-          },
-          {
-            title: 'Vazifa shabloni kategoriyalari',
-            path: paths.dashboard.tasksManagement.taskTemplateCategories.root,
-            allowedPermissions: [referencesTaskTemplateCategoriesPermissions.index],
-          },
-          {
-            title: 'Vazifa takrorlanishi',
-            path: paths.dashboard.tasksManagement.taskRecurrence.root,
-            allowedPermissions: [referencesTaskRecurrencePermissions.index],
-          },
-          {
-            title: 'Attach Template to Task',
-            path: paths.dashboard.tasksManagement.attachTemplateToTask.root,
-            allowedPermissions: [attachTemplateToTaskPermissions.index],
-          },
-        ],
-      },
-      // References
-      {
-        title: 'Malumotnomalar',
-        path: paths.dashboard.references.root,
-        icon: ICONS.user,
-        children: [
-          {
-            title: 'Davlatlar',
-            path: paths.dashboard.references.countries.root,
-            allowedPermissions: [referencesCountriesPermissions.index],
-          },
-          {
-            title: 'Viloyatlar',
-            path: paths.dashboard.references.regions.root,
-            allowedPermissions: [referencesRegionsPermissions.index],
-          },
-          {
-            title: 'Tumanlar',
-            path: paths.dashboard.references.districts.root,
-            allowedPermissions: [referencesDistrictsPermissions.index],
-          },
-          {
-            title: 'Currencies',
-            path: paths.dashboard.references.currencies.root,
-            allowedPermissions: [referencesCurrenciesPermissions.index],
-          },
-          {
-            title: 'Client Types',
-            path: paths.dashboard.references.clientTypes.root,
-            allowedPermissions: [referencesClientTypesPermissions.index],
-          },
-          {
-            title: 'Tariffs',
-            path: paths.dashboard.references.tariffs.root,
-            allowedPermissions: [referencesTariffsPermissions.index],
-          },
-          {
-            title: 'Counterparties',
-            path: paths.dashboard.references.counterparties.root,
-            allowedPermissions: [referencesCounterpartiesPermissions.index],
-          },
-          {
-            title: 'Legal Forms',
-            path: paths.dashboard.references.legalForms.root,
-            allowedPermissions: [referencesLegalFormsPermissions.index],
-          },
-          {
-            title: 'Services',
-            path: paths.dashboard.references.services.root,
-            allowedPermissions: [referencesServicesPermissions.index],
-          },
-          {
-            title: 'Principal Customer Credentials',
-            path: paths.dashboard.references.principalCustomerCredentials.root,
-            allowedPermissions: [referencesPrincipalCustomerCredentialsPermissions.index],
-          },
-          {
-            title: 'Attach Tariff to Principal Customers',
-            path: paths.dashboard.references.attachTariffToPrincipalCustomers.root,
-            allowedPermissions: [attachTariffToPrincipalCustomersPermissions.index],
-          },
-        ],
-      },
-      // Settings
-      {
-        title: 'Sozlamalar',
-        path: paths.dashboard.settings.root,
-        icon: ICONS.user,
-        children: [
-          {
-            title: 'Umumiy tarjimalar',
-            path: paths.dashboard.settings.translations.root,
-            allowedPermissions: [referencesTranslationsPermissions.index],
-          },
-          {
-            title: 'Maxsus tarjimalar',
-            path: paths.dashboard.settings.userTranslations.root,
-            allowedPermissions: [referencesUserTranslationsPermissions.index],
-          },
-        ],
-      },
-    ],
-  },
-];
+export function navData(t: TFunction<'navbar', undefined>): NavSectionProps['data'] {
+  return [
+    /**
+     * Overview
+     */
+    // {
+    //   subheader: 'Overview',
+    //   items: [
+    //     { title: 'App', path: paths.dashboard.root, icon: ICONS.dashboard },
+    //     { title: 'Ecommerce', path: paths.dashboard.general.ecommerce, icon: ICONS.ecommerce },
+    //     { title: 'Analytics', path: paths.dashboard.general.analytics, icon: ICONS.analytics },
+    //     { title: 'Banking', path: paths.dashboard.general.banking, icon: ICONS.banking },
+    //     { title: 'Booking', path: paths.dashboard.general.booking, icon: ICONS.booking },
+    //     { title: 'File', path: paths.dashboard.general.file, icon: ICONS.file },
+    //     { title: 'Course', path: paths.dashboard.general.course, icon: ICONS.course },
+    //   ],
+    // },
+    /**
+     * Management
+     */
+    {
+      subheader: t('management'),
+      items: [
+        {
+          title: t('dashboard'),
+          path: paths.dashboard.root,
+          icon: ICONS.dashboard,
+        },
+        // Administration
+        {
+          title: t('administration'),
+          path: paths.dashboard.administration.root,
+          icon: ICONS.dashboard,
+          allowedPermissions: [
+            usersPermissions.index,
+            principalsPermissions.index,
+            principalCustomersPermissions.index,
+          ],
+          children: [
+            {
+              title: t('users'),
+              path: paths.dashboard.administration.users.root,
+              icon: ICONS.user,
+              allowedPermissions: [usersPermissions.index],
+            },
+            {
+              title: t('principals'),
+              path: paths.dashboard.administration.principals.root,
+              icon: ICONS.user,
+              allowedPermissions: [principalsPermissions.index],
+            },
+            {
+              title: t('principalCustomers'),
+              path: paths.dashboard.administration.principalCustomers.root,
+              icon: ICONS.user,
+              allowedPermissions: [principalCustomersPermissions.index],
+            },
+          ],
+        },
+        // Security
+        {
+          title: t('security'),
+          path: paths.dashboard.security.root,
+          icon: ICONS.user,
+          children: [
+            {
+              title: t('permissionGroups'),
+              path: paths.dashboard.security.permissionGroups.root,
+              allowedPermissions: [referencesPermissionGroupsPermissions.index],
+            },
+            {
+              title: t('permissions'),
+              path: paths.dashboard.security.permissions.root,
+              allowedPermissions: [referencesPermissionsPermissions.index],
+            },
+            {
+              title: t('roles'),
+              path: paths.dashboard.security.roles.root,
+              allowedPermissions: [referencesRolesPermissions.index],
+            },
+            {
+              title: t('assignPermissionsToRoles'),
+              path: paths.dashboard.security.assignPermissionsToRoles.root,
+              allowedPermissions: [assignPermissionsToRolesPermissions.index],
+            },
+          ],
+        },
+        // Tasks management
+        {
+          title: t('taskManagement'),
+          path: paths.dashboard.tasksManagement.root,
+          icon: ICONS.user,
+          children: [
+            {
+              title: t('tasks'),
+              path: paths.dashboard.tasksManagement.tasks.root,
+              allowedPermissions: [referencesTasksPermissions.index],
+            },
+            {
+              title: t('taskTemplates'),
+              path: paths.dashboard.tasksManagement.taskTemplates.root,
+              allowedPermissions: [referencesTaskTemplatesPermissions.index],
+            },
+            {
+              title: t('taskTemplateCategories'),
+              path: paths.dashboard.tasksManagement.taskTemplateCategories.root,
+              allowedPermissions: [referencesTaskTemplateCategoriesPermissions.index],
+            },
+            {
+              title: t('taskRecurrence'),
+              path: paths.dashboard.tasksManagement.taskRecurrence.root,
+              allowedPermissions: [referencesTaskRecurrencePermissions.index],
+            },
+            {
+              title: t('attachTemplateToTask'),
+              path: paths.dashboard.tasksManagement.attachTemplateToTask.root,
+              allowedPermissions: [attachTemplateToTaskPermissions.index],
+            },
+          ],
+        },
+        // References
+        {
+          title: t('references'),
+          path: paths.dashboard.references.root,
+          icon: ICONS.user,
+          children: [
+            {
+              title: t('countries'),
+              path: paths.dashboard.references.countries.root,
+              allowedPermissions: [referencesCountriesPermissions.index],
+            },
+            {
+              title: t('regions'),
+              path: paths.dashboard.references.regions.root,
+              allowedPermissions: [referencesRegionsPermissions.index],
+            },
+            {
+              title: t('districts'),
+              path: paths.dashboard.references.districts.root,
+              allowedPermissions: [referencesDistrictsPermissions.index],
+            },
+            {
+              title: t('currencies'),
+              path: paths.dashboard.references.currencies.root,
+              allowedPermissions: [referencesCurrenciesPermissions.index],
+            },
+            {
+              title: t('clientTypes'),
+              path: paths.dashboard.references.clientTypes.root,
+              allowedPermissions: [referencesClientTypesPermissions.index],
+            },
+            {
+              title: t('tariffs'),
+              path: paths.dashboard.references.tariffs.root,
+              allowedPermissions: [referencesTariffsPermissions.index],
+            },
+            {
+              title: t('counterparties'),
+              path: paths.dashboard.references.counterparties.root,
+              allowedPermissions: [referencesCounterpartiesPermissions.index],
+            },
+            {
+              title: t('legalForms'),
+              path: paths.dashboard.references.legalForms.root,
+              allowedPermissions: [referencesLegalFormsPermissions.index],
+            },
+            {
+              title: t('services'),
+              path: paths.dashboard.references.services.root,
+              allowedPermissions: [referencesServicesPermissions.index],
+            },
+            {
+              title: t('principalCustomerCredentials'),
+              path: paths.dashboard.references.principalCustomerCredentials.root,
+              allowedPermissions: [referencesPrincipalCustomerCredentialsPermissions.index],
+            },
+            {
+              title: t('attachTariffToPrincipalCustomers'),
+              path: paths.dashboard.references.attachTariffToPrincipalCustomers.root,
+              allowedPermissions: [attachTariffToPrincipalCustomersPermissions.index],
+            },
+          ],
+        },
+        // Settings
+        {
+          title: t('settings'),
+          path: paths.dashboard.settings.root,
+          icon: ICONS.user,
+          children: [
+            {
+              title: t('generalTranslations'),
+              path: paths.dashboard.settings.translations.root,
+              allowedPermissions: [referencesTranslationsPermissions.index],
+            },
+            {
+              title: t('customTranslations'),
+              path: paths.dashboard.settings.userTranslations.root,
+              allowedPermissions: [referencesUserTranslationsPermissions.index],
+            },
+          ],
+        },
+      ],
+    },
+  ];
+}
