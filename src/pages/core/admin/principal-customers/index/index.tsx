@@ -92,7 +92,7 @@ export default function Page() {
         cell: ({ row }) => (
           <Link
             component={RouterLink}
-            href={paths.dashboard.principalCustomers.edit(row.original.id.toString())}
+            href={paths.dashboard.administration.principalCustomers.edit(row.original.id.toString())}
             color="inherit"
             sx={{ cursor: 'pointer' }}
           >
@@ -130,7 +130,7 @@ export default function Page() {
                 color="info"
                 onClick={() => {
                   router.push(
-                    paths.dashboard.principalCustomers.edit(info.getValue().toString())
+                    paths.dashboard.administration.principalCustomers.edit(info.getValue().toString())
                   );
                 }}
               >
@@ -312,7 +312,7 @@ export default function Page() {
           action={
             <Button
               component={RouterLink}
-              href={paths.dashboard.principalCustomers.create}
+              href={paths.dashboard.administration.principalCustomers.create}
               variant="contained"
               startIcon={<Iconify icon="mingcute:add-line" />}
             >

@@ -91,6 +91,17 @@ export const paths = {
   // DASHBOARD
   dashboard: {
     root: ROOTS.DASHBOARD,
+    administration: {
+      root: `${ROOTS.DASHBOARD}/administration`,
+      principalCustomers: {
+        root: `${ROOTS.DASHBOARD}/administration/principal-customers`,
+        create: `${ROOTS.DASHBOARD}/administration/principal-customers/create`,
+        edit: (id: string) => `${ROOTS.DASHBOARD}/administration/principal-customers/edit/${id}`,
+      },
+      principalCustomerCredentials: {
+        root: `${ROOTS.DASHBOARD}/administration/principal-customer-credentials`,
+      },
+    },
     mail: `${ROOTS.DASHBOARD}/mail`,
     chat: `${ROOTS.DASHBOARD}/chat`,
     blank: `${ROOTS.DASHBOARD}/blank`,
@@ -171,9 +182,6 @@ export const paths = {
       counterparties: {
         root: `${ROOTS.DASHBOARD}/references/counterparties`,
       },
-      principalCustomerCredentials: {
-        root: `${ROOTS.DASHBOARD}/references/principal-customer-credentials`,
-      },
       legalForms: {
         root: `${ROOTS.DASHBOARD}/references/legal-forms`,
       },
@@ -189,11 +197,6 @@ export const paths = {
       currencies: {
         root: `${ROOTS.DASHBOARD}/references/currencies`,
       },
-    },
-    principalCustomers: {
-      root: `${ROOTS.DASHBOARD}/principal-customers`,
-      create: `${ROOTS.DASHBOARD}/principal-customers/create`,
-      edit: (id: string) => `${ROOTS.DASHBOARD}/principal-customers/${id}/edit`,
     },
     tour: {
       root: `${ROOTS.DASHBOARD}/tour`,

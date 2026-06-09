@@ -1,44 +1,37 @@
-import type { RouteObject } from 'react-router';
+import type { RouteObject } from 'react-router'
 
-import { Outlet } from 'react-router';
-import { lazy, Suspense } from 'react';
+import { Outlet } from 'react-router'
+import { lazy, Suspense } from 'react'
 
-import { CONFIG } from 'src/global-config';
-import { DashboardLayout } from 'src/layouts/dashboard';
+import { CONFIG } from 'src/global-config'
+import { DashboardLayout } from 'src/layouts/dashboard'
 
-import { LoadingScreen } from 'src/components/loading-screen';
+import { LoadingScreen } from 'src/components/loading-screen'
 
-import { AuthGuard } from 'src/auth/guard';
+import { AuthGuard } from 'src/auth/guard'
 
-import { usePathname } from '../hooks';
+import { paths } from '../paths'
+import { usePathname } from '../hooks'
 
 // ----------------------------------------------------------------------
 
 const IndexPage = lazy(() => import('src/pages/dashboard'));
-const ReferencesServicesPage = lazy(
-  () => import('src/pages/core/references/services/index')
-);
+const ReferencesServicesPage = lazy(() => import('src/pages/core/references/services/index'));
 const ReferencesCounterpartiesPage = lazy(
   () => import('src/pages/core/references/counterparties/index')
 );
 const ReferencesPrincipalCustomerCredentialsPage = lazy(
   () => import('src/pages/core/references/principal-customer-credentials/index')
 );
-const ReferencesLegalFormsPage = lazy(
-  () => import('src/pages/core/references/legal-forms/index')
-);
+const ReferencesLegalFormsPage = lazy(() => import('src/pages/core/references/legal-forms/index'));
 const ReferencesClientTypesPage = lazy(
   () => import('src/pages/core/references/client-types/index')
 );
 const ReferencesAttachTariffToPrincipalCustomersPage = lazy(
   () => import('src/pages/core/references/attach-tariff-to-principal-customers/index')
 );
-const ReferencesTariffsPage = lazy(
-  () => import('src/pages/core/references/tariffs/index')
-);
-const ReferencesCurrenciesPage = lazy(
-  () => import('src/pages/core/references/currencies/index')
-);
+const ReferencesTariffsPage = lazy(() => import('src/pages/core/references/tariffs/index'));
+const ReferencesCurrenciesPage = lazy(() => import('src/pages/core/references/currencies/index'));
 const PrincipalCustomersIndexPage = lazy(
   () => import('src/pages/core/admin/principal-customers/index')
 );
@@ -65,12 +58,43 @@ const dashboardLayout = () => (
 
 export const dashboardRoutes: RouteObject[] = [
   {
-    path: 'dashboard',
+    path: paths.dashboard.root,
     element: CONFIG.auth.skip ? dashboardLayout() : <AuthGuard>{dashboardLayout()}</AuthGuard>,
     children: [
       { index: true, element: <IndexPage /> },
+      // Administration
       {
-        path: 'references',
+        path: paths.dashboard.administration.root,
+        children: [
+          // Principal Customers
+          {
+            path: paths.dashboard.administration.principalCustomers.root,
+            children: [
+              {
+                index: true,
+                element: <PrincipalCustomersIndexPage />,
+              },
+              {
+                path: 'create',
+                element: <PrincipalCustomersFormPage />,
+              },
+              {
+                path: 'edit/:id',
+                element: <PrincipalCustomersFormPage />,
+              },
+            ],
+          },
+
+          // Principal Customer Credentials
+          {
+            path: 'principal-customer-credentials',
+            element: <ReferencesPrincipalCustomerCredentialsPage />,
+          },
+        ],
+      },
+      // References
+      {
+        path: paths.dashboard.references.root,
         children: [
           {
             path: 'services',
@@ -79,10 +103,6 @@ export const dashboardRoutes: RouteObject[] = [
           {
             path: 'counterparties',
             element: <ReferencesCounterpartiesPage />,
-          },
-          {
-            path: 'principal-customer-credentials',
-            element: <ReferencesPrincipalCustomerCredentialsPage />,
           },
           {
             path: 'legal-forms',
@@ -104,14 +124,6 @@ export const dashboardRoutes: RouteObject[] = [
             path: 'currencies',
             element: <ReferencesCurrenciesPage />,
           },
-        ],
-      },
-      {
-        path: 'principal-customers',
-        children: [
-          { index: true, element: <PrincipalCustomersIndexPage /> },
-          { path: 'create', element: <PrincipalCustomersFormPage /> },
-          { path: ':id/edit', element: <PrincipalCustomersFormPage /> },
         ],
       },
     ],

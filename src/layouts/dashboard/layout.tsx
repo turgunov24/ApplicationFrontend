@@ -1,41 +1,42 @@
-import type { Breakpoint } from '@mui/material/styles';
-import type { NavItemProps, NavSectionProps } from 'src/components/nav-section';
-import type { MainSectionProps, HeaderSectionProps, LayoutSectionProps } from '../core';
+import type { Breakpoint } from '@mui/material/styles'
+import type { NavItemProps, NavSectionProps } from 'src/components/nav-section'
+import type { MainSectionProps, HeaderSectionProps, LayoutSectionProps } from '../core'
 
-import { merge } from 'es-toolkit';
-import { isEqual } from 'es-toolkit/compat';
-import { useBoolean } from 'minimal-shared/hooks';
+import { useMemo } from 'react'
+import { merge } from 'es-toolkit'
+import { isEqual } from 'es-toolkit/compat'
+import { useBoolean } from 'minimal-shared/hooks'
 
-import Box from '@mui/material/Box';
-import Alert from '@mui/material/Alert';
-import { useTheme } from '@mui/material/styles';
-import { iconButtonClasses } from '@mui/material/IconButton';
+import Box from '@mui/material/Box'
+import Alert from '@mui/material/Alert'
+import { useTheme } from '@mui/material/styles'
+import { iconButtonClasses } from '@mui/material/IconButton'
 
-import { allLangs } from 'src/locales';
-import { _contacts, _notifications } from 'src/_mock';
+import { allLangs, useTranslate } from 'src/locales'
+import { _contacts, _notifications } from 'src/_mock'
 
-import { Logo } from 'src/components/logo';
-import { useSettingsContext } from 'src/components/settings';
+import { Logo } from 'src/components/logo'
+import { useSettingsContext } from 'src/components/settings'
 
-import { useAuthStore } from 'src/auth/store';
+import { useAuthStore } from 'src/auth/store'
 
-import { NavMobile } from './nav-mobile';
-import { VerticalDivider } from './content';
-import { NavVertical } from './nav-vertical';
-import { NavHorizontal } from './nav-horizontal';
-import { _account } from '../nav-config-account';
-import { Searchbar } from '../components/searchbar';
-import { _workspaces } from '../nav-config-workspace';
-import { MenuButton } from '../components/menu-button';
-import { AccountDrawer } from '../components/account-drawer';
-import { SettingsButton } from '../components/settings-button';
-import { LanguagePopover } from '../components/language-popover';
-import { ContactsPopover } from '../components/contacts-popover';
-import { WorkspacesPopover } from '../components/workspaces-popover';
-import { navData as dashboardNavData } from '../nav-config-dashboard';
-import { dashboardLayoutVars, dashboardNavColorVars } from './css-vars';
-import { NotificationsDrawer } from '../components/notifications-drawer';
-import { MainSection, layoutClasses, HeaderSection, LayoutSection } from '../core';
+import { NavMobile } from './nav-mobile'
+import { VerticalDivider } from './content'
+import { NavVertical } from './nav-vertical'
+import { NavHorizontal } from './nav-horizontal'
+import { _account } from '../nav-config-account'
+import { Searchbar } from '../components/searchbar'
+import { _workspaces } from '../nav-config-workspace'
+import { MenuButton } from '../components/menu-button'
+import { AccountDrawer } from '../components/account-drawer'
+import { SettingsButton } from '../components/settings-button'
+import { LanguagePopover } from '../components/language-popover'
+import { ContactsPopover } from '../components/contacts-popover'
+import { WorkspacesPopover } from '../components/workspaces-popover'
+import { navData as dashboardNavData } from '../nav-config-dashboard'
+import { dashboardLayoutVars, dashboardNavColorVars } from './css-vars'
+import { NotificationsDrawer } from '../components/notifications-drawer'
+import { MainSection, layoutClasses, HeaderSection, LayoutSection } from '../core'
 
 // ----------------------------------------------------------------------
 
@@ -63,12 +64,16 @@ export function DashboardLayout({
 
   const settings = useSettingsContext();
   const { permissions } = useAuthStore();
+    const { t, i18n } = useTranslate('navbar');
 
   const navVars = dashboardNavColorVars(theme, settings.state.navColor, settings.state.navLayout);
 
   const { value: open, onFalse: onClose, onTrue: onOpen } = useBoolean();
 
-  const navData = slotProps?.nav?.data ?? dashboardNavData;
+    const navData = useMemo(
+    () => slotProps?.nav?.data ?? dashboardNavData(t),
+    [slotProps?.nav?.data, t]
+  );
 
   const isNavMini = settings.state.navLayout === 'mini';
   const isNavHorizontal = settings.state.navLayout === 'horizontal';
