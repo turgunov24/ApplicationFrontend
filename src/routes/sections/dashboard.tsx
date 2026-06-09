@@ -45,7 +45,7 @@ const IndexPage = lazy(() => import('src/pages/dashboard'));
 
 const UsersPage = lazy(() => import('src/pages/core/admin/users/index'));
 const UsersFormPage = lazy(() => import('src/pages/core/admin/users/form'));
-
+ 
 const PrincipalsPage = lazy(() => import('src/pages/core/admin/principals/index'));
 const PrincipalsFormPage = lazy(() => import('src/pages/core/admin/principals/form'));
 

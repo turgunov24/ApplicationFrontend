@@ -105,7 +105,7 @@ export function navData(t: TFunction<'navbar', undefined>): NavSectionProps['dat
     /**
      * Management
      */
-    {
+    { 
       subheader: t('management'),
       items: [
         {

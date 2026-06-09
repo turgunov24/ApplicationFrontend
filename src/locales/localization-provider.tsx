@@ -18,7 +18,7 @@ import { useTranslate } from './use-locales';
 type Props = {
   children: React.ReactNode;
 };
-
+ 
 export function LocalizationProvider({ children }: Props) {
   const { currentLang } = useTranslate();
 
